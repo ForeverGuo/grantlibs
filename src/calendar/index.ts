@@ -29,7 +29,7 @@ class Calendar {
   /* 获取某年某月天数 */
   getDaysOfYearMonth(year:number = this.getYear(), month:number = this.getMonth()): number {
     const date = new Date(year, month, 0)
-    return date.getDate() + 1
+    return date.getDate()
   }
 
   /* 获取某月第一天是星期几 */
