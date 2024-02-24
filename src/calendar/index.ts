@@ -21,25 +21,25 @@ class Calendar {
   }
 
   /* 获取星期几 */
-  getWeekDay(year = this.getYear(), month = this.getMonth(), date = this.getDate()) :string {
+  getWeekDay(year:number = this.getYear(), month:number = this.getMonth(), date:number = this.getDate()) :string {
     const week = new Date(`${month}/${date}/${year}`).getDay()
 		return weeks[week].day
   }
 
   /* 获取某年某月天数 */
-  getDaysOfYearMonth(year: number, month: number): number {
+  getDaysOfYearMonth(year:number = this.getYear(), month:number = this.getMonth()): number {
     const date = new Date(year, month, 0)
     return date.getDate() + 1
   }
 
   /* 获取某月第一天是星期几 */
-  getWeekOfMonth(month: number, year = this.getYear()): weekItem {
+  getWeekOfMonth(year: number = this.getYear(), month: number = this.getMonth()): weekItem {
     const week = new Date(`${month}/1/${year}`).getDay()
 		return weeks[week]
   }
 
   /* 获取完整年月日 */
-  getFullYearMonthDay(char = "-"): string {
+  getFullYearMonthDay(char:string = "-"): string {
     return`
       ${this.getYear()}${char}
       ${this.getMonth()}${char}
@@ -48,3 +48,5 @@ class Calendar {
   }
 
 }
+
+export default new Calendar()
