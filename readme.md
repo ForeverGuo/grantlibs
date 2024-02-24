@@ -2,7 +2,7 @@
 
 - 主要产出业务场景的功能函数，以及遇到的利于快速使用开发的钩子·
 
-### START 使用说明
+### START
 
 ```shell
 
@@ -18,7 +18,7 @@
 
 ```
 
-### Calendar 日历日常使用
+### Calendar 使用
 ```js
   /* 获取年份 */
   const year = calendar.getYear()
