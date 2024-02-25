@@ -9,11 +9,11 @@
   pnpm install grantguo-libs -D 或 yarn add grantguo-libs -D
 
   // es
-  import { calendar } from 'grantguo-libs'
+  import { calendar, store } from 'grantguo-libs'
   const year = calendar.getYear()
 
   // cjs
-  const { calendar } = require('grantguo-libs')
+  const { calendar, store } = require('grantguo-libs')
   const year = calendar.getYear()
 
 ```
