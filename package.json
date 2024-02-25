@@ -1,6 +1,6 @@
 {
   "name": "grantguo-libs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "常用工具库",
   "umdModuleName": "index",
   "module": "dist/esm/index.js",
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "rollup:build": "rm -fr dist && pnpm rollup -c",
-    "publish": " pnpm run rollup:build && npm publish"
+    "pub": " pnpm run rollup:build && npm publish"
   },
   "keywords": ["libs", "utils", "vue"],
   "author": "grantguo",
