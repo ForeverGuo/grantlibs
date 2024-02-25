@@ -19,10 +19,16 @@
 ```
 
 ### Calendar 使用
-｜方法  ｜调用方式 ｜
-｜---- ｜--------｜
-｜获取年份｜getYear｜
-｜获取月份｜getMonth｜
+
+|  方法名   | 调用方式  |
+|  ----  | ----  |
+| 获取年份  | calendar.getYear() |
+| 获取月份  | calendar.getMonth() |
+| 获取日期  | calendar.getDate() |
+| 获取某年某月某日是星期几  | calendar.getWeekDay() |
+| 获取某年某月天数  | calendar.getDaysOfYearMonth() |
+| 获取某月第一天是星期几  | calendar.getWeekOfMonth() |
+| 获取完整年月日，默认以 - 拼接  | calendar.getFullYearMonthDay() |
 
 ```js
   /* 获取年份 */
