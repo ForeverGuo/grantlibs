@@ -19,6 +19,11 @@
 ```
 
 ### Calendar 使用
+｜方法  ｜调用方式 ｜
+｜---- ｜--------｜
+｜获取年份｜getYear｜
+｜获取月份｜getMonth｜
+
 ```js
   /* 获取年份 */
   const year = calendar.getYear()
