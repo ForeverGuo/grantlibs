@@ -105,3 +105,5 @@ class Clone {
     return Object.assign({}, obj)
   }
 }
+
+export default new Clone()
