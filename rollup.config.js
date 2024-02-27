@@ -39,8 +39,7 @@ export default {
       tsconfig: "./tsconfig.json",
     }),
     alias({
-      // resolve: [".js"],
-      resolve: [".ts"], // 可选，默认情况下这只会查找 .js 文件或文件夹
+      resolve: [".ts", '.js'], 
       entries: [
         { find: "@", replacement: pathResolve('../src') }, // 将 @ 识别为 ./src 目录
       ]
