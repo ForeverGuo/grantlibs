@@ -5,6 +5,9 @@ import { terser } from "rollup-plugin-terser";
 import alias from "@rollup/plugin-alias";
 const packageJson = JSON.parse(readFileSync("./package.json", "utf8")); // 读取UMD全局模块名，在package中定义了
 const pkgName = packageJson.umdModuleName;
+import path from 'path'
+
+const pathResolve = (p) => path.resolve(__dirname, p);
 export default {
   input: "src/index.ts",
   output: [
@@ -36,7 +39,11 @@ export default {
       tsconfig: "./tsconfig.json",
     }),
     alias({
-      resolve: [".js"],
+      // resolve: [".js"],
+      resolve: [".ts"], // 可选，默认情况下这只会查找 .js 文件或文件夹
+      entries: [
+        { find: "@", replacement: pathResolve('../src') }, // 将 @ 识别为 ./src 目录
+      ]
     }),
     resolve(),
   ],
