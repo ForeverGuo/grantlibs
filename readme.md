@@ -104,3 +104,21 @@
   /* 深度拷贝 */
   const shallowObj = clone.shallow(obj)
 ```
+
+### test 的使用
+
+|  方法名   | 调用方式  |
+|  ----  | ----  |
+| 校验手机号  | test.mobile() |
+| 校验邮箱  | test.email() | 
+| 校验身份证  | test.idCard() | 
+| 校验车牌号  | test.plate() |  
+
+```js
+  /* 校验手机号 */
+  const mobile = 17704052506
+  const res = test.mobile(`${mobile}`)
+  /* 校验邮箱 */
+  const email = '810153274@qq.com'
+  const res = test.email(email)
+```

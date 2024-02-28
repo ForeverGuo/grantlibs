@@ -7,7 +7,7 @@ const packageJson = JSON.parse(readFileSync("./package.json", "utf8")); // è¯»å
 const pkgName = packageJson.umdModuleName;
 
 export default {
-  input: "src/index.js",
+  input: "src/index.ts",
   output: [
     {
       file: "dist/esm/index.js",
