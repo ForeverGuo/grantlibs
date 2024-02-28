@@ -1,6 +1,7 @@
 export default {
   preset: "ts-jest",
-  bail: true,
+  verbose: true,  // 显示测试结果
+  bail: true,     // 显示测试日志
   testEnvironment: "node",
   testMatch: [
     // 匹配文件，指示了Jest应该在那些文件夹中寻找哪些文件

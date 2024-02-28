@@ -7,7 +7,7 @@ const packageJson = JSON.parse(readFileSync("./package.json", "utf8")); // 读�
 const pkgName = packageJson.umdModuleName;
 
 export default {
-  input: "src/index.ts",
+  input: "src/index.js",
   output: [
     {
       file: "dist/esm/index.js",
@@ -37,7 +37,7 @@ export default {
       tsconfig: "./tsconfig.json",
     }),
     alias({
-      resolve: [".ts"], 
+      resolve: [".ts", '.js'], 
       entries: [
         { find: "@", replacement: '../src' }, // 将 @ 识别为 ./src 目录
       ]
