@@ -6,6 +6,7 @@ import store from './store'
 import clone from './clone'
 /** 正则校验 */
 import test from './check'
+/** 身份证信息 */
 import idCard from './idCard'
 export {
   calendar,
