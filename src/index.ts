@@ -6,10 +6,12 @@ import store from './store'
 import clone from './clone'
 /** 正则校验 */
 import test from './check'
+import idCard from './idCard'
 export {
   calendar,
   store,
   clone,
-  test
+  test,
+  idCard
 }
 

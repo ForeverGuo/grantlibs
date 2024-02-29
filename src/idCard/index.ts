@@ -3,7 +3,7 @@ class IdCard {
   constructor() {}
 
   //获取出生年月
-  getBirthDateFromChineseIDCard(idCard: string): string | null {
+  birthday(idCard: string): string | null {
     // 身份证号码正则表达式（18位）
     const reg = /^[1-9]\d{5}(19|20)\d{2}(0[1-9]|1[0-2])(([0-2][1-9])|10|30|31)\d{3}[0-9Xx]$/;
     
@@ -21,8 +21,10 @@ class IdCard {
   }
 
   // 获取性别
-  getSexFromChineseIDCard(idCard: string): string{
+  sex(idCard: string): string{
     const num = Number(idCard.slice(-2, -1))
     return isEven(num) ? '女性' : '男性'
   }
 }
+
+export default new IdCard()
