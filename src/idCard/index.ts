@@ -1,3 +1,4 @@
+import { isEven } from "../utils";
 class IdCard {
   constructor() {}
 
@@ -17,5 +18,11 @@ class IdCard {
     const day = idCard.substring(12, 14);
   
     return `${year}-${month}-${day}`;
+  }
+
+  // 获取性别
+  getSexFromChineseIDCard(idCard: string): string{
+    const num = Number(idCard.slice(-2, -1))
+    return isEven(num) ? '女性' : '男性'
   }
 }
