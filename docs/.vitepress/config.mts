@@ -9,7 +9,6 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: '/logo.png',
-    // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
       { text: '指南', link: '/guide/install' },
@@ -49,7 +48,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/ForeverGuo/grant-libs' }
     ]
   }
 })
