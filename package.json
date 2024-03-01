@@ -27,7 +27,8 @@
     "docs:serve": "vitepress serve docs",
     "rollup:build": "rm -fr dist && pnpm rollup -c",
     "rollup:publish": "pnpm run rollup:build && npm publish",
-    "test": "jest --no-cache"
+    "test": "jest --no-cache",
+    "deploy": "GH=1 bash utils/deploy-gh.sh"
   },
   "keywords": [
     "libs",
