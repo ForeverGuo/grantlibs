@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "grantguo",
   description: "基于JavaScript, TypeScript开发的轮子库, 适用于各种Web应用开发场景",
+  base: "/grant-libs/",
   head: [
     ['link',{rel:'icon',href:'/smile.ico'}], 
   ],
