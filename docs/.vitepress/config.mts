@@ -40,8 +40,24 @@ export default defineConfig({
         text: '基础使用',
         items: [
           {
+            text: 'calendar日历',
+            link: '/examples/calendar/index'
+          },
+          {
+            text: 'test正则匹配',
+            link: '/examples/check/index'
+          },
+          {
             text: 'clone克隆',
             link: '/examples/clone/index'
+          },
+          {
+            text: 'store存储',
+            link: '/examples/store/index'
+          },
+          {
+            text: 'idCard身份证',
+            link: '/examples/idCard/index'
           },
         ]
       }

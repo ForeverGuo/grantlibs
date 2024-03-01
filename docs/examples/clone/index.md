@@ -1,9 +1,18 @@
-### clone 的使用
+### 引入
+```shell
+  import { calendar } from 'grantguo-libs'
+  或
+  const { calendar } = require('grantguo-libs')
+```
+
+### 方法列表
 
 |  方法名   | 调用方式  |
 |  ----  | ----  |
-| 深度拷贝  | close.deep() |
-| 浅拷贝  | close.shallow() |  
+| 深度拷贝  | clone.deep() |
+| 浅拷贝  | clone.shallow() |  
+
+### 代码示例
 
 ```js
   const obj = {

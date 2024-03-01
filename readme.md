@@ -89,8 +89,8 @@
 
 |  方法名   | 调用方式  |
 |  ----  | ----  |
-| 深度拷贝  | close.deep() |
-| 浅拷贝  | close.shallow() |  
+| 深度拷贝  | clone.deep() |
+| 浅拷贝  | clone.shallow() |  
 
 ```js
   const obj = {
