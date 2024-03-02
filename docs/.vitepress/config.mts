@@ -6,13 +6,13 @@ export default defineConfig({
   description: "基于JavaScript, TypeScript开发的轮子库, 适用于各种Web应用开发场景",
   base: "/grant-libs/",
   head: [
-    ['link',{rel:'icon',href:'/smile.ico'}], 
+    ['link',{rel:'icon',href:'smile.ico'}], 
   ],
   themeConfig: {
     logo: '/logo.png',
     nav: [
       { text: 'Home', link: '/' },
-      { text: '指南', link: '/guide/install' },
+      { text: '快速上手', link: '/guide/quick' },
       { text: 'API', link: '/guide/install' }
     ],
 

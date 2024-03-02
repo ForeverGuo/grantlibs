@@ -8,11 +8,14 @@ import clone from './clone'
 import test from './check'
 /** 身份证信息 */
 import idCard from './idCard'
+
+import eventEmitter from './eventEmitter'
 export {
   calendar,
   store,
   clone,
   test,
-  idCard
+  idCard,
+  eventEmitter
 }
 
