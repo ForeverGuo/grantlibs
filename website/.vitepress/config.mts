@@ -6,14 +6,14 @@ export default defineConfig({
   description: "基于JavaScript, TypeScript开发的轮子库, 适用于各种Web应用开发场景",
   base: "/grantlibs/",
   head: [
-    ['link',{rel:'icon',href:'smile.ico'}], 
+    ['link', { rel: 'icon', href: 'smile.ico' }],
   ],
   themeConfig: {
-    logo: '/logo.png',
+    // logo: '/logo.png',
     nav: [
       { text: 'Home', link: '/' },
       { text: '快速上手', link: '/guide/quick' },
-      { text: 'API', link: '/guide/install' }
+      { text: '文档', link: '/guide/install' }
     ],
 
     sidebar: [
@@ -41,27 +41,27 @@ export default defineConfig({
         text: '基础使用',
         items: [
           {
-            text: '日历',
+            text: '日历calendar',
             link: '/examples/calendar/index'
           },
           {
-            text: '正则匹配',
+            text: '正则匹配test',
             link: '/examples/check/index'
           },
           {
-            text: '克隆',
+            text: '克隆clone',
             link: '/examples/clone/index'
           },
           {
-            text: '存储',
+            text: '存储store',
             link: '/examples/store/index'
           },
           {
-            text: '身份证',
+            text: '身份证idCard',
             link: '/examples/idCard/index'
           },
           {
-            text: '发布订阅',
+            text: '发布订阅subscribe',
             link: '/examples/eventEmitter/index'
           },
         ]

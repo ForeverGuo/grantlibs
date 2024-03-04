@@ -3,19 +3,16 @@
 layout: home
 
 hero:
-  name: "grantguo-libs.js"
-  hero: 
-    image: 
-      src: /logo.png
-      alt: js库
+  name: "grantlibs"
+  text: "develop tools set"
   tagline: 基于JavaScript, TypeScript开发的轮子库, 适用于各种Web应用开发场景
   actions:
     - theme: brand
       text: 开始使用
       link: /guide/install
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: View on Github
+      link: https://github.com/ForeverGuo/grantlibs
 
 features:
   - title: UnoCSS
@@ -39,3 +36,9 @@ features:
     details: Vue.js 的官方路由,为 Vue.js 提供富有表现力、可配置的、方便的路由.
     link: https://router.vuejs.org/zh/
 ---
+
+<style> 
+:root { 
+  --vp-home-hero-name-color: transparent; --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe, #41d1ff); 
+} 
+</style>
