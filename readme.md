@@ -2,16 +2,16 @@
 
 <p align=center>
   <b>
-    基于TypeScript开发的轮子库, 适用于各种Web应用开发场景·
+    基于TypeScript开发的轮子库, 适用于各种Web应用开发场景·<br/>
     Wheel library based on TypeScript development for various Web application development scenarios
   </b>
 </p>
 
 <div align=center class="space-y">
-  ✅ ESM
-  ✅ Fast & Lightweight
-  ✅ Tree-shakable
-  ✅ Typescript Strict Mode
+  <p>✅ ESM </p>
+  <p>✅ Fast & Lightweight</p>
+  <p>✅ Tree-shakable</p>
+  <p>✅ Typescript Strict Mode</p>
   <br>
   🙂 100% Test Coverage
   🙂 Zero dependencies
@@ -38,6 +38,6 @@
 
 ### Link
 
- [文档地址](https://foreverguo.github.io/grantlibs/) 
+ [文档地址](https://foreverguo.github.io/grantlibs/) <br/>
  [Issues](https://github.com/ForeverGuo/grantlibs/issues)
 
