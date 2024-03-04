@@ -8,10 +8,10 @@
 </p>
 
 <div align=center class="space-y">
-  <p>✅ ESM </p>
-  <p>✅ Fast & Lightweight</p>
-  <p>✅ Tree-shakable</p>
-  <p>✅ Typescript Strict Mode</p>
+  ✅ ESM
+  ✅ Fast & Lightweight
+  ✅ Tree-shakable
+  ✅ Typescript Strict Mode
   <br>
   🙂 100% Test Coverage
   🙂 Zero dependencies
@@ -38,6 +38,8 @@
 
 ### Link
 
- [文档地址](https://foreverguo.github.io/grantlibs/) <br/>
+ [文档地址](https://foreverguo.github.io/grantlibs/) 
+ 
+ <p></p>
+ 
  [Issues](https://github.com/ForeverGuo/grantlibs/issues)
-
