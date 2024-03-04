@@ -1,4 +1,4 @@
-### 简介
+### Desription
 
 <p align=center>
   <b>
@@ -20,7 +20,7 @@
 </div>
 <p></p>
 
-### START
+### Start
 
 ```shell
 
@@ -36,5 +36,8 @@
 
 ```
 
-### [网址链接](https://foreverguo.github.io/grantlibs/) 
+### Link
+
+ [文档地址](https://foreverguo.github.io/grantlibs/) 
+ [Issues](https://github.com/ForeverGuo/grantlibs/issues)
 
