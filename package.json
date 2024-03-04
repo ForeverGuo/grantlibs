@@ -1,6 +1,6 @@
 {
   "name": "grantguo-libs",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "常用工具库",
   "umdModuleName": "index",
   "module": "dist/esm/index.js",
@@ -16,9 +16,9 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
-  "homepage": "https://github.com/ForeverGuo/grant-libs",
+  "homepage": "https://github.com/ForeverGuo/grantlibs",
   "bugs": {
-    "url": "https://github.com/ForeverGuo/grant-libs/issues",
+    "url": "https://github.com/ForeverGuo/grantlibs/issues",
     "email": "810153274@qq.com"
   },
   "scripts": {
