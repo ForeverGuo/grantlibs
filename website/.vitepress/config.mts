@@ -1,31 +1,22 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "grantguo",
-  description: "基于JavaScript, TypeScript开发的轮子库, 适用于各种Web应用开发场景",
+  description: "基于TypeScript开发的轮子库, 适用于各种Web应用开发场景",
   base: "/grantlibs/",
   head: [
     ['link', { rel: 'icon', href: 'smile.ico' }],
   ],
   themeConfig: {
-    // logo: '/logo.png',
     nav: [
-      { text: 'Home', link: '/' },
-      { text: '快速上手', link: '/guide/quick' },
-      { text: '文档', link: '/guide/install' }
+      { text: '首页', link: '/' },
+      { text: '指南', link: '/guide/install' },
+      { text: '文档', link: '/api/calendar/index' }
     ],
 
     sidebar: [
       {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      },
-      {
-        text: '基础',
+        text: '',
         items: [
           {
             text: '安装',
@@ -42,27 +33,27 @@ export default defineConfig({
         items: [
           {
             text: '日历calendar',
-            link: '/examples/calendar/index'
+            link: '/api/calendar/index'
           },
           {
             text: '正则匹配test',
-            link: '/examples/check/index'
+            link: '/api/check/index'
           },
           {
             text: '克隆clone',
-            link: '/examples/clone/index'
+            link: '/api/clone/index'
           },
           {
             text: '存储store',
-            link: '/examples/store/index'
+            link: '/api/store/index'
           },
           {
             text: '身份证idCard',
-            link: '/examples/idCard/index'
+            link: '/api/idCard/index'
           },
           {
             text: '发布订阅subscribe',
-            link: '/examples/eventEmitter/index'
+            link: '/api/eventEmitter/index'
           },
         ]
       }
