@@ -1,20 +1,22 @@
 ### 引入
+
 ```shell
-  import { calendar } from 'grantguo-libs'
+  import { calendar } from 'grantlibs'
   或
-  const { calendar } = require('grantguo-libs')
+  const { calendar } = require('grantlibs')
 ```
+
 ### 方法列表
 
-|  方法名   | 调用方式  |
-|  ----  | ----  |
-| 获取年份  | calendar.getYear() |
-| 获取月份  | calendar.getMonth() |
-| 获取日期  | calendar.getDate() |
-| 获取某年某月某日是星期几  | calendar.getWeekDay() |
-| 获取某年某月天数  | calendar.getDaysOfYearMonth() |
-| 获取某月第一天是星期几  | calendar.getWeekOfMonth() |
-| 获取完整年月日，默认以 - 拼接  | calendar.getFullYearMonthDay() |  
+| 方法名                        | 调用方式                       |
+| ----------------------------- | ------------------------------ |
+| 获取年份                      | calendar.getYear()             |
+| 获取月份                      | calendar.getMonth()            |
+| 获取日期                      | calendar.getDate()             |
+| 获取某年某月某日是星期几      | calendar.getWeekDay()          |
+| 获取某年某月天数              | calendar.getDaysOfYearMonth()  |
+| 获取某月第一天是星期几        | calendar.getWeekOfMonth()      |
+| 获取完整年月日，默认以 - 拼接 | calendar.getFullYearMonthDay() |
 
 ### 代码示例
 
@@ -34,7 +36,7 @@
   /* 获取某年某月天数, 默认输出当月天数 */
   const days = calendar.getDaysOfYearMonth(year: number, month: number)
 
-  /* 
+  /*
     获取某月第一天是星期几, 默认输出当月第一天
     场景说明：
       针对每月天数及对应星期展示, 可输出个性化

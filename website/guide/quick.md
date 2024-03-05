@@ -2,8 +2,8 @@
 
 ```html
 <script setup>
-  import { clone } from "grantguo-libs";
-  const deepObj = clone.deep(obj);
-  const shallowObj = clone.shallow(obj);
+  import { clone } from "grantlibs";
+  const deepObj = clone.deep({ a: 1, b: 2 });
+  const shallowObj = clone.shallow({ a: 1, b: 2 });
 </script>
 ```

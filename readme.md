@@ -24,22 +24,22 @@
 
 ```shell
 
-  pnpm install grantguo-libs -D 或 yarn add grantguo-libs -D
+  pnpm install grantlibs -D 或 yarn add grantlibs -D
 
   // es
-  import { calendar, store } from 'grantguo-libs'
+  import { calendar, store } from 'grantlibs'
   const year = calendar.getYear()
 
   // cjs
-  const { calendar, store } = require('grantguo-libs')
+  const { calendar, store } = require('grantlibs')
   const year = calendar.getYear()
 
 ```
 
 ### Link
 
- [文档地址](https://foreverguo.github.io/grantlibs/) 
- 
+[文档地址](https://foreverguo.github.io/grantlibs/)
+
  <p></p>
  
  [Issues](https://github.com/ForeverGuo/grantlibs/issues)

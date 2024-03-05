@@ -19,6 +19,10 @@ export default defineConfig({
         text: '',
         items: [
           {
+            text: '介绍',
+            link: '/guide/whatIs'
+          },
+          {
             text: '安装',
             link: '/guide/install'
           },
