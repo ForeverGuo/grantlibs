@@ -1,0 +1,1 @@
+import{_ as s,c as i,o as a,a2 as t}from"./chunks/framework.VG5rnJV_.js";const o=JSON.parse('{"title":"代码引入","description":"","frontmatter":{},"headers":[],"relativePath":"guide/quick.md","filePath":"guide/quick.md"}'),h={name:"guide/quick.md"},n=t("",2),l=[n];function k(p,e,r,d,E,c){return a(),i("div",null,l)}const y=s(h,[["render",k]]);export{o as __pageData,y as default};

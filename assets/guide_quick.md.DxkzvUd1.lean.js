@@ -1,1 +1,0 @@
-import{_ as s,c as i,o as a,a2 as t}from"./chunks/framework.B3fADvCd.js";const E=JSON.parse('{"title":"快速开始","description":"","frontmatter":{},"headers":[],"relativePath":"guide/quick.md","filePath":"guide/quick.md"}'),n={name:"guide/quick.md"},h=t("",4),l=[h];function e(p,k,r,d,o,c){return a(),i("div",null,l)}const y=s(n,[["render",e]]);export{E as __pageData,y as default};
