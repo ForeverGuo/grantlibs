@@ -59,6 +59,10 @@ export default defineConfig({
             text: '发布订阅subscribe',
             link: '/api/eventEmitter/index'
           },
+          {
+            text: '防抖debounce',
+            link: '/api/function/debounce'
+          },
         ]
       }
     ],
