@@ -1,1 +1,0 @@
-import{_ as a,c as s,o as i,a2 as t}from"./chunks/framework.VG5rnJV_.js";const E=JSON.parse('{"title":"说明","description":"","frontmatter":{},"headers":[],"relativePath":"guide/install.md","filePath":"guide/install.md"}'),e={name:"guide/install.md"},l=t("",10),h=[l];function n(p,d,r,k,o,c){return i(),s("div",null,h)}const u=a(e,[["render",n]]);export{E as __pageData,u as default};

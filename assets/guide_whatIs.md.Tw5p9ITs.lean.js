@@ -1,1 +1,0 @@
-import{_ as a,c as s,o as i,a2 as t}from"./chunks/framework.VG5rnJV_.js";const E=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"guide/whatIs.md","filePath":"guide/whatIs.md"}'),e={name:"guide/whatIs.md"},h=t("",17),l=[h];function n(r,p,k,d,o,c){return i(),s("div",null,l)}const u=a(e,[["render",n]]);export{E as __pageData,u as default};
