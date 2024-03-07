@@ -22,7 +22,7 @@
 
 ### Start
 
-```shell
+```js
 
   pnpm install grantlibs -D 或 yarn add grantlibs -D
 

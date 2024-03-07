@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { debounce } from 'grantlibs'
-  或
-  const { debounce } = require('grantlibs')
+```js
+import { debounce } from "grantlibs";
+或;
+const { debounce } = require("grantlibs");
 ```
 
 ### 方法列表

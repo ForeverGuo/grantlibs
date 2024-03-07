@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { idCard } from 'grantlibs'
-  或
-  const { idCard } = require('grantlibs')
+```js
+import { idCard } from "grantlibs";
+或;
+const { idCard } = require("grantlibs");
 ```
 
 ### 方法列表

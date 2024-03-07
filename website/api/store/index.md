@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { store } from 'grantlibs'
-  或
-  const { store } = require('grantlibs')
+```js
+import { store } from "grantlibs";
+或;
+const { store } = require("grantlibs");
 ```
 
 ### 方法列表

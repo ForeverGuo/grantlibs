@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { calendar } from 'grantlibs'
-  或
-  const { calendar } = require('grantlibs')
+```js
+import { calendar } from "grantlibs";
+或;
+const { calendar } = require("grantlibs");
 ```
 
 ### 方法列表

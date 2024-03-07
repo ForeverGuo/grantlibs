@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { throttle } from 'grantlibs'
-  或
-  const { throttle } = require('grantlibs')
+```js
+import { throttle } from "grantlibs";
+或;
+const { throttle } = require("grantlibs");
 ```
 
 ### 代码示例

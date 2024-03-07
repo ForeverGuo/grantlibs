@@ -1,9 +1,9 @@
 ### 引入
 
-```shell
-  import { eventEmitter } from 'grantlibs'
-  或
-  const { eventEmitter } = require('grantlibs')
+```js
+import { eventEmitter } from "grantlibs";
+或;
+const { eventEmitter } = require("grantlibs");
 ```
 
 ### 方法列表
