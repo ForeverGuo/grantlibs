@@ -3,6 +3,9 @@
  * @param func 需要执行的函数
  * @param wait 延迟时间
  */
+type ReFn = (...args: any) => void;
+type DeFn = (fn: ReFn, wait: number) => ReFn
+
 export function debounce<A extends Array<any>, R = void>(
   func: (..._args: A) => R,
   wait: number,

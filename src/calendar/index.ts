@@ -21,13 +21,13 @@ class Calendar {
   }
 
   /* 获取星期几 */
-  getWeekDay(year:number = this.getYear(), month:number = this.getMonth(), date:number = this.getDate()) :string {
+  getWeekDay(year: number = this.getYear(), month: number = this.getMonth(), date: number = this.getDate()): string {
     const week = new Date(`${month}/${date}/${year}`).getDay()
-		return weeks[week].day
+    return weeks[week].day
   }
 
   /* 获取某年某月天数 */
-  getDaysOfYearMonth(year:number = this.getYear(), month:number = this.getMonth()): number {
+  getDaysOfYearMonth(year: number = this.getYear(), month: number = this.getMonth()): number {
     const date = new Date(year, month, 0)
     return date.getDate()
   }
@@ -35,12 +35,12 @@ class Calendar {
   /* 获取某月第一天是星期几 */
   getWeekOfMonth(year: number = this.getYear(), month: number = this.getMonth()): weekItem {
     const week = new Date(`${month}/1/${year}`).getDay()
-		return weeks[week]
+    return weeks[week]
   }
 
   /* 获取完整年月日 */
-  getFullYearMonthDay(char:string = "-"): string {
-    return`
+  getFullYearMonthDay(char: string = "-"): string {
+    return `
       ${this.getYear()}${char}
       ${this.getMonth()}${char}
       ${this.getDate()}
@@ -49,4 +49,4 @@ class Calendar {
 
 }
 
-export default new Calendar()
+export const calendar = new Calendar()

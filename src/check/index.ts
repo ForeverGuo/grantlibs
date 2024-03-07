@@ -48,4 +48,4 @@ class Check {
   }
 }
 
-export default new Check()
+export const test = new Check()

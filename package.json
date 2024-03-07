@@ -1,6 +1,6 @@
 {
   "name": "grantlibs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "基于TypeScript开发的轮子库, 适用于各种Web应用开发场景",
   "umdModuleName": "index",
   "module": "dist/esm/index.js",
@@ -24,9 +24,8 @@
   "scripts": {
     "docs:dev": "vitepress dev website",
     "docs:build": "vitepress build website",
-    "docs:serve": "vitepress serve website",
-    "rollup:build": "rm -fr dist && pnpm rollup -c",
-    "rollup:publish": "pnpm run rollup:build && npm publish",
+    "ts:build": "rm -fr dist && pnpm rollup -c",
+    "ts:publish": "pnpm run ts:build && npm publish",
     "test": "jest --no-cache",
     "deploy": "GH=1 bash utils/deploy-gh.sh"
   },

@@ -63,6 +63,10 @@ export default defineConfig({
             text: '防抖debounce',
             link: '/api/function/debounce'
           },
+          {
+            text: '节流throttle',
+            link: '/api/function/throttle'
+          },
         ]
       }
     ],

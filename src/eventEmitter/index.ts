@@ -43,4 +43,4 @@ class EventEmitter<Events> {
   }
 }
 
-export default new EventEmitter()
+export const eventEmitter = new EventEmitter()

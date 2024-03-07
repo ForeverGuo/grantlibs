@@ -23,7 +23,7 @@ const funType = '[object Function]';
 // 将可遍历类型做个集合
 const traverseTypes: string[] = [arrType, objType, mapType, setType, argType];
 class Clone {
-  constructor() {}
+  constructor() { }
   // 判断是否是对象类型
   isObject(obj: any): boolean {
     const type = typeof obj;
@@ -106,4 +106,4 @@ class Clone {
   }
 }
 
-export default new Clone()
+export const clone = new Clone()
