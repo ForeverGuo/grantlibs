@@ -1,6 +1,6 @@
 export const leetCodeMenu = [
   {
-    text: 'xxx题',
-    link: '/leetcode/01'
+    text: 'Top k 问题',
+    link: '/leetcode/topk'
   },
 ]
