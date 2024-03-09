@@ -36,26 +36,24 @@ function inventoryManagement(stock: number[], k: number): number[] {
 由于堆的大小是 k，空间复杂度是 O(k),时间复杂度是 O(nlogk)
 
 ```js
-const swap = (arr, i, j) => {
-  let temp = arr[i];
-  arr[i] = arr[j];
-  arr[j] = temp;
-};
+const swap = (arr, i, j) => ([arr[i], arr[j]] = [arr[j], arr[i]]);
 
 class MaxHeap {
   constructor(arr = []) {
     this.container = [];
     if (Array.isArray(arr)) {
+      // 筛选最大值
       arr.forEach(this.insert.bind(this));
     }
   }
-
+  // 插入元素排序 不是完整数组排序
   insert(data) {
     const { container } = this;
-
     container.push(data);
+    // 从最后一个数值开始进行比较 执行后是最大堆
     let index = container.length - 1;
     while (index) {
+      // 找父元素
       let parent = Math.floor((index - 1) / 2);
       if (container[index] <= container[parent]) {
         break;
@@ -64,7 +62,7 @@ class MaxHeap {
       index = parent;
     }
   }
-
+  // 移除堆顶元素
   extract() {
     const { container } = this;
     if (!container.length) {
@@ -74,26 +72,26 @@ class MaxHeap {
     swap(container, 0, container.length - 1);
     const res = container.pop();
     const length = container.length;
-    let index = 0,
-      exchange = index * 2 + 1;
+    let index = 0, // 父节点
+      left = index * 2 + 1; // 左子节点
 
-    while (exchange < length) {
+    while (left < length) {
       // 如果有右节点，并且右节点的值大于左节点的值
       let right = index * 2 + 2;
-      if (right < length && container[right] > container[exchange]) {
-        exchange = right;
+      if (right < length && container[right] > container[left]) {
+        left = right;
       }
-      if (container[exchange] <= container[index]) {
+      if (container[left] <= container[index]) {
         break;
       }
-      swap(container, exchange, index);
-      index = exchange;
-      exchange = index * 2 + 1;
+      swap(container, left, index);
+      index = left;
+      left = index * 2 + 1;
     }
 
     return res;
   }
-
+  // 获取堆顶元素
   top() {
     if (this.container.length) return this.container[0];
     return null;
@@ -123,3 +121,7 @@ const getLeastNumbers = (arr, k) => {
 
 时间复杂度：O(nlogk) <br/>
 空间复杂度：O(k)
+
+### 解决方式 3
+
+这里是否想到了第三种解决方式呢...
