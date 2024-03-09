@@ -36,4 +36,26 @@ export const apiMenu = [
     text: '节流throttle',
     link: '/api/function/throttle'
   },
+  {
+    text: '判断boolean',
+    collapsed: true,
+    items: [
+      {
+        text: 'isObject',
+        link: '/api/boolean/isObject'
+      },
+      {
+        text: 'isPromise',
+        link: '/api/boolean/isPromise'
+      },
+      {
+        text: 'isRegexp',
+        link: '/api/boolean/isRegexp'
+      },
+      {
+        text: 'isDef',
+        link: '/api/boolean/isDef'
+      },
+    ]
+  }
 ]
