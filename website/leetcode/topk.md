@@ -124,4 +124,60 @@ const getLeastNumbers = (arr, k) => {
 
 ### 解决方式 3
 
-这里是否想到了第三种解决方式呢...
+  <div style="color: #409EFF; fontSize: 18px; padding: 20px 0">
+  利用快排的方式，主要是递归 + 分治的方式进行
+  </div>
+
+#### 代码讲解
+
+1. 快排首先找一个哨兵位，插入一个哨兵位置或者就是拿第一位位哨兵，所以比如一个数组 arr = [1,2,3,4,5] ，往队头塞一个数进去，让首位是个哨兵，然后后面的 (1, arr.length - 1) 才是真正的数据。
+
+2. 分为两个函数，一个是判断是否需要快排与基准位置，需要快排就执行左边与右边的划分递归函数，另一个是快排函数。
+
+```js
+const inventoryManagement = function (stock, cnt) {
+  // 这里是放入哨兵的位置 后面的从1开始
+  stock.unshift(-1);
+  sorted(stock, 1, stock.length - 1);
+  return stock.slice(1, cnt + 1);
+};
+
+const quickSort = (arr, start, end) => {
+  // 设置哨兵
+  arr[0] = arr[start];
+  while (start < end) {
+    while (start < end && arr[end] >= arr[0]) {
+      end--;
+    }
+    // 如果小于哨兵，则赋值给start
+    arr[start] = arr[end];
+
+    while (start < end && arr[start] <= arr[0]) {
+      start++;
+    }
+    // 如果大于哨兵，则赋值给end
+    arr[end] = arr[start];
+  }
+  arr[start] = arr[0];
+
+  // 返回当前哨兵的位置
+  return start;
+};
+
+const sorted = (arr, strat, end) => {
+  if (start < end) {
+    const now = quickSort(arr, start, end);
+    sorted(arr, start, now - 1);
+    sorted(arr, now + 1, end);
+  }
+};
+```
+
+#### 复杂度
+
+时间复杂度：O(nlogn) <br/>
+空间复杂度：O(n)
+
+::: tip
+综上第二种方式是最优解，时间复杂度最低，但是 1 和 3 的解决方式也更实用，根据实际需要选择最优解。
+:::
