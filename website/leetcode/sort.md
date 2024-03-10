@@ -62,4 +62,60 @@ const maxHeap = (arr, i, n) => {
 
 ### 解决方式 2
 
-快排也很经典 更新中...
+#### 代码讲解
+
+1. 快排首先找一个哨兵位，插入一个哨兵位置或者就是拿第一位位哨兵，所以比如一个数组 arr = [1,2,3,4,5] ，往队头塞一个数进去，让首位是个哨兵，然后后面的 (1, arr.length - 1) 才是真正的数据。
+
+2. 分为两个函数，一个是判断是否需要快排与基准位置，需要快排就执行左边与右边的划分递归函数，另一个是快排函数。
+
+```js
+const quickSort = (arr, start, end) => {
+  // 设置哨兵
+  arr[0] = arr[start];
+  while (start < end) {
+    while (start < end && arr[end] >= arr[0]) {
+      end--;
+    }
+    // 如果小于哨兵，则赋值给start
+    arr[start] = arr[end];
+
+    while (start < end && arr[start] <= arr[0]) {
+      start++;
+    }
+    // 如果大于哨兵，则赋值给end
+    arr[end] = arr[start];
+  }
+  arr[start] = arr[0];
+
+  // 返回当前哨兵的位置
+  return start;
+};
+
+const sorted = (arr, strat, end) => {
+  if (start < end) {
+    const now = quickSort(arr, start, end);
+    sorted(arr, start, now - 1);
+    sorted(arr, now + 1, end);
+  }
+};
+```
+
+<div style="color: #409EFF; fontSize: 18px; padding: 20px 0">
+  以上快排方法已经写完，用了哨兵作为基准，分治思想，将需要处理的数据不断分解，再加上递归思想，达到了想要的快速排序的效果
+</div>
+
+```js
+const arr = [1, 2, 3, 4];
+// 这里主要是设置哨兵
+arr.unshift(-1);
+sorted(arr, 1, arr.length - 1);
+```
+
+#### 复杂度
+
+时间复杂度：O(nlogn) <br/>
+空间复杂度：O(n)
+
+### 解决方式 3
+
+这里的解决方式都是从难到易的，也是最常用的 冒泡
