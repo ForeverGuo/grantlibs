@@ -118,4 +118,23 @@ sorted(arr, 1, arr.length - 1);
 
 ### 解决方式 3
 
-这里的解决方式都是从难到易的，也是最常用的 冒泡
+直接上代码之冒泡排序
+
+```js
+const sortArray = function (nums) {
+  const len = nums.length;
+  for (let i = 0; i < len - 1; i++) {
+    for (let j = 0; j < len - 1 - i; j++) {
+      if (nums[j] > nums[j + 1]) {
+        [nums[j + 1], nums[j]] = [nums[j], nums[j + 1]];
+      }
+    }
+  }
+  return nums;
+};
+```
+
+#### 复杂度
+
+时间复杂度：O(n^2) <br/>
+空间复杂度：O(n)
