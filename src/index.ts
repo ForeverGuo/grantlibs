@@ -1,4 +1,5 @@
 export * from './calendar'
+export * from './date'
 export * from './store'
 export * from './clone'
 export * from './check'

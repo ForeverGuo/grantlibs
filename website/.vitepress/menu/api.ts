@@ -57,5 +57,27 @@ export const apiMenu = [
         link: '/api/boolean/isDef'
       },
     ]
+  },
+  {
+    text: '时间time',
+    collapsed: true,
+    items: [
+      {
+        text: 'getTime',
+        link: '/api/time/time'
+      },
+      {
+        text: 'getHour',
+        link: '/api/time/hour'
+      },
+      {
+        text: 'getMinute',
+        link: '/api/time/minute'
+      },
+      {
+        text: 'getSecond',
+        link: '/api/time/second'
+      }
+    ]
   }
 ]
