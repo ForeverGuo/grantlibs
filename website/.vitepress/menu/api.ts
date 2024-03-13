@@ -79,5 +79,15 @@ export const apiMenu = [
         link: '/api/time/second'
       }
     ]
+  },
+  {
+    text: '数组array',
+    collapsed: true,
+    items: [
+      {
+        text: 'sort',
+        link: '/api/array/sort'
+      },
+    ]
   }
 ]
