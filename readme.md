@@ -26,20 +26,23 @@
 ```js
 
   pnpm install grantlibs -D
-
   或
-
   yarn add grantlibs -D
 
+```
 
-  // esModule
-  import { calendar, store } from 'grantlibs'
-  const year = calendar.getYear()
+### ESModule 方式
 
-  // commonJs
-  const { calendar, store } = require('grantlibs')
-  const year = calendar.getYear()
+```js
+import { calendar, store } from "grantlibs";
+const year = calendar.getYear();
+```
 
+### CommonJS 方式
+
+```js
+const { calendar, store } = require("grantlibs");
+const year = calendar.getYear();
 ```
 
 ### API 文档
