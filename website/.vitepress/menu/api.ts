@@ -88,6 +88,10 @@ export const apiMenu = [
         text: 'sort',
         link: '/api/array/sort'
       },
+      {
+        text: 'unique',
+        link: '/api/array/unique'
+      },
     ]
   }
 ]
