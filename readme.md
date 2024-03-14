@@ -45,6 +45,12 @@ const { calendar, store } = require("grantlibs");
 const year = calendar.getYear();
 ```
 
+### 浏览器 UMD 方式
+
+```js
+<script type="text/javascript" src="/node_module/dist/umd/index.js"></script>
+```
+
 ### API 文档
 
 [文档地址](https://foreverguo.github.io/grantlibs/)
@@ -52,7 +58,7 @@ const year = calendar.getYear();
 #### 参与贡献
 
 1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
+2.  新建 feature_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
 
