@@ -9,15 +9,15 @@
 </p>
 
 <div align=center class="space-y">
-  ✅ ESM <br/>
-  ✅ Fast & Lightweight <br/>
-  ✅ Tree-shakable <br/>
-  ✅ Typescript Strict Mode <br/>
+  ✅ ESM
+  ✅ Fast & Lightweight 
+  ✅ Tree-shakable 
+  ✅ Typescript Strict Mode
   <br>
-  🙂 100% Test Coverage <br/>
-  🙂 Zero dependencies <br/>
-  🙂 Hoverable Docs <br/>
-  🙂 TS Decorators <br/>
+  🙂 100% Test Coverage 
+  🙂 Zero dependencies 
+  🙂 Hoverable Docs
+  🙂 TS Decorators
 </div>
 <p></p>
 
