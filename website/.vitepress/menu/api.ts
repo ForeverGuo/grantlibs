@@ -92,6 +92,10 @@ export const apiMenu = [
         text: 'unique',
         link: '/api/array/unique'
       },
+      {
+        text: 'chunk',
+        link: '/api/array/chunk'
+      },
     ]
   }
 ]

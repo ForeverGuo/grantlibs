@@ -7,8 +7,7 @@ const { unique } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
-  对数值数组，对象数组，进行特定的条件去重，保证有效且唯一。
-  返回新的数组。
+  创建一个去重后的array数组副本。使用了SameValueZero 做等值比较。只有第一次出现的元素才会被保留。
 </div>
 
 ### 使用
@@ -21,7 +20,7 @@ const { unique } = require("grantlibs");
 
 ### 参数
 
-1. array(Array): 需要处理的数组
+1. array(Array): 检查的数组
 2. (a, b) => boolean: 根据特殊字段的执行函数
 
 ### 返回
