@@ -6,26 +6,30 @@ import { sort } from "grantlibs";
 const { sort } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  对数值数组，对象数组，进行特定的条件排序，保证有效且唯一。
+  返回新的数组。
+</div>
 
-<table width="750" cellspacing="0">
-  <tr>
-    <th align="left">方法名</th>
-    <th align="center">调用方式</th>
-    <th align="center">参数 1</th>
-    <th align="center">参数 2</th>
-    <th align="center">返回值</th>
-  </tr>
-  <tr>
-    <td>排序</td>
-    <td>sort(params1, params2)</td>
-    <td>数组[]</td>
-    <td>可选，{ order: 'asc' | 'des', by: item => item.a }</td>
-    <td>数组[]</td>
-  </tr>
-</table>
+### 使用
 
-### 代码示例
+```ts
+
+sort<T>( array: readonly T[], ...list: { order?: 'asc'|'des', by?: T => any }[] ): T[]
+
+```
+
+### 参数
+
+1. array(Array): 需要处理的数组
+2. order?: string : 升序降序，默认 asc 升序
+3. by?: T => T : 执行排序的函数
+
+### 返回
+
+（Array）：返回一个根据条件排序的新数组
+
+### 示例
 
 ```js
 sort([1, 3, 2], { order: "asc" });

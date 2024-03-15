@@ -1,10 +1,6 @@
 ### 对称二叉树判断
 
-### 解决方式一
-
-<div style="color: #409EFF; fontSize: 18px; padding: 20px 0">
-  函数递归方式  
-</div>
+### 递归方式
 
 ```js
 function isSymmetric(root) {
@@ -15,6 +11,7 @@ function isSymmetric(root) {
 
   return compare(root.left, root.right);
 }
+
 function compare(left, right) {
   if (left && right == null) {
     return false;
@@ -31,3 +28,10 @@ function compare(left, right) {
   );
 }
 ```
+
+#### 复杂度
+
+时间复杂度：O(n) <br/>
+空间复杂度：O(n)
+
+#### 迭代方式

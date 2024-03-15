@@ -1,4 +1,4 @@
-import { sort, unique } from '../src'
+import { sort, unique, chunk } from '../src'
 
 test("sort", () => {
   const array = sort([1, 3, 2], { order: 'asc' })
@@ -25,3 +25,9 @@ test('uniqueArr2', () => {
   const uniqueArr = unique(arr, (a, b) => a.id === b.id)
   expect(uniqueArr).toEqual([{ id: 1, name: 'tiny' }, { id: 3, name: 'tiny' }])
 })
+
+test('chunk', () => {
+  const arr = chunk(['a', 'b', 'c', 'd'], 2)
+  expect(arr).toEqual([['a', 'b'], ['c', 'd']])
+})
+

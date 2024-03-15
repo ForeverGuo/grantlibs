@@ -6,26 +6,29 @@ import { unique } from "grantlibs";
 const { unique } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  对数值数组，对象数组，进行特定的条件去重，保证有效且唯一。
+  返回新的数组。
+</div>
 
-<table width="820" cellspacing="0">
-  <tr>
-    <th align="left">方法名</th>
-    <th align="center">调用方式</th>
-    <th align="center">参数 1</th>
-    <th align="center">参数 2</th>
-    <th align="center">返回值</th>
-  </tr>
-  <tr>
-    <td>去重唯一值</td>
-    <td>unique(params1, params2)</td>
-    <td>数组[]</td>
-    <td>可选，根据字段去重，(a, b) => a.name === b.name</td>
-    <td>数组[]</td>
-  </tr>
-</table>
+### 使用
 
-### 代码示例
+```ts
+
+  unique<T>( array: readonly T[], fn?: (a: Temp, b: T) => boolean ): T[]
+
+```
+
+### 参数
+
+1. array(Array): 需要处理的数组
+2. (a, b) => boolean: 根据特殊字段的执行函数
+
+### 返回
+
+（Array）：返回一个根据条件去重的新数组
+
+### 示例
 
 ```js
 unique([1, 2, 2, 3]);
