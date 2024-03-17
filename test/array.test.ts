@@ -42,7 +42,7 @@ test('count', () => {
 })
 
 test('difference', () => {
-  const res = difference([3, 2, 1], [4, 2])
+  const res = difference([3, 2, 1], [4, 2], [5])
   expect(res).toEqual([3, 1])
   const compareByFloor = (a, b) => Math.floor(a) === Math.floor(b);
   const res2 = difference([1.2, 3.1], [1.3, 2.4], compareByFloor)

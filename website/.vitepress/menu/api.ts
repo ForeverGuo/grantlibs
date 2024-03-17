@@ -100,6 +100,10 @@ export const apiMenu = [
         text: 'count',
         link: '/api/array/count'
       },
+      {
+        text: 'difference',
+        link: '/api/array/difference'
+      },
     ]
   }
 ]
