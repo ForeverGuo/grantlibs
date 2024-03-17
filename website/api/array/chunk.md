@@ -21,7 +21,7 @@ chunk<T>( array: readonly T[], size: number ): T[][]
 ### 参数
 
 1. array(Array): 检查的数组
-2. [size = 1](number) : 每个数组区块的长度
+2. [size = 1]number : 每个数组区块的长度
 
 ### 返回
 
