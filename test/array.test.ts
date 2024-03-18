@@ -1,4 +1,4 @@
-import { sort, unique, chunk, count, difference } from '../src'
+import { sort, unique, chunk, count, difference, group } from '../src'
 
 test("sort", () => {
   const array = sort([1, 3, 2], { order: 'asc' })
@@ -47,4 +47,9 @@ test('difference', () => {
   const compareByFloor = (a, b) => Math.floor(a) === Math.floor(b);
   const res2 = difference([1.2, 3.1], [1.3, 2.4], compareByFloor)
   expect(res2).toEqual([3.1])
+})
+
+test('group', () => {
+  const res = group([6.1, 4.2, 6.3], Math.floor)
+  expect(res).toEqual({ '4': [4.2], '6': [6.1, 6.3] })
 })
