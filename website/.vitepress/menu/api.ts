@@ -104,6 +104,10 @@ export const apiMenu = [
         text: 'difference',
         link: '/api/array/difference'
       },
+      {
+        text: 'group',
+        link: '/api/array/group'
+      },
     ]
   }
 ]
