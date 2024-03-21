@@ -41,5 +41,6 @@ export function move<Temp>(
 
   array[toIndex] = item
 
+  return array
 }
 
