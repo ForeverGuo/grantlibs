@@ -108,6 +108,10 @@ export const apiMenu = [
         text: 'group',
         link: '/api/array/group'
       },
+      {
+        text: 'move',
+        link: '/api/array/move'
+      },
     ]
   }
 ]
