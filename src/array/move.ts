@@ -27,6 +27,19 @@ export function move<Temp>(
 
   if (toIndex === fromIndex) return array;
 
+  const item = array[fromIndex]
+
+  if (fromIndex < toIndex) {
+    for (let index = fromIndex; index < toIndex; index++) {
+      array[index] = array[index + 1]
+    }
+  } else {
+    for (let index = fromIndex; index > toIndex; index--) {
+      array[index] = array[index - 1]
+    }
+  }
+
+  array[toIndex] = item
 
 }
 
