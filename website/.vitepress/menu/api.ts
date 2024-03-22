@@ -5,10 +5,6 @@
 */
 export const apiMenu = [
   {
-    text: '日历calendar',
-    link: '/api/calendar/index'
-  },
-  {
     text: '正则匹配test',
     link: '/api/check/index'
   },
@@ -35,6 +31,41 @@ export const apiMenu = [
   {
     text: '节流throttle',
     link: '/api/function/throttle'
+  },
+  {
+    text: '日历calendar',
+    collapsed: true,
+    items: [
+      {
+        text: '年',
+        link: '/api/calendar/getYear'
+      },
+      {
+        text: '月',
+        link: '/api/calendar/getMonth'
+      },
+      {
+        text: '日',
+        link: '/api/calendar/getDate'
+      },
+      {
+        text: '星期几',
+        link: '/api/calendar/getWeekDay'
+      },
+      {
+        text: '某年某月天数',
+        link: '/api/calendar/getDaysOfYearMonth'
+      },
+      {
+        text: '某月第一天星期几',
+        link: '/api/calendar/getWeekOfMonth'
+      },
+      {
+        text: '获取年月日',
+        link: '/api/calendar/getFullYear'
+      },
+    ]
+
   },
   {
     text: '判断boolean',
