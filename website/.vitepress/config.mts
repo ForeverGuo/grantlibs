@@ -18,7 +18,7 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '指南', link: '/guide/whatIs' },
-      { text: '文档', link: '/api/calendar/index' },
+      { text: '文档', link: '/api/check/index' },
       { text: '每日一题', link: '/leetcode/topk' }
     ],
 
