@@ -1,4 +1,4 @@
-import { sort, unique, chunk, count, difference, group, move } from '../src'
+import { sort, unique, chunk, count, difference, group, move, takeWhile } from '../src'
 
 test("sort", () => {
   const array = sort([1, 3, 2], { order: 'asc' })
@@ -58,3 +58,14 @@ test('move', () => {
   const res = move([1, 2, 3, 4, 5], 0, 2)
   expect(res).toEqual([2, 3, 1, 4, 5])
 })
+
+test('takeWhile', () => {
+  var users = [
+    { 'user': 'barney', 'active': false },
+    { 'user': 'fred', 'active': false },
+    { 'user': 'pebbles', 'active': true }
+  ];
+  const res = takeWhile(users, user => user.active)
+  expect(res).toEqual([{ 'user': 'pebbles', 'active': true }])
+})
+
