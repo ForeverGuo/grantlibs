@@ -143,6 +143,10 @@ export const apiMenu = [
         text: 'move',
         link: '/api/array/move'
       },
+      {
+        text: 'takeWhile',
+        link: '/api/array/takeWhile'
+      },
     ]
   }
 ]
