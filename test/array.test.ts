@@ -1,4 +1,4 @@
-import { sort, unique, chunk, count, difference, group, move, takeWhile } from '../src'
+import { sort, unique, chunk, count, difference, group, move, takeWhile, shuffle } from '../src'
 
 test("sort", () => {
   const array = sort([1, 3, 2], { order: 'asc' })
@@ -67,5 +67,10 @@ test('takeWhile', () => {
   ];
   const res = takeWhile(users, user => user.active)
   expect(res).toEqual([{ 'user': 'pebbles', 'active': true }])
+})
+
+test('shuffle', () => {
+  // const res = shuffle([1, 2, 3, 4])
+  // console.log(res)
 })
 
