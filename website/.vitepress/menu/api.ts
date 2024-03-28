@@ -147,6 +147,10 @@ export const apiMenu = [
         text: 'takeWhile',
         link: '/api/array/takeWhile'
       },
+      {
+        text: 'shuffle',
+        link: '/api/array/shuffle'
+      },
     ]
   }
 ]
