@@ -5,10 +5,6 @@
 */
 export const apiMenu = [
   {
-    text: '正则匹配test',
-    link: '/api/check/index'
-  },
-  {
     text: '克隆clone',
     link: '/api/clone/index'
   },
@@ -61,7 +57,7 @@ export const apiMenu = [
         link: '/api/calendar/getWeekOfMonth'
       },
       {
-        text: '获取年月日',
+        text: '年月日',
         link: '/api/calendar/getFullYear'
       },
     ]
@@ -152,5 +148,27 @@ export const apiMenu = [
         link: '/api/array/shuffle'
       },
     ]
-  }
+  },
+  {
+    text: '正则匹配test',
+    collapsed: true,
+    items: [
+      {
+        text: '手机号',
+        link: '/api/check/mobile'
+      },
+      {
+        text: '邮箱',
+        link: '/api/check/email'
+      },
+      {
+        text: '身份证',
+        link: '/api/check/idCard'
+      },
+      {
+        text: '车牌号',
+        link: '/api/check/plate'
+      },
+    ]
+  },
 ]
