@@ -6,15 +6,29 @@ import { getSecond } from "grantlibs";
 const { getSecond } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  获取当前秒数
+</div>
 
-| 方法名     | 调用方式    | 返回值 |
-| ---------- | ----------- | ------ |
-| 获取当前秒 | getSecond() | 数值   |
+### 使用
 
-### 代码示例
+```ts
+
+getSecond(): string
+
+```
+
+### 参数
+
+无
+
+### 返回
+
+string: 秒
+
+### 示例
 
 ```js
-const time = getSecond();
-console.log(time);
+const second = getSecond();
+// => 10
 ```

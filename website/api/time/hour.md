@@ -6,15 +6,29 @@ import { getHour } from "grantlibs";
 const { getHour } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  获取当前小时
+</div>
 
-| 方法名       | 调用方式  | 返回值 |
-| ------------ | --------- | ------ |
-| 获取当前小时 | getHour() | 数值   |
+### 使用
 
-### 代码示例
+```ts
+
+getHour(): string
+
+```
+
+### 参数
+
+无
+
+### 返回
+
+string: 小时
+
+### 示例
 
 ```js
 const time = getHour();
-console.log(time); // 22
+// => 22
 ```

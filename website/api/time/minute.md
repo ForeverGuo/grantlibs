@@ -6,15 +6,29 @@ import { getMinute } from "grantlibs";
 const { getMinute } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  获取当前分钟
+</div>
 
-| 方法名       | 调用方式    | 返回值 |
-| ------------ | ----------- | ------ |
-| 获取当前分钟 | getMinute() | 数值   |
+### 使用
 
-### 代码示例
+```ts
+
+getMinute(): string
+
+```
+
+### 参数
+
+无
+
+### 返回
+
+string: 分钟
+
+### 示例
 
 ```js
-const time = getMinute();
-console.log(time);
+const minute = getMinute();
+// => 22
 ```

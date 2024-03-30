@@ -6,15 +6,29 @@ import { getTime } from "grantlibs";
 const { getTime } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  获取当前时分秒
+</div>
 
-| 方法名       | 调用方式  | 返回值   |
-| ------------ | --------- | -------- |
-| 获取当前时间 | getTime() | 10:00:00 |
+### 使用
 
-### 代码示例
+```ts
+
+getTime(): string
+
+```
+
+### 参数
+
+无
+
+### 返回
+
+string: 时分秒
+
+### 示例
 
 ```js
 const time = getTime();
-console.log(time); // 22:10:10
+// => 10:10:10
 ```
