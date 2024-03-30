@@ -5,10 +5,6 @@
 */
 export const apiMenu = [
   {
-    text: '克隆clone',
-    link: '/api/clone/index'
-  },
-  {
     text: '存储store',
     link: '/api/store/index'
   },
@@ -27,6 +23,20 @@ export const apiMenu = [
   {
     text: '节流throttle',
     link: '/api/function/throttle'
+  },
+  {
+    text: '克隆clone',
+    collapsed: true,
+    items: [
+      {
+        text: 'deep',
+        link: '/api/clone/deep'
+      },
+      {
+        text: 'shallow',
+        link: '/api/clone/shallow'
+      },
+    ]
   },
   {
     text: '日历calendar',
