@@ -185,6 +185,10 @@ export const apiMenu = [
         text: '节流',
         link: '/api/function/throttle'
       },
+      {
+        text: '执行次数',
+        link: '/api/function/times'
+      },
     ]
   }
 ]
