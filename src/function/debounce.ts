@@ -9,6 +9,7 @@ type DeFn = (fn: ReFn, wait: number) => ReFn
 export function debounce<A extends Array<any>, R = void>(
   func: (..._args: A) => R,
   wait: number,
+  flag: boolean = false
 ): Function {
   let timeOut: null | any;
   let args: A;
@@ -40,5 +41,10 @@ export function debounce<A extends Array<any>, R = void>(
     debounce.cancel();
     return func.apply(null, args);
   }
+
+  if (flag) {
+    debounce.flush()
+  }
+
   return debounce;
 }

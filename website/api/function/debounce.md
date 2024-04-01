@@ -6,14 +6,29 @@ import { debounce } from "grantlibs";
 const { debounce } = require("grantlibs");
 ```
 
-### 方法列表
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  防抖函数，提高性能。
+</div>
 
-| 方法名   | 调用方式            |
-| -------- | ------------------- |
-| 取消执行 | debounce().cancel() |
-| 立即执行 | debounce().flush()  |
+### 使用
 
-### 代码示例
+```ts
+
+debounce(fn: () => {}, wait: number, flag: boolean): Function
+
+```
+
+### 参数
+
+- fn: 执行函数
+- wait: 等待时间
+- flag: 立即执行
+
+### 返回
+
+function: 执行函数
+
+### 示例
 
 ```js
 const test = debounce(() => {

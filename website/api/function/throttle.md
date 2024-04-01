@@ -6,7 +6,28 @@ import { throttle } from "grantlibs";
 const { throttle } = require("grantlibs");
 ```
 
-### 代码示例
+<div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
+  节流函数，节约资源。
+</div>
+
+### 使用
+
+```ts
+
+debounce(fn: () => {}, wait: number): Function
+
+```
+
+### 参数
+
+- fn: 执行函数
+- wait: 等待时间
+
+### 返回
+
+function: 执行函数
+
+### 示例
 
 ```js
 const test = throttle(() => {

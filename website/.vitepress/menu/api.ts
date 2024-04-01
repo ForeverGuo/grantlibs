@@ -17,14 +17,6 @@ export const apiMenu = [
     link: '/api/eventEmitter/index'
   },
   {
-    text: '防抖debounce',
-    link: '/api/function/debounce'
-  },
-  {
-    text: '节流throttle',
-    link: '/api/function/throttle'
-  },
-  {
     text: '克隆clone',
     collapsed: true,
     items: [
@@ -181,4 +173,18 @@ export const apiMenu = [
       },
     ]
   },
+  {
+    text: '函数function',
+    collapsed: true,
+    items: [
+      {
+        text: '防抖',
+        link: '/api/function/debounce'
+      },
+      {
+        text: '节流',
+        link: '/api/function/throttle'
+      },
+    ]
+  }
 ]
