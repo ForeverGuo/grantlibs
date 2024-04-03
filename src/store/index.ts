@@ -1,24 +1,22 @@
-class Store {
-  store: Map<any, any>;
-  constructor() {
-    this.store = new Map()
-  }
-  set(name: any, val: any) {
-    this.store.set(name, val)
-    return this;
-  }
-  get(name: any) {
-    return this.store.get(name)
-  }
-  has(name: any) {
-    return this.store.has(name)
-  }
-  delete(name: any) {
-    return this.store.delete(name)
-  }
-  size() {
-    return this.store.size
-  }
+const store: Map<any, any> = new Map();
+
+export function storeSet(name: any, val: any) {
+  store.set(name, val)
 }
 
-export const store = new Store()
+export function storeGet(name: any): any {
+  return store.get(name)
+}
+
+export function storeHas(name: any): boolean {
+  return store.has(name)
+}
+
+export function storeDel(name: any): boolean {
+  return store.delete(name)
+}
+
+export function storeSize(): number {
+  return store.size
+}
+

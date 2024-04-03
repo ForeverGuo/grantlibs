@@ -5,10 +5,6 @@
 */
 export const apiMenu = [
   {
-    text: '存储store',
-    link: '/api/store/index'
-  },
-  {
     text: '身份证idCard',
     link: '/api/idCard/index'
   },
@@ -190,5 +186,31 @@ export const apiMenu = [
         link: '/api/function/times'
       },
     ]
-  }
+  },
+  {
+    text: '存储store',
+    collapsed: true,
+    items: [
+      {
+        text: '设置',
+        link: '/api/store/set'
+      },
+      {
+        text: '获取',
+        link: '/api/store/get'
+      },
+      {
+        text: '检查是否有该值',
+        link: '/api/store/has'
+      },
+      {
+        text: '删除',
+        link: '/api/store/del'
+      },
+      {
+        text: '长度',
+        link: '/api/store/size'
+      },
+    ]
+  },
 ]
