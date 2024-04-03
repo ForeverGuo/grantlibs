@@ -6,7 +6,17 @@
 export const apiMenu = [
   {
     text: '身份证idCard',
-    link: '/api/idCard/index'
+    collapsed: true,
+    items: [
+      {
+        text: '出生年月',
+        link: '/api/idCard/birthday',
+      },
+      {
+        text: '性别',
+        link: '/api/idCard/sex',
+      }
+    ]
   },
   {
     text: '发布订阅subscribe',
