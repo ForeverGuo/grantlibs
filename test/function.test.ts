@@ -2,7 +2,7 @@ import { debounce, times } from "../src/index";
 
 test("debounce", () => {
   debounce(() => {
-    console.log('hello world')
+    // console.log('hello world')
   }, 1000, true)
 })
 

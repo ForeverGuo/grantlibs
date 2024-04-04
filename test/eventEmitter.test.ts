@@ -1,11 +1,13 @@
-import { eventEmitter } from "../src/index";
+import { subsOn, subsEmit, subsOff } from "../src/index";
 
 test("eventEmitter", () => {
-  // eventEmitter.on('testName', () => {
-  //   console.info('test-1')
-  // })
-  // eventEmitter.on('testName', () => {
-  //   console.info('test-2')
-  // })
-  // eventEmitter.emit('testName')
+  subsOn('testName', function t2() {
+    console.info('test-1')
+  })
+  function t1() {
+    console.info('test-2')
+  }
+  subsOn('testName', t1)
+  subsOff('testName', t1)
+  subsEmit('testName')
 })

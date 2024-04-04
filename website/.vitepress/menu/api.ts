@@ -20,7 +20,25 @@ export const apiMenu = [
   },
   {
     text: '发布订阅subscribe',
-    link: '/api/eventEmitter/index'
+    collapsed: true,
+    items: [
+      {
+        text: '订阅',
+        link: '/api/subscribe/on',
+      },
+      {
+        text: '一次订阅',
+        link: '/api/subscribe/once',
+      },
+      {
+        text: '取消订阅',
+        link: '/api/subscribe/off',
+      },
+      {
+        text: '执行订阅',
+        link: '/api/subscribe/emit',
+      }
+    ]
   },
   {
     text: '克隆clone',
