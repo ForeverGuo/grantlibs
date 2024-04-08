@@ -11,4 +11,12 @@ export const leetCodeMenu = [
     text: '对称二叉树',
     link: '/leetcode/SymmetricBinaryTree'
   },
+  {
+    text: '两数之和',
+    link: '/leetcode/twoSum'
+  },
+  {
+    text: '链表是否有环',
+    link: '/leetcode/linkHasCircle'
+  },
 ]
