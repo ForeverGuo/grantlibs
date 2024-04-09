@@ -8,7 +8,7 @@
  *   return fibonacci(n - 1) + fibonacci(n - 2);
  * }
  *
- * const memoizedFib = memoize(fibonacci, { ttl: 1000 })
+ * const memoizedFib = memorize(fibonacci, { ttl: 1000 })
  * 
  * memoizedFib(40) // => 102334155
  * memoizedFib(40) // => 102334155 (cache hit)
@@ -24,12 +24,34 @@
  * 
 */
 import type { GenericFunction } from "../type/GenericFunction.js";
+const defaultResolver = (...args: unknown[]) => JSON.stringify(args[0]);
 
-export function memoize<TFunc extends GenericFunction<TFunc>, Cache extends Map<string, [ReturnType<TFunc>, number]>(
+export function memorize<
+  TFunc extends GenericFunction<TFunc>,
+  Cache extends Map<string, [ReturnType<TFunc>, number]>
+>(
   func: TFunc,
-  options: { resolver?: (...args: Parameters<TFunc>) => string }
-) {
+  options: { resolver?: (...args: Parameters<TFunc>) => string, ttl?: number }
+): TFunc & { cache: Cache } {
+  const resolver = options.resolver ?? defaultResolver
+  const ttl = options.ttl
+  const cache = new Map as Cache
 
+  const memorizedFunc = function (this: unknown, ...args: Parameters<TFunc>): ReturnType<TFunc> {
+    const key = resolver(...args as unknown[]);
+    if (cache.has(key)) {
+      const [cacheResult, cacheTime] = cache.get(key)
+      if (ttl == undefined || Date.now() - cacheTime < ttl) {
+        return cacheResult
+      }
+    }
+    const result = func.apply(this, args)
+    cache.set(key, [result, Date.now()])
+    return result;
+  }
+
+  memorizedFunc.cache = cache
+  return memorizedFunc as TFunc & { cache: Cache };
 }
 
 
