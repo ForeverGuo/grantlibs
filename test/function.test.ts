@@ -17,13 +17,12 @@ test('memorize', () => {
     if (n <= 1) return n;
     return fibonacci(n - 1) + fibonacci(n - 2);
   }
-
   const memoizedFib = memorize(fibonacci, { ttl: 1000 })
-  memoizedFib(10)
-  console.log(memoizedFib(10))
-  console.log(memoizedFib(10))
 
-  console.log(memoizedFib.cache)
-  console.log(memoizedFib.cache.get('10'))
+  // console.log(memoizedFib(10))
+  // console.log(memoizedFib(10))
+
+  // console.log(memoizedFib.cache)
+  // console.log(memoizedFib.cache.get('10'))
 
 })
