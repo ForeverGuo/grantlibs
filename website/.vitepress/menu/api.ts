@@ -213,6 +213,10 @@ export const apiMenu = [
         text: '执行次数',
         link: '/api/function/times'
       },
+      {
+        text: '缓存',
+        link: '/api/function/memorize'
+      },
     ]
   },
   {
