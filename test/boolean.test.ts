@@ -1,4 +1,4 @@
-import { isObject, isPromise, isDef } from "../src/boolean";
+import { isObject, isPromise, isDef, isEqual } from "../src/boolean";
 
 test('isObject', () => {
   expect(isObject(null)).toBe(false)
@@ -13,4 +13,9 @@ test('isPromise', () => {
 test('isDef', () => {
   expect(isDef(undefined)).toBe(false)
   expect(isDef("hello")).toBe(true)
+})
+
+test('isEqual', () => {
+  expect(isEqual(1, '1')).toEqual(false)
+  expect(isEqual({ a: 2, c: 3 }, { a: 2, c: 3 })).toEqual(true)
 })
