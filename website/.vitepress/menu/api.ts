@@ -109,6 +109,10 @@ export const apiMenu = [
         text: 'isDef',
         link: '/api/boolean/isDef'
       },
+      {
+        text: 'isEqual',
+        link: '/api/boolean/isEqual'
+      },
     ]
   },
   {
