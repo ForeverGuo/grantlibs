@@ -26,6 +26,24 @@ export function isEqual(a: unknown, b: unknown): boolean {
     return a.getTime() === b.getTime()
   }
 
+  // is map
+  if (a instanceof Map && b instanceof Map) {
+    if (a.size !== b.size) return false;
+    for (let key of a.keys()) {
+      if (!b.has(key) || a.get(key) !== b.get(key)) return false;
+    }
+    return true
+  }
+
+  // is set
+  if (a instanceof Set && b instanceof Set) {
+    if (a.size !== b.size) return false;
+    for (let val of a.values()) {
+      if (!b.has(val)) return false;
+    }
+    return true
+  }
+
   // support circular reference in array and object
   if (map.has(a) || map.has(b)) {
     return true

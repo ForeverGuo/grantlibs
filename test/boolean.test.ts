@@ -18,4 +18,15 @@ test('isDef', () => {
 test('isEqual', () => {
   expect(isEqual(1, '1')).toEqual(false)
   expect(isEqual({ a: 2, c: 3 }, { a: 2, c: 3 })).toEqual(true)
+  const m1 = new Map()
+  m1.set('a', 2)
+  const m2 = new Map()
+  m2.set('a', 2)
+  expect(isEqual(m1, m2)).toBe(true)
+
+  const s1 = new Set()
+  s1.add('a')
+  const s2 = new Set()
+  s2.add('b')
+  expect(isEqual(s1, s2)).toBe(false)
 })

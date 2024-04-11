@@ -7,7 +7,7 @@ const { isEqual } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
-  isEqual (支持基本类型 时间 日期 对象 数组)
+  isEqual (支持基本类型，时间，日期，对象，数组，Map，Set)
 </div>
 
 ### 使用
