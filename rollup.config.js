@@ -37,10 +37,10 @@ export default {
       tsconfig: "./tsconfig.json",
     }),
     alias({
-      resolve: [".ts", '.js'], 
+      resolve: [".ts", ".js"],
       entries: [
-        { find: "@", replacement: '../src' }, // 将 @ 识别为 ./src 目录
-      ]
+        { find: "@", replacement: "../src" }, // 将 @ 识别为 ./src 目录
+      ],
     }),
     resolve(),
   ],
