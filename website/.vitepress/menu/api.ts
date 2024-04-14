@@ -249,4 +249,14 @@ export const apiMenu = [
       },
     ]
   },
+  {
+    text: '装饰器decorator',
+    collapsed: true,
+    items: [
+      {
+        text: 'toDecorator',
+        link: '/api/decorator/toDecorator'
+      },
+    ]
+  }
 ]
