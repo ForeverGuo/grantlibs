@@ -221,6 +221,10 @@ export const apiMenu = [
         text: '缓存',
         link: '/api/function/memorize'
       },
+      {
+        text: '最多执行次数',
+        link: '/api/function/maxCalls'
+      },
     ]
   },
   {
