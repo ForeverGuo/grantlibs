@@ -1,4 +1,4 @@
-import { debounce, times, memorize } from "../src/index";
+import { debounce, times, memorize, maxCalls } from "../src/index";
 
 test("debounce", () => {
   debounce(() => {
@@ -25,4 +25,14 @@ test('memorize', () => {
   // console.log(memoizedFib.cache)
   // console.log(memoizedFib.cache.get('10'))
 
+})
+
+test('maxCalls', () => {
+  let count = 0;
+  const addCount = () => ++count;
+  const limitAddCount = maxCalls(addCount, 2)
+
+  // console.log(limitAddCount())
+  // console.log(limitAddCount())
+  // console.log(limitAddCount())
 })

@@ -1,4 +1,5 @@
 import { toDecorator } from "./toDecorator";
+import { decMaxCalls } from "./decMaxCalls";
 function log(func: Function, message: string) {
   return function (...args: unknown[]) {
     console.log(message);
@@ -9,9 +10,10 @@ function log(func: Function, message: string) {
 const logger = toDecorator(log);
 
 class TestClass {
-  @logger("Hello world!")
+  private count = 0;
+  @decMaxCalls(2)
   testMethod() {
-    return 1;
+    return ++this.count;
   }
 }
 
