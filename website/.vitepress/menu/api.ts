@@ -222,8 +222,12 @@ export const apiMenu = [
         link: '/api/function/memorize'
       },
       {
-        text: '最多执行次数',
+        text: '限制函数最多执行n次',
         link: '/api/function/maxCalls'
+      },
+      {
+        text: '限制函数n次后执行',
+        link: '/api/function/minCalls'
       },
     ]
   },
