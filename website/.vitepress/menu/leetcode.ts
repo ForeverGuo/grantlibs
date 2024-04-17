@@ -19,4 +19,8 @@ export const leetCodeMenu = [
     text: '链表是否有环',
     link: '/leetcode/linkHasCircle'
   },
+  {
+    text: 'Maximum Sum Size K',
+    link: '/leetcode/Maximum Sum Subarray of Size K'
+  },
 ]
