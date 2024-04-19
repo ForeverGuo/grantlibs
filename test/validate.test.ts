@@ -1,4 +1,4 @@
-import { isObject, isPromise, isDef, isEqual } from "../src/boolean";
+import { isObject, isPromise, isDef, isEqual, isEmpty } from "../src/validate";
 
 test('isObject', () => {
   expect(isObject(null)).toBe(false)
@@ -29,4 +29,11 @@ test('isEqual', () => {
   const s2 = new Set()
   s2.add('b')
   expect(isEqual(s1, s2)).toBe(false)
+})
+
+test('isEmpty', () => {
+  const b1 = isEmpty({})
+  expect(b1).toBe(true)
+  const b2 = isEmpty([1, 2, 3])
+  expect(b2).toBe(false)
 })
