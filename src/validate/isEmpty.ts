@@ -26,7 +26,7 @@
 
 export function isEmpty(value: string | null | object | undefined): boolean {
   if (typeof value === null || typeof value === undefined) return true;
-
+  
   if (typeof value === 'string' || Array.isArray(value)) {
     return value.length === 0
   }

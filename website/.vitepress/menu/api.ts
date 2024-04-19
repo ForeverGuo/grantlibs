@@ -90,28 +90,32 @@ export const apiMenu = [
 
   },
   {
-    text: '判断boolean',
+    text: '判断validate',
     collapsed: true,
     items: [
       {
         text: 'isObject',
-        link: '/api/boolean/isObject'
+        link: '/api/validate/isObject'
       },
       {
         text: 'isPromise',
-        link: '/api/boolean/isPromise'
+        link: '/api/validate/isPromise'
       },
       {
         text: 'isRegexp',
-        link: '/api/boolean/isRegexp'
+        link: '/api/validate/isRegexp'
       },
       {
         text: 'isDef',
-        link: '/api/boolean/isDef'
+        link: '/api/validate/isDef'
       },
       {
         text: 'isEqual',
-        link: '/api/boolean/isEqual'
+        link: '/api/validate/isEqual'
+      },
+      {
+        text: 'isEmpty',
+        link: '/api/validate/isEmpty'
       },
     ]
   },

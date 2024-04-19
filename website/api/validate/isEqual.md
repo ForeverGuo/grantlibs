@@ -20,8 +20,8 @@ isEqual(a: unknown, b: unknown): boolean
 
 ### 参数
 
-1. a: 任意类型
-2. b: 任意类型
+- a: 任意类型
+- b: 任意类型
 
 ### 返回
 
