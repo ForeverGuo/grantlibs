@@ -236,6 +236,24 @@ export const apiMenu = [
     ]
   },
   {
+    text: '数值number',
+    collapsed: true,
+    items: [
+      {
+        text: 'sum',
+        link: '/api/number/sum'
+      },
+      {
+        text: 'average',
+        link: '/api/number/average'
+      },
+      {
+        text: 'round',
+        link: '/api/number/round'
+      },
+    ]
+  },
+  {
     text: '存储store',
     collapsed: true,
     items: [
