@@ -1,4 +1,4 @@
-import { isObject, isPromise, isDef, isEqual, isEmpty } from "../src/validate";
+import { isObject, isPromise, isDef, isEqual, isEmpty, isCard } from "../src/validate";
 
 test('isObject', () => {
   expect(isObject(null)).toBe(false)
@@ -36,4 +36,9 @@ test('isEmpty', () => {
   expect(b1).toBe(true)
   const b2 = isEmpty([1, 2, 3])
   expect(b2).toBe(false)
+})
+
+test('idCard', () => {
+  const b1 = isCard('220181199308286312')
+  console.log(b1)
 })
