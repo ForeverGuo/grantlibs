@@ -62,3 +62,30 @@ function validate18IdCard(idNumber: string): boolean {
     return false;
   }
 }
+
+
+// 校验身份证
+export function t_idCard(idCard: string): boolean {
+  // 身份证号码正则表达式（18位）
+  const reg = /^[1-9]\d{5}(19|20)\d{2}(0[1-9]|1[0-2])(([0-2][1-9])|10|30|31)\d{3}[0-9Xx]$/;
+
+  // 检查身份证号码格式
+  if (!reg.test(idCard)) {
+    return false;
+  }
+
+  // 校验身份证最后一位校验码
+  const checkCode = (idCard: string): boolean => {
+    const factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+    const checkList = '10X98765432';
+    let sum = 0;
+    for (let i = 0; i < 17; i++) {
+      sum += parseInt(idCard.charAt(i)) * factor[i];
+    }
+    const mod = sum % 11;
+    const lastChar = idCard.charAt(17).toUpperCase();
+    return lastChar === checkList[mod];
+  };
+
+  return checkCode(idCard);
+}

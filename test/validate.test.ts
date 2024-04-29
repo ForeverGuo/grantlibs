@@ -1,4 +1,6 @@
-import { isObject, isPromise, isDef, isEqual, isEmpty, isCard } from "../src/validate";
+import {
+  isObject, isPromise, isDef, isEqual, isEmpty, isCard, isMobile, isEmail, isPlate
+} from "../src/validate";
 
 test('isObject', () => {
   expect(isObject(null)).toBe(false)
@@ -42,3 +44,33 @@ test('idCard', () => {
   const b1 = isCard('220181199308286312')
   console.log(b1)
 })
+
+test("测试手机号", () => {
+  const mobile = 17704052506
+  const res = isMobile(`${mobile}`)
+  expect(res).toBeTruthy()
+});
+
+test("测试邮箱正确", () => {
+  const email = '810153274@qq.com'
+  const res = isEmail(email)
+  expect(res).toBeTruthy()
+});
+
+test("测试邮箱错误", () => {
+  const email = '8101274'
+  const res = isEmail(email)
+  expect(res).toBeFalsy()
+});
+
+test("测试身份证号", () => {
+  const idcard = '110101199001013590'
+  const res = isCard(idcard)
+  expect(res).toBeTruthy()
+});
+
+test("测试车牌号", () => {
+  const plate = '京JB1295'
+  const res = isPlate(plate)
+  expect(res).toBeTruthy()
+});

@@ -117,6 +117,10 @@ export const apiMenu = [
         text: 'isEmpty',
         link: '/api/validate/isEmpty'
       },
+      {
+        text: 'isIdCard',
+        link: '/api/validate/isIdCard'
+      }
     ]
   },
   {

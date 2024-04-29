@@ -1,9 +1,9 @@
 ### 引入
 
 ```js
-import { t_plate } from "grantlibs";
+import { isPlate } from "grantlibs";
 或;
-const { t_plate } = require("grantlibs");
+const { isPlate } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
@@ -14,7 +14,7 @@ const { t_plate } = require("grantlibs");
 
 ```ts
 
-t_plate(plate: string): boolean
+isPlate(plate: string): boolean
 
 ```
 
@@ -30,6 +30,6 @@ boolean: 是否正确
 
 ```js
 const plate = "京JB1295";
-const res = t_plate(plate);
+const res = isPlate(plate);
 // => true
 ```

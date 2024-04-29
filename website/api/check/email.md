@@ -1,9 +1,9 @@
 ### 引入
 
 ```js
-import { t_email } from "grantlibs";
+import { isEmail } from "grantlibs";
 或;
-const { t_email } = require("grantlibs");
+const { isEmail } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
@@ -14,7 +14,7 @@ const { t_email } = require("grantlibs");
 
 ```ts
 
-t_email(email: string): boolean
+isEmail(email: string): boolean
 
 ```
 
@@ -30,6 +30,6 @@ boolean: 是否正确
 
 ```js
 const email = "810153274@qq.com";
-const res = t_email(email);
+const res = isEmail(email);
 // => true
 ```

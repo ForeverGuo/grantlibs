@@ -1,9 +1,9 @@
 ### 引入
 
 ```js
-import { t_mobile } from "grantlibs";
+import { isMobile } from "grantlibs";
 或;
-const { t_mobile } = require("grantlibs");
+const { isMobile } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
@@ -14,7 +14,7 @@ const { t_mobile } = require("grantlibs");
 
 ```ts
 
-t_mobile(mobile: string): boolean
+isMobile(mobile: string): boolean
 
 ```
 
@@ -30,6 +30,6 @@ boolean: 是否正确
 
 ```js
 const mobile = 17704052506;
-const res = t_mobile(`${mobile}`);
+const res = isMobile(`${mobile}`);
 // => true
 ```
