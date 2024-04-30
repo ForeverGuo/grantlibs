@@ -12,3 +12,4 @@ export const isOdd = (num: number): boolean => {
 export const isSameType = (a: unknown, b: unknown): boolean => {
   return Object.prototype.toString.call(a) === Object.prototype.toString.call(b)
 }
+
