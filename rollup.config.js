@@ -6,16 +6,25 @@ import alias from "@rollup/plugin-alias";
 const packageJson = JSON.parse(readFileSync("./package.json", "utf8")); // 读取UMD全局模块名，在package中定义了
 const pkgName = packageJson.umdModuleName;
 
+const banner =
+  "/*!\n" +
+  ` * grantlibs v${packageJson.version}\n` +
+  ` * (c) 2024-${new Date().getFullYear()} grantguo \n` +
+  " * Released under the MIT License.\n" +
+  " */";
+
 export default {
   input: "src/index.ts",
   output: [
     {
       file: "dist/esm/index.js",
       format: "esm",
+      banner,
     },
     {
       file: "dist/cjs/index.js",
       format: "cjs",
+      banner,
     },
     {
       file: "dist/umd/index.js",
@@ -24,12 +33,14 @@ export default {
       globals: {
         // 配置依赖中的UMD全局变量名
       },
+      banner,
     },
     {
       file: "dist/bundle/index.js",
       format: "iife",
       name: pkgName,
       plugins: [terser()],
+      banner,
     },
   ],
   plugins: [
