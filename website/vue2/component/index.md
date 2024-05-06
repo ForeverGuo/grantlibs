@@ -839,14 +839,15 @@ Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
 个 vnode 是通过 vm.\_render() 返回的组件渲染 VNode，vm.\_vnode 和 vm.
 $vnode 的关系就是一种父子关系，用代码表达就是 <span :class="$style.common_text">vm.parent.\_vnode === vm.
 $vnode</span>。 <br>
-这个 activeInstance 作用就是保持当前上下文的 Vue 实例，它是
-在 lifecycle 模块的全局变量，定义是 export let activeInstance: any =
-null，并且在之前我们调用 createComponentInstanceForVnode 方法的时候从 li
+
+这个 <span :class="$style.red_text">activeInstance</span> 作用就是保持当前上下文的 Vue 实例，它是
+在 lifecycle 模块的全局变量，定义是<span :class="$style.red_text"> export let activeInstance: any =
+null </span>，并且在之前我们调用 createComponentInstanceForVnode 方法的时候从 li
 fecycle 模块获取，并且作为参数传入的。因为实际上 JavaScript 是一个单线
-程，Vue 整个初始化是一个深度遍历的过程，在实例化子组件的过程中，它需
-要知道当前上下文的 Vue 实例是什么，并把它作为子组件的父 Vue 实例。之
-前我们提到过对子组件的实例化过程先会调用 initInternalComponent(vm,
-options) 合并 options，把 parent 存储在 vm.$options 中，在 $mount 之前
+程，Vue 整个初始化是一个深度遍历的过程，<span :class="$style.common_text">在实例化子组件的过程中，它需
+要知道当前上下文的 Vue 实例是什么</span>，并把它作为子组件的父 Vue 实例。之
+前我们提到过对子组件的实例化过程先会调用 <span :class="$style.red_text">initInternalComponent(vm,
+options)</span> 合并 options，把 parent 存储在 vm.$options 中，在 $mount 之前
 会调用 initLifecycle(vm)方法：
 
 ```js
@@ -865,16 +866,115 @@ export function initLifecycle(vm: Component) {
 }
 ```
 
-可以看到 vm.$parent 就是用来保留当前 vm 的父实例，并且通过 parent.
-$children.push(vm) 来把当前的 vm 存储到父实例的 $children 中。
-在 vm._update 的过程中，把当前的 vm 赋值给 activeInstance，同时通过 c
-onst prevActiveInstance = activeInstance 用 prevActiveInstance 保留上一次
-的 activeInstance。实际上，prevActiveInstance 和当前的 vm 是一个父子关系，
+可以看到 <span :class="$style.red_text">vm.$parent</span> 就是用来保留当前 vm 的父实例，并且通过 <span :class="$style.red_text">parent.
+$children.push(vm) </span> 来把当前的 vm 存储到父实例的 $children 中。
+在 vm._update 的过程中，把当前的 vm 赋值给 activeInstance，同时通过<span :class="$style.red_text"> const prevActiveInstance = activeInstance </span> 用 prevActiveInstance 保留上一次
+的 activeInstance。实际上，<span :class="$style.common_text">prevActiveInstance 和当前的 vm 是一个父子关系，
 当一个 vm 实例完成它的所有子树的 patch 或者 update 过程后，
 activeInstance 会回到它的父实例，这样就完美地保证了 createComponentInstan
-ceForVnode 整个深度遍历过程中，我们在实例化子组件的时候能传入当前子组
-件的父 Vue 实例，并在 _init 的过程中，通过 vm.$parent 把这个父子关系
-保留。
+ceForVnode 整个深度遍历过程中</span>，我们在实例化子组件的时候能传入当前子组
+件的父 Vue 实例，并在 \_init 的过程中，通过 vm.$parent 把这个父子关系保留。 <br>
+
+那么回到 \_update，最后就是调用 **patch** 渲染 VNode 了。
+
+```js
+vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
+function patch(oldVnode, vnode, hydrating, removeOnly) {
+  // ...
+  let isInitialPatch = false;
+  const insertedVnodeQueue = [];
+  if (isUndef(oldVnode)) {
+    // empty mount (likely as component), create new root element
+    isInitialPatch = true;
+    createElm(vnode, insertedVnodeQueue);
+  } else {
+    // ...
+  }
+  // ...
+}
+```
+
+这里又回到了本节开始的过程，之前分析过负责渲染成 DOM 的函数
+是 createElm，注意这里我们只传了 2 个参数，所以对应的 parentElm
+是 undefined。我们再来看看它的定义：
+
+```js
+function createElm(
+  vnode,
+  insertedVnodeQueue,
+  parentElm,
+  refElm,
+  nested,
+  ownerArray,
+  index
+) {
+  // ...
+  if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
+    return;
+  }
+  const data = vnode.data;
+  const children = vnode.children;
+  const tag = vnode.tag;
+  if (isDef(tag)) {
+    // ...
+    vnode.elm = vnode.ns
+      ? nodeOps.createElementNS(vnode.ns, tag)
+      : nodeOps.createElement(tag, vnode);
+    setScope(vnode);
+    /* istanbul ignore if */
+    if (__WEEX__) {
+      // ...
+    } else {
+      createChildren(vnode, children, insertedVnodeQueue);
+      if (isDef(data)) {
+        invokeCreateHooks(vnode, insertedVnodeQueue);
+      }
+      insert(parentElm, vnode.elm, refElm);
+    }
+    // ...
+  } else if (isTrue(vnode.isComment)) {
+    vnode.elm = nodeOps.createComment(vnode.text);
+    insert(parentElm, vnode.elm, refElm);
+  } else {
+    vnode.elm = nodeOps.createTextNode(vnode.text);
+    insert(parentElm, vnode.elm, refElm);
+  }
+}
+```
+
+注意，这里我们传入的 <span :class="$style.special_text">vnode</span> 是组件渲染的 vnode，也就是我们之前说的 vm
+.\_vnode，如果组件的根节点是个普通元素，那么 vm.\_vnode 也是普通的 vnod
+e，这里 <span :class="$style.special_text">createComponent(vnode, insertedVnodeQueue, parentElm, refElm)</span> 的返回值是 false。接下来的过程就和我们上一章一样了，先创建一个父节点占位符，
+然后再遍历所有子 VNode 递归调用 createElm，在遍历的过程中，如果遇到
+子 VNode 是一个组件的 VNode，则重复本节开始的过程，<span :class="$style.special_text">这样通过一个递归
+的方式就可以完整地构建了整个组件树</span>。
+由于我们这个时候传入的 parentElm 是空，所以对组件的插入，在 createComp
+onent 有这么一段逻辑：
+
+```js
+function createComponent(vnode, insertedVnodeQueue, parentElm, refElm) {
+  let i = vnode.data;
+  if (isDef(i)) {
+    // ....
+    if (isDef((i = i.hook)) && isDef((i = i.init))) {
+      i(vnode, false /* hydrating */);
+    }
+    // ...
+    if (isDef(vnode.componentInstance)) {
+      initComponent(vnode, insertedVnodeQueue);
+      insert(parentElm, vnode.elm, refElm);
+      if (isTrue(isReactivated)) {
+        reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm);
+      }
+      return true;
+    }
+  }
+}
+```
+
+在完成组件的整个 patch 过程后，最后执行 <span :class="$style.special_text">insert(parentElm, vnode.elm,
+refElm)</span> 完成组件的 DOM 插入，如果组件 patch 过程中又创建了子组件，那
+么 DOM 的插入顺序是<span :class="$style.special_text">先子后父</span>。
 
 ## 合并配置
 
