@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { apiMenu, guideMenu, leetCodeMenu, vue2Menu } from './menu'
+import { apiMenu, guideMenu, leetCodeMenu, vue2Menu, planMenu } from './menu'
 
 export default defineConfig({
   title: "grantguo",
@@ -27,7 +27,8 @@ export default defineConfig({
       '/guide': guideMenu,
       '/api': apiMenu,
       '/leetcode': leetCodeMenu,
-      '/vue2': vue2Menu
+      '/vue2': vue2Menu,
+      '/plan': planMenu
     },
 
     socialLinks: [
