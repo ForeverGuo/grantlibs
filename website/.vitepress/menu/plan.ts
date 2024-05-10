@@ -12,11 +12,11 @@ export const planMenu = [
     link: '/planTodo/vue3'
   },
   {
-    text: 'java',
+    text: 'Java',
     link: '/planTodo/java'
   },
   {
-    text: 'springBoot',
+    text: 'SpringBoot',
     link: '/planTodo/springBoot'
   }
 ]

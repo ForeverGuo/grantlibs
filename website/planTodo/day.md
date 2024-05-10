@@ -1,5 +1,5 @@
 <div :class="$style.special_text">
-  坚持每日更新学习日志
+  每日学习日志
 </div>
 
 ## 2024-05-10
@@ -9,7 +9,7 @@
 
 <style module>
 .special_text {
-  color: #00BCD4; 
+  color: #FFC107; 
   font-size: 30px; 
   padding: 20px 0;
 }
