@@ -11,4 +11,8 @@ export const vue2Menu = [
     text: '组件化',
     link: '/vue2/component/index'
   },
+  {
+    text: '响应式原理',
+    link: '/vue2/reactive/index'
+  },
 ]

@@ -2324,7 +2324,61 @@ if (isDef(factory.resolved)) {
 
 #### 异步组件加载中
 
+如果异步组件加载中并未返回，这时候会走到这个逻辑：
+
+```js
+if (isTrue(factory.loading) && isDef(factory.loadingComp)) {
+  return factory.loadingComp;
+}
+```
+
+那么则会返回 factory.loadingComp，渲染 loading 组件。
+
 #### 异步组件加载超时
+
+如果超时，则走到了 reject 逻辑，之后逻辑和加载失败一样，渲染 error 组
+件。
+
+#### 异步组件 patch
+
+回到<span :class="$style.red_text"> createComponent </span>的逻辑：
+
+```js
+Ctor = resolveAsyncComponent(asyncFactory, baseCtor, context);
+if (Ctor === undefined) {
+  return createAsyncPlaceholder(asyncFactory, data, context, children, tag);
+}
+```
+
+如果是第一次执行<span :class="$style.red_text"> resolveAsyncComponent </span>，除非使用高级异步组件 <span :class="$style.red_text">0 delay</span> 去
+创建了一个<span :class="$style.red_text"> loading </span>组件，否则返回是<span :class="$style.red_text"> undefiend </span>，接着通
+过<span :class="$style.red_text"> createAsyncPlaceholder </span> 创建一个注释节点作为占位符。它的定义在 src/
+core/vdom/helpers/resolve-async-components.js 中：
+
+```js
+export function createAsyncPlaceholder(
+  factory: Function,
+  data: ?VNodeData,
+  context: Component,
+  children: ?Array<VNode>,
+  tag: ?string
+): VNode {
+  const node = createEmptyVNode();
+  node.asyncFactory = factory;
+  node.asyncMeta = { data, context, children, tag };
+  return node;
+}
+```
+
+实际上就是就是创建了一个占位的注释<span :class="$style.red_text"> VNode </span>，同时把<span :class="$style.red_text"> asyncFactory </span>
+和<span :class="$style.red_text"> asyncMeta </span>赋值给当前 vnode。<br>
+
+当执行<span :class="$style.red_text"> forceRender </span>的时候，会触发组件的重新渲染，那么会再一次执行<span :class="$style.red_text"> resolveAsyncComponent </span>，这时候就会根据不同的情况，可能返回 <span :class="$style.red_text">loading</span>、<span :class="$style.red_text">error</span> 或 成功加载的异步组件，返回值不为<span :class="$style.red_text"> undefined </span>，因此就走正常的组件 <span :class="$style.red_text">render、patch</span> 过程，与组件第一次渲染流程不一样，这个时候是存在新旧 vnode 的，下一章分析组件更新的 patch 过程。
+
+::: tip
+通过以上代码分析，我们对 Vue 的异步组件的实现有了深入的了解，知道了 3 种异步组件的实现方式，并且看到高级异步组件的实现是非常巧妙的，它实现了<span :class="$style.red_text"> loading、resolve、reject、timeout </span> 4 种状态。异步组件实现的本质是 2
+次渲染，除了<span :class="$style.red_text"> 0 delay </span> 的高级异步组件第一次直接渲染成 loading 组件外，其它都是第一次渲染生成一个注释节点，当异步获取组件成功后，再通过<span :class="$style.red_text"> forceRender </span> 强制重新渲染，这样就能正确渲染出我们异步加载的组件了。
+:::
 
 <style module>
 .special_text {
