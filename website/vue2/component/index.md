@@ -705,9 +705,7 @@ export function createComponentInstanceForVnode(
 ```
 
 <span :class="$style.red_text">createComponentInstanceForVnode</span> 函数构造的一个内部组件的参数，然后执行 new vnode.componentOptions.Ctor(options)。这里的 vnode.componentOptions.Ctor
-对应的就是子组件的构造函数，上一节分析了它实际上是继承于 Vue 的一
-个构造器 Sub，相当于<span :class="$style.red_text"> new Sub(options) </span>这里有几个关键参数要注意几个点，
-\_isComponent 为 true 表示它是一个组件，parent 表示当前激活的组件实例。<br>
+对应的就是子组件的构造函数，上一节分析了它实际上是继承于 Vue 的一个构造器 Sub，相当于<span :class="$style.red_text"> new Sub(options) </span>这里有几个关键参数要注意几个点，\_isComponent 为 true 表示它是一个组件，parent 表示当前激活的组件实例。<br>
 所以子组件的实例化实际上就是在这个时机执行的，并且它会执行实例的<span :class="$style.red_text"> \_init </span> 方法，这个过程有一些和之前不同的地方需要挑出来说，代码在 <span :class="$style.red_text">src/core/
 instance/init.js </span> 中：
 
@@ -761,9 +759,7 @@ export function initInternalComponent(
 }
 ```
 
-这个过程我们重点记住以下几个点即可：<span :class="$style.red_text">opts.parent = options.parent、opts.\_parentVnode = parentVnode </span>，它们是把之前我们通
-过 <span :class="$style.red_text">createComponentInstanceForVnode</span> 函数传入的几个参数合并到内部的选项 $
-options 里了。<br>
+这个过程我们重点记住以下几个点即可：<span :class="$style.red_text">opts.parent = options.parent、opts.\_parentVnode = parentVnode </span>，它们是把之前我们通过 <span :class="$style.red_text">createComponentInstanceForVnode </span> 函数传入的几个参数合并到内部的选项 $options 里了。<br>
 由于组件初始化的时候是不传 el 的，因此组件是自己接管了 $mount 的过程，
 这个过程的主要流程在上一章介绍过了，回到组件 init 的过程，componentVNodeHooks 的 init 钩子函数，在完成实例化的 _init 后，接着会执行 <span :class="$style.red_text">child.$mount(hydrating ? vnode.elm : undefined, hydrating)</span> 。这里 hydrating 为 true 一般是服务端渲染的情况，我们只考虑客户端渲染，所
 以这里 $mount 相当于执行 <span :class="$style.red_text">child.$mount(undefined, false)</span>，它最终会调
@@ -837,8 +833,7 @@ Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
 
 <span :class="$style.common_text">\_update</span> 过程中有几个关键的代码，首先 vm.\_vnode = vnode 的逻辑，这
 个 vnode 是通过 vm.\_render() 返回的组件渲染 VNode，vm.\_vnode 和 vm.
-$vnode 的关系就是一种父子关系，用代码表达就是 <span :class="$style.common_text">vm.parent.\_vnode === vm.
-$vnode</span>。 <br>
+$vnode 的关系就是一种父子关系，用代码表达就是 <span :class="$style.common_text">vm.parent.\_vnode === vm.$vnode</span>。 <br>
 
 这个 <span :class="$style.red_text">activeInstance</span> 作用就是保持当前上下文的 Vue 实例，它是
 在 lifecycle 模块的全局变量，定义是<span :class="$style.red_text"> export let activeInstance: any =
@@ -866,13 +861,9 @@ export function initLifecycle(vm: Component) {
 }
 ```
 
-可以看到 <span :class="$style.red_text">vm.$parent</span> 就是用来保留当前 vm 的父实例，并且通过 <span :class="$style.red_text">parent.
-$children.push(vm) </span> 来把当前的 vm 存储到父实例的 $children 中。
-在 vm._update 的过程中，把当前的 vm 赋值给 activeInstance，同时通过<span :class="$style.red_text"> const prevActiveInstance = activeInstance </span> 用 prevActiveInstance 保留上一次
-的 activeInstance。实际上，<span :class="$style.common_text">prevActiveInstance 和当前的 vm 是一个父子关系，
-当一个 vm 实例完成它的所有子树的 patch 或者 update 过程后，
-activeInstance 会回到它的父实例，这样就完美地保证了 createComponentInstan
-ceForVnode 整个深度遍历过程中</span>，我们在实例化子组件的时候能传入当前子组
+可以看到 <span :class="$style.red_text">vm.$parent</span> 就是用来保留当前 vm 的父实例，并且通过 <span :class="$style.red_text">parent.$children.push(vm) </span> 来把当前的 vm 存储到父实例的 $children 中。
+在 vm._update 的过程中，把当前的 vm 赋值给 activeInstance，同时通过<span :class="$style.red_text"> const prevActiveInstance = activeInstance </span> 用 prevActiveInstance 保留上一次的 activeInstance。实际上，<span :class="$style.common_text">prevActiveInstance 和当前的 vm 是一个父子关系，
+当一个 vm 实例完成它的所有子树的 patch 或者 update 过程后，activeInstance 会回到它的父实例，这样就完美地保证了 createComponentInstanceForVnode 整个深度遍历过程中</span>，我们在实例化子组件的时候能传入当前子组
 件的父 Vue 实例，并在 \_init 的过程中，通过 vm.$parent 把这个父子关系保留。 <br>
 
 那么回到 \_update，最后就是调用 **patch** 渲染 VNode 了。
@@ -894,9 +885,7 @@ function patch(oldVnode, vnode, hydrating, removeOnly) {
 }
 ```
 
-这里又回到了本节开始的过程，之前分析过负责渲染成 DOM 的函数
-是 createElm，注意这里我们只传了 2 个参数，所以对应的 parentElm
-是 undefined。我们再来看看它的定义：
+这里又回到了本节开始的过程，之前分析过负责渲染成 DOM 的函数是 createElm，注意这里我们只传了 2 个参数，所以对应的 parentElm 是 undefined。我们再来看看它的定义：
 
 ```js
 function createElm(
@@ -942,14 +931,7 @@ function createElm(
 }
 ```
 
-注意，这里我们传入的 <span :class="$style.special_text">vnode</span> 是组件渲染的 vnode，也就是我们之前说的 vm
-.\_vnode，如果组件的根节点是个普通元素，那么 vm.\_vnode 也是普通的 vnod
-e，这里 <span :class="$style.special_text">createComponent(vnode, insertedVnodeQueue, parentElm, refElm)</span> 的返回值是 false。接下来的过程就和我们上一章一样了，先创建一个父节点占位符，
-然后再遍历所有子 VNode 递归调用 createElm，在遍历的过程中，如果遇到
-子 VNode 是一个组件的 VNode，则重复本节开始的过程，<span :class="$style.special_text">这样通过一个递归
-的方式就可以完整地构建了整个组件树</span>。
-由于我们这个时候传入的 parentElm 是空，所以对组件的插入，在 createComp
-onent 有这么一段逻辑：
+注意，这里我们传入的 vnode 是组件渲染的 vnode，也就是我们之前说的 vm.vnode，如果组件的根节点是个普通元素，那么 vm.vnode 也是普通的 vnode，这里 createComponent(vnode, insertedVnodeQueue, parentElm,refElm) 的返回值 false。接下来的过程就和我们上一章一样了，先创建一个父节点占位符，然后再遍历所有子 VNode 递归调用 createElm，在遍历的过程中，如果遇到子 VNode 是一个组件的 VNode，则重复本节开始的过程，这样通过一个递归的方式就可以完整地构建了整个组件树。由于我们这个时候传入的 parentElm 是空，所以对组件的插入，在 createComponent 有这么一段逻辑：<br/>
 
 ```js
 function createComponent(vnode, insertedVnodeQueue, parentElm, refElm) {
@@ -973,16 +955,1376 @@ function createComponent(vnode, insertedVnodeQueue, parentElm, refElm) {
 ```
 
 在完成组件的整个 patch 过程后，最后执行 <span :class="$style.special_text">insert(parentElm, vnode.elm,
-refElm)</span> 完成组件的 DOM 插入，如果组件 patch 过程中又创建了子组件，那
-么 DOM 的插入顺序是<span :class="$style.special_text">先子后父</span>。
+refElm)</span> 完成组件的 DOM 插入，如果组件 patch 过程中又创建了子组件，那么 DOM 的插入顺序是<span :class="$style.special_text">先子后父</span>。
 
 ## 合并配置
 
+通过之前章节的源码分析我们知道，<span :class="$style.red_text">new Vue</span> 的过程通常有 2 种场景，一种是
+外部我们的代码主动调用 <span :class="$style.red_text">new Vue(options)</span> 的方式实例化一个 Vue 对象；另
+一种是上一节分析的组件过程中内部通过 <span :class="$style.red_text">new Vue(options)</span> 实例化子组件。
+无论哪种场景，都会执行实例的 <span :class="$style.red_text">\_init(options)</span> 方法，它首先会执行一个 me
+rge options 的逻辑，相关的代码在 src/core/instance/init.js 中：
+
+```js
+Vue.prototype._init = function (options?: Object) {
+  // merge options
+  if (options && options._isComponent) {
+    // optimize internal component instantiation
+    // since dynamic options merging is pretty slow, and none of the
+    // internal component options needs special treatment.
+    initInternalComponent(vm, options);
+  } else {
+    vm.$options = mergeOptions(
+      resolveConstructorOptions(vm.constructor),
+      options || {},
+      vm
+    );
+  }
+  // ...
+};
+```
+
+可以看到不同场景对于 options 的合并逻辑是不一样的，并且传入的 options 值也有非常大的不同，接下来我会分开介绍 2 种场景的 options 合并过程。为了更直观，我们可以举个简单的示例：
+
+```js
+import Vue from "vue";
+let childComp = {
+  template: "<div>{{msg}}</div>",
+  created() {
+    console.log("child created");
+  },
+  mounted() {
+    console.log("child mounted");
+  },
+  data() {
+    return {
+      msg: "Hello Vue",
+    };
+  },
+};
+Vue.mixin({
+  created() {
+    console.log("parent created");
+  },
+});
+let app = new Vue({
+  el: "#app",
+  render: (h) => h(childComp),
+});
+```
+
+### 外部调用场景
+
+当执行 new Vue 的时候，在执行 <span :class="$style.red_text">this.\_init(options)</span> 的时候，就会执行如下
+逻辑去<span :class="$style.red_text">合并 options</span>：
+
+```js
+vm.$options = mergeOptions(
+  resolveConstructorOptions(vm.constructor),
+  options || {},
+  vm
+);
+```
+
+这里通过调用 <span :class="$style.red_text">mergeOptions</span> 方法来合并，它实际上就是把 resolveConstructorOptions(vm.constructor) 的返回值和 options 做合并，resolveConstructorOptions
+的实现先不考虑，在这个场景下，它还是简单返回 vm.constructor.options，相当于 <span :class="$style.red_text">Vue.options</span>，那么这个值又是什么呢，其实在 <span :class="$style.red_text">initGlobalAPI(Vue)</span>的时候定义了这个值，代码在 src/core/global-api/index.js 中：
+
+```js
+export function initGlobalAPI(Vue: GlobalAPI) {
+  // ...
+  Vue.options = Object.create(null);
+  ASSET_TYPES.forEach((type) => {
+    Vue.options[type + "s"] = Object.create(null);
+  });
+  // this is used to identify the "base" constructor to extend all plain - object;
+  // components with in Weex's multi-instance scenarios.
+  Vue.options._base = Vue;
+  extend(Vue.options.components, builtInComponents);
+  // ...
+}
+```
+
+首先通过 <span :class="$style.red_text">Vue.options = Object.create(null)</span> 创建一个空对象，然后遍
+历 ASSET_TYPES，ASSET_TYPES 的定义在 src/shared/constants.js 中：
+
+```js
+export const ASSET_TYPES = ["component", "directive", "filter"];
+// 相当于
+Vue.options.components = {};
+Vue.options.directives = {};
+Vue.options.filters = {};
+```
+
+接着执行了 <span :class="$style.red_text">Vue.options.\_base = Vue</span>，它的作用在上节实例化子组件的时
+候介绍了。<br>
+最后通过 <span :class="$style.red_text">extend(Vue.options.components, builtInComponents)</span> 把一些内置组件扩展到 Vue.options.components 上，Vue 的内置组件目前有
+
+```md
+<keep-alive>、<transition> 和 <transition-group>
+组件， 这也就是为什么我们在其它组件中使用
+<keep-alive /> 组件不需要注册的原因，这块儿后续介绍
+<keep-alive> 组件的时候会详细讲。
+```
+
+那么回到<span :class="$style.red_text">mergeOptions</span>这个函数，它的定义在 <span :class="$style.red_text">src/core/util/options.js</span> 中：
+
+```js
+/**
+ * 合并两个选项，出现相同配置项时，子选项会覆盖父选项的配置
+ */
+export function mergeOptions(
+  parent: Object,
+  child: Object,
+  vm?: Component
+): Object {
+  if (process.env.NODE_ENV !== "production") {
+    checkComponents(child);
+  }
+
+  if (typeof child === "function") {
+    child = child.options;
+  }
+
+  // 标准化 props、inject、directive 选项，方便后续程序的处理
+  normalizeProps(child, vm);
+  normalizeInject(child, vm);
+  normalizeDirectives(child);
+
+  // 处理原始 child 对象上的 extends 和 mixins，分别执行 mergeOptions，将这些继承而来的选项合并到 parent
+  // mergeOptions 处理过的对象会含有 _base 属性
+  if (!child._base) {
+    if (child.extends) {
+      parent = mergeOptions(parent, child.extends, vm);
+    }
+    if (child.mixins) {
+      for (let i = 0, l = child.mixins.length; i < l; i++) {
+        parent = mergeOptions(parent, child.mixins[i], vm);
+      }
+    }
+  }
+
+  const options = {};
+  let key;
+  // 遍历 父选项
+  for (key in parent) {
+    mergeField(key);
+  }
+
+  // 遍历 子选项，如果父选项不存在该配置，则合并，否则跳过，因为父子拥有同一个属性的情况在上面处理父选项时已经处理过了，用的子选项的值
+  for (key in child) {
+    if (!hasOwn(parent, key)) {
+      mergeField(key);
+    }
+  }
+
+  // 合并选项，childVal 优先级高于 parentVal
+  function mergeField(key) {
+    // strat 是合并策略函数，如何 key 冲突，则 childVal 会 覆盖 parentVal
+    const strat = strats[key] || defaultStrat;
+    // 值为如果 childVal 存在则优先使用 childVal，否则使用 parentVal
+    options[key] = strat(parent[key], child[key], vm, key);
+  }
+  return options;
+}
+```
+
+<span :class="$style.red_text">mergeOptions</span> 主要功能就是把 parent 和 child 这两个对象根据一些合并策略，合并成一个新对象并返回。比较核心的几步，先递归把<span :class="$style.red_text"> extends 和 mixixns 合并到 parent 上</span>，然后遍历 parent，调用 mergeField，然后再遍历 child，如果 key 不在 parent 的自身属性上，则调用 mergeField。<br>
+这里有意思的是 mergeField 函数，它对不同的 key 有着不同的合并策略。举
+例来说，对于生命周期函数，它的合并策略是这样的：
+
+```js
+/**
+ * Hooks and props are merged as arrays.
+ */
+function mergeHook(
+  parentVal: ?Array<Function>,
+  childVal: ?Function | ?Array<Function>
+): ?Array<Function> {
+  const res = childVal
+    ? parentVal
+      ? parentVal.concat(childVal)
+      : Array.isArray(childVal)
+      ? childVal
+      : [childVal]
+    : parentVal;
+  return res ? dedupeHooks(res) : res;
+}
+
+// 这里父子组件合并并不会去重，只有全局钩子函数合并会达到去重效果
+function dedupeHooks(hooks) {
+  const res = [];
+  for (let i = 0; i < hooks.length; i++) {
+    if (res.indexOf(hooks[i]) === -1) {
+      res.push(hooks[i]);
+    }
+  }
+  return res;
+}
+
+LIFECYCLE_HOOKS.forEach((hook) => {
+  strats[hook] = mergeHook;
+});
+
+export const LIFECYCLE_HOOKS = [
+  "beforeCreate",
+  "created",
+  "beforeMount",
+  "mounted",
+  "beforeUpdate",
+  "updated",
+  "beforeDestroy",
+  "destroyed",
+  "activated",
+  "deactivated",
+  "errorCaptured",
+  "serverPrefetch",
+];
+```
+
+这里定义了 Vue.js 所有的钩子函数名称，所以对于钩子函数，他们的合并策略都是 <span :class="$style.red_text">mergeHook</span>函数。
+这个函数的实现也非常有意思，用了一个多层 3 元运算符，逻辑就是如果不存在 childVal ，就返回 parentVal；否则再判断是否存在 parentVal，如果存在就把 childVal 添加到 parentVal 后返回新数组；否
+则返回 childVal 的数组。所以回到 mergeOptions 函数，一旦 parent 和 chi
+ld 都定义了相同的钩子函数，那么它们会把 2 个钩子函数合并成一个数组。<br>
+
+因此，在我们当前这个 case 下，执行完如下合并后：
+
+```js
+vm.$options = mergeOptions(
+  resolveConstructorOptions(vm.constructor),
+  options || {},
+  vm
+);
+```
+
+<span :class="$style.red_text">vm.$options</span>的内容格式是：
+
+```js
+vm.$options = {
+  components: {},
+  created: [
+    function created() {
+      console.log("parent created");
+    },
+  ],
+  directives: {},
+  filters: {},
+  _base: function Vue(options) {
+    // ...
+  },
+  el: "#app",
+  render: function (h) {
+    //...
+  },
+};
+```
+
+### 组件场景
+
+由于组件的构造函数是通过<span :class="$style.red_text"> Vue.extend </span>继承自 Vue 的，先回顾一下这个过程，代码定义在 <span :class="$style.red_text">src/core/global-api/extend.js</span> 中。
+
+```js
+/**
+ * Class inheritance
+ */
+Vue.extend = function (extendOptions: Object): Function {
+  // ...
+  Sub.options = mergeOptions(Super.options, extendOptions);
+  // ...
+  // keep a reference to the super options at extension time.
+  // later at instantiation we can check if Super's options have
+  // been updated.
+  Sub.superOptions = Super.options;
+  Sub.extendOptions = extendOptions;
+  Sub.sealedOptions = extend({}, Sub.options);
+  // ...
+  return Sub;
+};
+```
+
+这里只保留关键逻辑，这里的<span :class="$style.red_text"> extendOptions </span>对应的就是前面定义的组件对象，它会和 Vue.options 合并到 Sub.opitons 中。<br>
+接下来我们再回忆一下子组件的初始化过程，代码定义在 src/core/vdom/create-component.js 中：
+
+```js
+export function createComponentInstanceForVnode(
+  vnode: any, // we know it's MountedComponentVNode but flow doesn't
+  parent: any // activeInstance in lifecycle state
+): Component {
+  const options: InternalComponentOptions = {
+    _isComponent: true,
+    _parentVnode: vnode,
+    parent,
+  };
+  // ...
+  return new vnode.componentOptions.Ctor(options);
+}
+```
+
+这里的 <span :class="$style.red_text">vnode.componentOptions.Ctor</span> 就是指向 <span :class="$style.red_text">Vue.extend</span> 的返回值 Sub， 所
+以 执行 <span :class="$style.red_text">new vnode.componentOptions.Ctor(options)</span> 接着执
+行 <span :class="$style.red_text">this.\_init(options)</span>，因为 <span :class="$style.red_text">options.\_isComponent</span> 为 true，那么合并 options 的过程走到了 <span :class="$style.red_text">initInternalComponent(vm, options)</span> 逻辑。先来看一下它的代码实现，在 src/core/instance/init.js 中：
+
+```js
+export function initInternalComponent(
+  vm: Component,
+  options: InternalComponentOptions
+) {
+  const opts = (vm.$options = Object.create(vm.constructor.options));
+  // doing this because it's faster than dynamic enumeration.
+  const parentVnode = options._parentVnode;
+  opts.parent = options.parent;
+  opts._parentVnode = parentVnode;
+  const vnodeComponentOptions = parentVnode.componentOptions;
+  opts.propsData = vnodeComponentOptions.propsData;
+  opts._parentListeners = vnodeComponentOptions.listeners;
+  opts._renderChildren = vnodeComponentOptions.children;
+  opts._componentTag = vnodeComponentOptions.tag;
+  if (options.render) {
+    opts.render = options.render;
+    opts.staticRenderFns = options.staticRenderFns;
+  }
+}
+```
+
+<span :class="$style.red_text">initInternalComponent</span> 方法首先执行<span :class="$style.red_text"> const opts = vm.$options =
+Object.create(vm.constructor.options)</span>，这里的 vm.construction 就是子组件的
+构造函数 Sub，相当于<span :class="$style.red_text"> vm.$options = Sub.options</span>。
+接着又把实例化子组件传入的<span :class="$style.red_text">子组件父 VNode 实例 parentVnode</span>、<span :class="$style.red_text">子组件的
+父 Vue 实例 parent</span> 保存到 vm.$options 中，另外还保留了 parentVnode 配置
+中的如 propsData 等其它的属性。
+这么看来，initInternalComponent 只是做了简单一层对象赋值，并不涉及到递归、
+合并策略等复杂逻辑。
+
+vm.$options 执行 initInternalComponent(vm, options)合并后内容大概是：
+
+```js
+vm.$options = {
+  parent: Vue /*父 Vue 实例*/,
+  propsData: undefined,
+  _componentTag: undefined,
+  _parentVnode: VNode /*父 VNode 实例*/,
+  _renderChildren: undefined,
+  __proto__: {
+    components: {},
+    directives: {},
+    filters: {},
+    _base: function Vue(options) {
+      //...
+    },
+    _Ctor: {},
+    created: [
+      function created() {
+        console.log("parent created");
+      },
+      function created() {
+        console.log("child created");
+      },
+    ],
+    mounted: [
+      function mounted() {
+        console.log("child mounted");
+      },
+    ],
+    data() {
+      return {
+        msg: "Hello Vue",
+      };
+    },
+    template: "<div>{{msg}}</div>",
+  },
+};
+```
+
+> [!TIP]
+> Vue 初始化阶段对于 options 的合并过程就介绍完了，我们需要知
+> 道对于 options 的合并有 2 种方式，子组件初始化过程通
+> 过 initInternalComponent 方式要比外部初始化 Vue 通过 mergeOptions 的过程
+> 要快，合并完的结果保留在 vm.$options 中。
+
 ## 生命周期
+
+每个 Vue 实例在被创建之前都要经过一系列的初始化过程。例如需要设置<span :class="$style.red_text">数据监听、编译模板、挂载实例到 DOM、在数据变化时更新 DOM </span>等。同时在这个过程中也会运行一些叫做生命周期钩子的函数，给予用户机会在一些特定的场景下添加他们自己的代码。<br>
+
+在我们实际项目开发过程中，会非常频繁地和 Vue 组件的生命周期打交道，接
+下来我们就从源码的角度来看一下这些生命周期的钩子函数是如何被执行的。
+源码中最终执行生命周期的函数都是调用 callHook 方法，它的定义在 src/core/instance/lifecycle 中：
+
+```js
+/**
+ * callHook(vm, 'mounted')
+ * 执行实例指定的生命周期钩子函数
+ * 如果实例设置有对应的 Hook Event，比如：<comp @hook:mounted="method" />，执行完生命周期函数之后，触发该事件的执行
+ * @param {*} vm 组件实例
+ * @param {*} hook 生命周期钩子函数
+ */
+export function callHook(vm: Component, hook: string) {
+  // 打开依赖收集
+  pushTarget();
+  // 从实例配置对象中获取指定钩子函数，比如 mounted
+  const handlers = vm.$options[hook];
+  // mounted hook
+  const info = `${hook} hook`;
+  if (handlers) {
+    // 通过 invokeWithErrorHandler 执行生命周期钩子
+    for (let i = 0, j = handlers.length; i < j; i++) {
+      invokeWithErrorHandling(handlers[i], vm, null, vm, info);
+    }
+  }
+  // Hook Event，如果设置了 Hook Event，比如 <comp @hook:mounted="method" />，则通过 $emit 触发该事件
+  // vm._hasHookEvent 标识组件是否有 hook event，这是在 vm.$on 中处理组件自定义事件时设置的
+  if (vm._hasHookEvent) {
+    // vm.$emit('hook:mounted')
+    vm.$emit("hook:" + hook);
+  }
+  // 关闭依赖收集
+  popTarget();
+}
+```
+
+<span :class="$style.common_text">callHook</span> 函数的逻辑很简单，根据传入的字符串 hook，去拿到 <span :class="$style.common_text">vm.$options[hook]</span> 对应的回调函数数组，然后遍历执行，执行的时候把 vm 作为函数执行的上下文。<br>
+在上一节中，我们详细地介绍了 Vue.js 合并 options 的过程，各个阶段的生
+命周期的函数也被合并到 vm.$options 里，并且是一个数组。因此 <span :class="$style.common_text">callhook</span>
+函数的功能就是调用某个生命周期钩子注册的所有回调函数。
+了解了生命周期的执行方式后，接下来我们会具体介绍每一个生命周期函数它
+的调用时机。
+
+### beforeCreate & created
+
+<span :class="$style.common_text">beforeCreate</span> 和 <span :class="$style.common_text">created</span> 函数都是在实例化 Vue 的阶段，在 \_init 方法中执
+行的，它的定义在 src/core/instance/init.js 中：
+
+```js
+Vue.prototype._init = function (options?: Object) {
+  // ...
+  initLifecycle(vm);
+  initEvents(vm);
+  initRender(vm);
+  callHook(vm, "beforeCreate");
+  initInjections(vm); // resolve injections before data/props
+  initState(vm);
+  initProvide(vm); // resolve provide after data/props
+  callHook(vm, "created");
+  // ...
+};
+```
+
+可以看到 <span :class="$style.red_text">beforeCreate</span> 和 <span :class="$style.red_text">created</span> 的钩子调用是在 initState 的前后，
+initState 的作用是初始化 <span :class="$style.red_text">props</span>、<span :class="$style.red_text">data</span>、<span :class="$style.red_text">methods</span>、<span :class="$style.red_text">watch</span>、<span :class="$style.red_text">computed</span> 等属性，之
+后我们会详细分析。那么显然 beforeCreate 的钩子函数中就不能获取到 prop
+s、data 中定义的值，也不能调用 methods 中定义的函数。<br>
+
+在这俩个钩子函数执行的时候，并没有渲染 DOM，所以我们也不能够访问 DOM，一般来说，如果组件在加载的时候需要和后端有交互，放在这俩个钩子函数执行都可以，如果是需要访问 props、data 等数据的话，就需要使用 cre
+ated 钩子函数。
+
+### beforeMount & mounted
+
+顾名思义，<span :class="$style.red_text">beforeMount</span> 钩子函数发生在 <span :class="$style.red_text">mount</span>，也就是 DOM 挂载之前，它的
+调用时机是在<span :class="$style.red_text">mountComponent</span> 函数中，定义在 src/core/instance/lifecycle.js 中：
+
+```js
+export function mountComponent (
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+  vm.$el = el
+  // ...
+  callHook(vm, 'beforeMount')
+  let updateComponent
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== 'production' && config.performance &&
+  mark) {
+  updateComponent = () => {
+    const name = vm._name
+    const id = vm._uid
+    const startTag = `vue-perf-start:${id}`
+    const endTag = `vue-perf-end:${id}`
+    mark(startTag)
+    const vnode = vm._render()
+    mark(endTag)
+    measure(`vue ${name} render`, startTag, endTag)
+    mark(startTag)
+    vm._update(vnode, hydrating)
+    mark(endTag)
+    measure(`vue ${name} patch`, startTag, endTag)
+  }
+  } else {
+    updateComponent = () => {
+      vm._update(vm._render(), hydrating)
+    }
+  }
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g.
+  inside child
+  // component's mounted hook), which relies on vm._watcher being
+  already defined
+  new Watcher(vm, updateComponent, noop, {
+    before () {
+      if (vm._isMounted) {
+        callHook(vm, 'beforeUpdate')
+      }
+    }
+  }, true /* isRenderWatcher */)
+  hydrating = false
+  // manually mounted instance, call mounted on self
+  // mounted is called for render-created child components in its
+  inserted hook
+  if (vm.$vnode == null) {
+    vm._isMounted = true
+    callHook(vm, 'mounted')
+  }
+  return vm
+}
+```
+
+在执行<span :class="$style.red_text"> vm.\_render()</span> 函数渲染 VNode 之前，执行了 beforeMount 钩子函数，
+在执行完 vm.\_update() 把 <span :class="$style.red_text">VNode patch 到真实 DOM 后</span>，执行 <span :class="$style.red_text"> mouted </span> 钩子。
+注意，这里对 mouted 钩子函数执行有一个判断逻辑，<span :class="$style.red_text">vm.$vnode</span> 如果为 nul
+l，则表明这不是一次组件的初始化过程，而是我们通过外部 new Vue 初始化
+过程。那么对于组件，它的 mounted 时机在哪儿呢？ <br>
+组件的 VNode patch 到 DOM 后，会执行 <span :class="$style.red_text">invokeInsertHook</span> 函数，把 insertedVnodeQueue 里保存的钩子函数依次执行
+一遍，它的定义在 src/core/vdom/patch.js 中：
+
+```js
+function invokeInsertHook(vnode, queue, initial) {
+  // delay insert hooks for component root nodes, invoke them after the
+  // element is really inserted
+  if (isTrue(initial) && isDef(vnode.parent)) {
+    vnode.parent.data.pendingInsert = queue;
+  } else {
+    for (let i = 0; i < queue.length; ++i) {
+      queue[i].data.hook.insert(queue[i]);
+    }
+  }
+}
+```
+
+该函数会执行 insert 这个钩子函数，对于组件而言，insert 钩子函数的定义
+在 src/core/vdom/create-component.js 中的 componentVNodeHooks 中：
+
+```js
+const componentVNodeHooks = {
+  // ...
+  insert(vnode: MountedComponentVNode) {
+    const { context, componentInstance } = vnode;
+    if (!componentInstance._isMounted) {
+      componentInstance._isMounted = true;
+      callHook(componentInstance, "mounted");
+    }
+    // ...
+  },
+};
+```
+
+我们可以看到，每个子组件都是在这个钩子函数中执行 mouted 钩子函数，并
+且我们之前分析过，<span :class="$style.red_text">insertedVnodeQueue</span> 的添加顺序是先子后父，所以对于同步渲染的子组件而言，<span :class="$style.red_text">mounted</span> 钩子函数的执行顺序也是先子后父。
+
+### beforeUpdate & updated
+
+顾名思义，<span :class="$style.red_text">beforeUpdate</span> 和 <span :class="$style.red_text">updated</span> 的钩子函数执行时机都应该是在数据更新
+的时候，beforeUpdate 的执行时机是在渲染 Watcher 的 before 函数中，我们刚才提到
+过：
+
+```js
+export function mountComponent(
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+  // ...
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g.inside child
+  // component's mounted hook), which relies on vm._watcher being already defined
+  new Watcher(
+    vm,
+    updateComponent,
+    noop,
+    {
+      before() {
+        if (vm._isMounted) {
+          callHook(vm, "beforeUpdate");
+        }
+      },
+    },
+    true /* isRenderWatcher */
+  );
+  // ...
+}
+```
+
+注意这里有个判断，也就是在组件已经 mounted 之后，才会去调用这个钩子
+函数。<br>
+<span :class="$style.red_text">update</span> 的执行时机是在 <span :class="$style.red_text">flushSchedulerQueue</span> 函数调用的时候, 它的定义
+在 src/core/observer/scheduler.js 中：
+
+```js
+function flushSchedulerQueue() {
+  // ...
+  // 获取到 updatedQueue
+  callUpdatedHooks(updatedQueue);
+}
+function callUpdatedHooks(queue) {
+  let i = queue.length;
+  while (i--) {
+    const watcher = queue[i];
+    const vm = watcher.vm;
+    if (vm._watcher === watcher && vm._isMounted) {
+      callHook(vm, "updated");
+    }
+  }
+}
+```
+
+<span :class="$style.red_text">flushSchedulerQueue</span> 函数我们之后会详细介绍，可以先大概了解一下，
+<span :class="$style.red_text">updatedQueue</span> 是 更新了的 wathcer 数组，那么在 callUpdatedHooks 函数中，它对这些数组做遍历，只有满足当前 <span :class="$style.red_text">watcher</span> 为 vm.\_watcher 以及组件已经 <span :class="$style.red_text">mounted</span> 这两个条件，才会执行 updated 钩子函数。<br>
+
+我们之前提过，在组件 mount 的过程中，会实例化一个渲染的<span :class="$style.red_text"> Watcher </span> 去监
+听 vm 上的数据变化重新渲染，这断逻辑发生在 mountComponent 函数执行的时候：
+
+```js
+export function mountComponent(
+  vm: Component,
+  el: ?Element,
+  hydrating?: boolean
+): Component {
+  // ...
+  // 这里是简写
+  let updateComponent = () => {
+    vm._update(vm._render(), hydrating);
+  };
+  new Watcher(
+    vm,
+    updateComponent,
+    noop,
+    {
+      before() {
+        if (vm._isMounted) {
+          callHook(vm, "beforeUpdate");
+        }
+      },
+    },
+    true /* isRenderWatcher */
+  );
+  // ...
+}
+```
+
+那么在实例化 Watcher 的过程中，在它的构造函数里会判断 isRenderWatche
+r，接着把当前 watcher 的实例赋值给 vm.\_watcher，定义在 src/core/
+observer/watcher.js 中：
+
+```js
+export default class Watcher {
+  // ...
+  constructor(
+    vm: Component,
+    expOrFn: string | Function,
+    cb: Function,
+    options?: ?Object,
+    isRenderWatcher?: boolean
+  ) {
+    this.vm = vm;
+    if (isRenderWatcher) {
+      vm._watcher = this;
+    }
+    vm._watchers.push(this);
+    // ...
+  }
+}
+```
+
+同时，还把当前 <span :class="$style.red_text">wathcer</span> 实例 push 到 <span :class="$style.red_text">vm.\_watchers</span> 中，<span :class="$style.red_text">vm.\_watcher</span> 是专门
+用来监听 vm 上数据变化然后重新渲染的，所以它是一个<span :class="$style.red_text">渲染相关的 watcher</span>，因此在 <span :class="$style.red_text">callUpdatedHooks</span> 函数中，只有 <span :class="$style.red_text">vm.\_watcher</span> 的回调执行完毕后，才会执行 updated 钩子函数。
+
+### beforeDestroy & destroyed
+
+顾名思义，<span :class="$style.red_text">beforeDestroy</span> 和 <span :class="$style.red_text">destroyed</span> 钩子函数的执行时机在组件销毁的阶段，组件的销毁过程之后会详细介绍，最终会调用 <span :class="$style.red_text">$destroy</span> 方法，它的定义在 src/core/instance/lifecycle.js 中：
+
+```js
+/**
+ * 完全销毁一个实例。清理它与其它实例的连接，解绑它的全部指令及事件监听器。
+ */
+Vue.prototype.$destroy = function () {
+  const vm: Component = this;
+  if (vm._isBeingDestroyed) {
+    // 表示实例已经销毁
+    return;
+  }
+  // 调用 beforeDestroy 钩子
+  callHook(vm, "beforeDestroy");
+  // 标识实例已经销毁
+  vm._isBeingDestroyed = true;
+  // 把自己从老爹（$parent)的肚子里（$children）移除
+  const parent = vm.$parent;
+  if (parent && !parent._isBeingDestroyed && !vm.$options.abstract) {
+    remove(parent.$children, vm);
+  }
+  // 移除依赖监听
+  if (vm._watcher) {
+    vm._watcher.teardown();
+  }
+  let i = vm._watchers.length;
+  while (i--) {
+    vm._watchers[i].teardown();
+  }
+  // remove reference from data ob
+  // frozen object may not have observer.
+  if (vm._data.__ob__) {
+    vm._data.__ob__.vmCount--;
+  }
+  // call the last hook...
+  vm._isDestroyed = true;
+  // 调用 __patch__，销毁节点
+  vm.__patch__(vm._vnode, null);
+  // 调用 destroyed 钩子
+  callHook(vm, "destroyed");
+  // 关闭实例的所有事件监听
+  vm.$off();
+  // remove __vue__ reference
+  if (vm.$el) {
+    vm.$el.__vue__ = null;
+  }
+  // release circular reference (#6759)
+  if (vm.$vnode) {
+    vm.$vnode.parent = null;
+  }
+};
+```
+
+<span :class="$style.red_text">beforeDestroy</span> 钩子函数的执行时机是在 <span :class="$style.red_text">$destroy</span> 函数执行最开始的地方，接
+着执行了一系列的销毁动作，包括从 <span :class="$style.red_text">parent</span> 的 <span :class="$style.red_text">$children</span> 中删掉自身，删除watcher，当前渲染的 VNode 执行销毁钩子函数等，执行完毕后再调用 <span :class="$style.red_text">destroy</span> 钩子函数。
+在 $destroy 的执行过程中，它又会执行 vm.**patch**(vm.\_vnode, null) 触发
+它子组件的销毁钩子函数，这样一层层的递归调用，所以 <span :class="$style.red_text">destroy</span> 钩子函数执行顺序是先子后父，和 mounted 过程一样。
+
+### activated & deactivated
+
+activated 和 deactivated 钩子函数是专门为 keep-alive 组件定制的钩子，这里先做个标记，后面详细介绍
 
 ## 组件注册
 
+在 Vue.js 中，除了它内置的组件如 keep-alive、component、transition、transition-group 等，其它用户自定义组件在使
+用前必须注册。很多同学在开发过程中可能会遇到如下报错信息：
+
+```md
+'Unknown custom element: <xxx> - did you register the component
+correctly?
+For recursive components, make sure to provide the "name" option.'
+```
+
+一般报这个错的原因都是我们使用了未注册的组件。Vue.js 提供了 2 种组件的注册方式，全局注册和局部注册。
+
+### 全局注册
+
+要注册一个全局组件，可以使用 <span :class="$style.red_text">Vue.component(tagName, options)</span>。例如：
+
+```js
+Vue.component("my-component", {
+  // 选项
+});
+```
+
+那么，<span :class="$style.red_text">Vue.component</span> 函数是在什么时候定义的呢，它的定义过程发生在最开始
+初始化 Vue 的全局函数的时候，代码在 src/core/global-api/assets.js 中：
+
+```js
+/* @flow */
+
+import { ASSET_TYPES } from "shared/constants";
+import { isPlainObject, validateComponentName } from "../util/index";
+
+export function initAssetRegisters(Vue: GlobalAPI) {
+  /**
+   * 定义 Vue.component、Vue.filter、Vue.directive 这三个方法
+   * 这三个方法所做的事情是类似的，就是在 this.options.xx 上存放对应的配置
+   * 比如 Vue.component(compName, {xx}) 结果是 this.options.components.compName = 组件构造函数
+   * ASSET_TYPES = ['component', 'directive', 'filter']
+   */
+  ASSET_TYPES.forEach((type) => {
+    /**
+     * 比如：Vue.component(name, definition)
+     * @param {*} id name
+     * @param {*} definition 组件构造函数或者配置对象
+     * @returns 返回组件构造函数
+     */
+    Vue[type] = function (
+      id: string,
+      definition: Function | Object
+    ): Function | Object | void {
+      if (!definition) {
+        return this.options[type + "s"][id];
+      } else {
+        /* istanbul ignore if */
+        if (process.env.NODE_ENV !== "production" && type === "component") {
+          validateComponentName(id);
+        }
+        if (type === "component" && isPlainObject(definition)) {
+          // 如果组件配置中存在 name，则使用，否则直接使用 id
+          definition.name = definition.name || id;
+          // extend 就是 Vue.extend，所以这时的 definition 就变成了 组件构造函数，使用时可直接 new Definition()
+          definition = this.options._base.extend(definition);
+        }
+        if (type === "directive" && typeof definition === "function") {
+          definition = { bind: definition, update: definition };
+        }
+        // this.options.components[id] = definition
+        // 在实例化时通过 mergeOptions 将全局注册的组件合并到每个组件的配置对象的 components 中
+        this.options[type + "s"][id] = definition;
+        return definition;
+      }
+    };
+  });
+}
+```
+
+函数首先遍历 <span :class="$style.red_text">ASSET_TYPES</span>，得到 type 后挂载到 <span :class="$style.red_text">Vue</span> 上 。ASSET_TYPES 的定义在 src/shared/constants.js 中：
+
+```js
+export const ASSET_TYPES = ["component", "directive", "filter"];
+```
+
+所以实际上 Vue 是初始化了 3 个全局函数，并且如果 type 是 component 且 definition 是一个对象的话，通过 <span :class="$style.red_text">this.opitons.\_base.extend</span>， 相当
+于 <span :class="$style.red_text">Vue.extend</span> 把这个对象转换成一个继承于 <span :class="$style.red_text">Vue 的构造函数</span>，最后通过 <span :class="$style.common_text">this.options[type + 's'][id] = definition</span> 把它挂载
+到 <span :class="$style.common_text">Vue.options.components</span> 上。<br>
+由于每个组件的创建都是通过 Vue.extend 继承而来，我们之前分析过在继承的过程中有这么一段逻辑：
+
+```js
+Sub.options = mergeOptions(Super.options, extendOptions);
+```
+
+也就是说它会把 <span :class="$style.red_text">Vue.options</span> 合并到 <span :class="$style.red_text">Sub.options</span>，也就是组件的 optinons 上， 然后在组件的实例化阶段，会执行 <span :class="$style.red_text">merge options</span> 逻辑，把 Sub.options.components 合并到 <span :class="$style.red_text">vm.$options.components</span> 上。<br>
+然后在创建 vnode 的过程中，会执行 \_createElement 方法，再来回顾一下这部分的逻辑，它的定义在 src/core/vdom/create-element.js 中：
+
+```js
+export function _createElement(
+  context: Component,
+  tag?: string | Class<Component> | Function | Object,
+  data?: VNodeData,
+  children?: any,
+  normalizationType?: number
+): VNode | Array<VNode> {
+  // ...
+  let vnode, ns;
+  if (typeof tag === "string") {
+    let Ctor;
+    ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
+    if (config.isReservedTag(tag)) {
+      // platform built-in elements
+      vnode = new VNode(
+        config.parsePlatformTagName(tag),
+        data,
+        children,
+        undefined,
+        undefined,
+        context
+      );
+    } else if (
+      isDef((Ctor = resolveAsset(context.$options, "components", tag)))
+    ) {
+      // component
+      vnode = createComponent(Ctor, data, context, children, tag);
+    } else {
+      // unknown or unlisted namespaced elements
+      // check at runtime because it may get assigned a namespace when its;
+      // parent normalizes children
+      vnode = new VNode(tag, data, children, undefined, undefined, context);
+    }
+  } else {
+    // direct component options / constructor
+    vnode = createComponent(tag, data, context, children);
+  }
+  // ...
+}
+```
+
+这里有一个判断逻辑 <span :class="$style.red_text">isDef(Ctor = resolveAsset(context.$options,
+'components', tag))</span>，先来看一下 <span :class="$style.red_text">resolveAsset</span> 的定义，在 src/core/utils/options.js 中：
+
+```js
+/**
+ * Resolve an asset.
+ * This function is used because child instances need access
+ * to assets defined in its ancestor chain.
+ */
+export function resolveAsset(
+  options: Object,
+  type: string,
+  id: string,
+  warnMissing?: boolean
+): any {
+  /* istanbul ignore if */
+  if (typeof id !== "string") {
+    return;
+  }
+  const assets = options[type];
+  // check local registration variations first
+  if (hasOwn(assets, id)) return assets[id];
+  const camelizedId = camelize(id);
+  if (hasOwn(assets, camelizedId)) return assets[camelizedId];
+  const PascalCaseId = capitalize(camelizedId);
+  if (hasOwn(assets, PascalCaseId)) return assets[PascalCaseId];
+  // fallback to prototype chain
+  const res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
+  if (process.env.NODE_ENV !== "production" && warnMissing && !res) {
+    warn("Failed to resolve " + type.slice(0, -1) + ": " + id, options);
+  }
+  return res;
+}
+```
+
+这段逻辑很简单，先通过<span :class="$style.red_text"> const assets = options[type] </span> 拿到 assets，然后再
+尝试拿 <span :class="$style.red_text">assets[id]</span>，这里有个顺序，先直接使用 id 拿，如果不存在，则把
+id 变成驼峰的形式再拿，如果仍然不存在，则在驼峰的基础上把首字母再变成大
+写的形式再拿，如果仍然拿不到则报错。这样说明了我们在使用 <span :class="$style.red_text">Vue.component(id, definition)</span> 全局注册组件的时候，id 可以是连字符、驼峰或首字母大写
+的形式。<br>
+那么回到我们的调用 <span :class="$style.red_text">resolveAsset(context.$options, 'components', tag)</span>，即
+拿 <span :class="$style.red_text">vm.$options.components[tag]</span>，这样就可以在 resolveAsset 的时候拿到
+这个组件的构造函数，并作为 createComponent 的钩子的参数。
+
+### 局部注册
+
+Vue.js 也同样支持局部注册，我们可以在一个组件内部使用 <span :class="$style.red_text">components</span> 选项
+做组件的局部注册，例如：
+
+```js
+import HelloWorld from "./components/HelloWorld";
+export default {
+  components: {
+    HelloWorld,
+  },
+};
+```
+
+其实理解了全局注册的过程，局部注册是非常简单的。在组件的 Vue 的实例化阶段有一个合并 option 的逻辑，之前也分析过，所以就把 components 合
+并到 <span :class="$style.red_text">vm.$options.components</span> 上，这样就可以在<span :class="$style.red_text"> resolveAsset </span>的时候拿到这个组件的构造函数，并作为 createComponent 的钩子的参数。<br>
+注意，局部注册和全局注册不同的是，只有该类型的组件才可以访问局部注册
+的子组件，而全局注册是扩展到 <span :class="$style.red_text">Vue.options</span> 下，所以在所有组件创建的过程
+中，都会从全局的<span :class="$style.red_text"> Vue.options.components </span>扩展到当前组件的<span :class="$style.red_text"> vm.$options.components </span>下，这就是全局注册的组件能被任意使用的原因。
+
 ## 异步组件
+
+在我们平时的开发工作中，为了减少首屏代码体积，往往会把一些非首屏的组
+件设计成异步组件，按需加载。Vue 也原生支持了异步组件的能力，如下：
+
+```js
+Vue.component("async-example", function (resolve, reject) {
+  // 这个特殊的 require 语法告诉 webpack
+  // 自动将编译后的代码分割成不同的块，
+  // 这些块将通过 Ajax 请求自动下载。
+  require(["./my-async-component"], resolve);
+});
+```
+
+示例中可以看到，Vue 注册的组件不再是一个对象，而是一个<span :class="$style.red_text">工厂函数</span>，函数有两个参数<span :class="$style.red_text"> resolve 和 reject </span>，函数内部用 setTimout 模拟了异步，实际使
+用可能是通过动态请求异步组件的 JS 地址，最终通过执行 resolve 方法，它的参数就是我们的异步组件对象。<br>
+上一节分析了组件的注册逻辑，由于组件的定义并不是一个普通对象，所
+以不会执行 Vue.extend 的逻辑把它变成一个组件的构造函数，但是它仍然可
+以执行到<span :class="$style.red_text"> createComponent </span>函数，再来对这个函数做回顾，它的定义在 s
+rc/core/vdom/create-component/js 中：
+
+```js
+export function createComponent(
+  Ctor: Class<Component> | Function | Object | void,
+  data: ?VNodeData,
+  context: Component,
+  children: ?Array<VNode>,
+  tag?: string
+): VNode | Array<VNode> | void {
+  if (isUndef(Ctor)) {
+    return;
+  }
+  const baseCtor = context.$options._base;
+  // plain options object: turn it into a constructor
+  if (isObject(Ctor)) {
+    Ctor = baseCtor.extend(Ctor);
+  }
+  // ...
+  // async component
+  let asyncFactory;
+  if (isUndef(Ctor.cid)) {
+    asyncFactory = Ctor;
+    Ctor = resolveAsyncComponent(asyncFactory, baseCtor, context);
+    if (Ctor === undefined) {
+      // return a placeholder node for async component, which is rendered
+      // as a comment node but preserves all the raw information for the node.
+      // the information will be used for async server-rendering and hydration.
+      return createAsyncPlaceholder(asyncFactory, data, context, children, tag);
+    }
+  }
+}
+```
+
+省略了不必要的逻辑，只保留关键逻辑，由于我们这个时候传入的 Ctor
+是一个函数，那么它也并不会执行 Vue.extend 逻辑，因此它的 cid 是 undefiend，进入了异步组件创建的逻辑。这里首先执行了<span :class="$style.red_text"> Ctor =resolveAsyncComponent(asyncFactory, baseCtor, context) </span>方法，它的定义
+在<span :class="$style.red_text"> src/core/vdom/helpers/resolve-async-component.js </span>中：
+
+```js
+export function resolveAsyncComponent(
+  factory: Function,
+  baseCtor: Class<Component>
+): Class<Component> | void {
+  if (isTrue(factory.error) && isDef(factory.errorComp)) {
+    return factory.errorComp;
+  }
+
+  if (isDef(factory.resolved)) {
+    return factory.resolved;
+  }
+
+  const owner = currentRenderingInstance;
+  if (owner && isDef(factory.owners) && factory.owners.indexOf(owner) === -1) {
+    // already pending
+    factory.owners.push(owner);
+  }
+
+  if (isTrue(factory.loading) && isDef(factory.loadingComp)) {
+    return factory.loadingComp;
+  }
+
+  if (owner && !isDef(factory.owners)) {
+    const owners = (factory.owners = [owner]);
+    let sync = true;
+    let timerLoading = null;
+    let timerTimeout = null;
+
+    (owner: any).$on("hook:destroyed", () => remove(owners, owner));
+
+    const forceRender = (renderCompleted: boolean) => {
+      for (let i = 0, l = owners.length; i < l; i++) {
+        (owners[i]: any).$forceUpdate();
+      }
+
+      if (renderCompleted) {
+        owners.length = 0;
+        if (timerLoading !== null) {
+          clearTimeout(timerLoading);
+          timerLoading = null;
+        }
+        if (timerTimeout !== null) {
+          clearTimeout(timerTimeout);
+          timerTimeout = null;
+        }
+      }
+    };
+
+    const resolve = once((res: Object | Class<Component>) => {
+      // cache resolved
+      factory.resolved = ensureCtor(res, baseCtor);
+      // invoke callbacks only if this is not a synchronous resolve
+      // (async resolves are shimmed as synchronous during SSR)
+      if (!sync) {
+        forceRender(true);
+      } else {
+        owners.length = 0;
+      }
+    });
+
+    const reject = once((reason) => {
+      process.env.NODE_ENV !== "production" &&
+        warn(
+          `Failed to resolve async component: ${String(factory)}` +
+            (reason ? `\nReason: ${reason}` : "")
+        );
+      if (isDef(factory.errorComp)) {
+        factory.error = true;
+        forceRender(true);
+      }
+    });
+
+    const res = factory(resolve, reject);
+
+    if (isObject(res)) {
+      if (isPromise(res)) {
+        // () => Promise
+        if (isUndef(factory.resolved)) {
+          res.then(resolve, reject);
+        }
+      } else if (isPromise(res.component)) {
+        res.component.then(resolve, reject);
+
+        if (isDef(res.error)) {
+          factory.errorComp = ensureCtor(res.error, baseCtor);
+        }
+
+        if (isDef(res.loading)) {
+          factory.loadingComp = ensureCtor(res.loading, baseCtor);
+          if (res.delay === 0) {
+            factory.loading = true;
+          } else {
+            timerLoading = setTimeout(() => {
+              timerLoading = null;
+              if (isUndef(factory.resolved) && isUndef(factory.error)) {
+                factory.loading = true;
+                forceRender(false);
+              }
+            }, res.delay || 200);
+          }
+        }
+
+        if (isDef(res.timeout)) {
+          timerTimeout = setTimeout(() => {
+            timerTimeout = null;
+            if (isUndef(factory.resolved)) {
+              reject(
+                process.env.NODE_ENV !== "production"
+                  ? `timeout (${res.timeout}ms)`
+                  : null
+              );
+            }
+          }, res.timeout);
+        }
+      }
+    }
+
+    sync = false;
+    // return in case resolved synchronously
+    return factory.loading ? factory.loadingComp : factory.resolved;
+  }
+}
+```
+
+<span :class="$style.red_text"> resolveAsyncComponent </span> 函数的逻辑略复杂，因为它实际上处理了 3 种异步组件
+的创建方式，除了刚才示例的组件注册方式，还支持 2 种，一种是支
+持 Promise 创建组件的方式，如下：
+
+```js
+Vue.component(
+  "async-webpack-example",
+  // 该 `import` 函数返回一个 `Promise` 对象。
+  () => import("./my-async-component")
+);
+```
+
+另一种是高级异步组件，如下：
+
+```js
+const AsyncComp = () => ({
+  // 需要加载的组件。应当是一个 Promise
+  component: import("./MyComp.vue"),
+  // 加载中应当渲染的组件
+  loading: LoadingComp,
+  // 出错时渲染的组件
+  error: ErrorComp,
+  // 渲染加载中组件前的等待时间。默认：200ms。
+  delay: 200,
+  // 最长等待时间。超出此时间则渲染错误组件。默认：Infinity
+  timeout: 3000,
+});
+Vue.component("async-example", AsyncComp);
+```
+
+### 普通函数异步组件
+
+针对普通函数的情况，前面几个 if 判断可以忽略，它们是为高级组件所用，对于 <span :class="$style.red_text"> factory.contexts </span> 的判断，是考虑到多个地方同时初始化一个异步组件，那
+么它的实际加载应该只有一次。接着进入实际加载逻辑，定义了 <span :class="$style.common_text"> forceRender、resolve 和 reject </span> 函数，注意 resolve 和 reject 函数用 once 函数做了
+一层包装，它的定义在 src/shared/util.js 中：
+
+```js
+/**
+ * Ensure a function is called only once.
+ */
+export function once(fn: Function): Function {
+  let called = false;
+  return function () {
+    if (!called) {
+      called = true;
+      fn.apply(this, arguments);
+    }
+  };
+}
+```
+
+<span :class="$style.common_text"> once </span>逻辑非常简单，传入一个函数，并返回一个新函数，它非常巧妙地利用闭
+包和一个标志位保证了它包装的函数只会执行一次，也就是确保<span :class="$style.common_text"> resolve </span>和<span :class="$style.common_text"> reject </span>函数只执行一次。<br>
+
+接下来执行<span :class="$style.red_text"> const res = factory(resolve, reject) </span> 逻辑，这块儿就是执行我们
+组件的工厂函数，同时把<span :class="$style.red_text"> resolve </span>和<span :class="$style.red_text"> reject </span>函数作为参数传入，组件的工厂函数通常会先发送请求去加载我们的异步组件的 JS 文件，拿到组件定义的对象 res 后，执行 resolve(res) 逻辑，它会先执行<span :class="$style.red_text"> factory.resolved = ensureCtor(res, baseCtor) </span>：
+
+```js
+function ensureCtor(comp: any, base) {
+  if (comp.__esModule || (hasSymbol && comp[Symbol.toStringTag] === "Module")) {
+    comp = comp.default;
+  }
+  return isObject(comp) ? base.extend(comp) : comp;
+}
+```
+
+这个函数目的是为了保证能找到异步组件 JS 定义的组件对象，并且如果它是
+一个普通对象，则调用<span :class="$style.red_text"> Vue.extend </span>把它转换成一个组件的构造函数。<br>
+resolve 逻辑最后判断了<span :class="$style.red_text"> sync </span>，显然我们这个场景下 sync 为 false，那么就会执行 forceRender 函数，它会遍历<span :class="$style.red_text"> factory.contexts </span>，拿到每一个调用异步组件的实例 vm, 执行<span :class="$style.red_text"> vm.$forceUpdate() </span> 方法，它的定义在<span :class="$style.red_text"> src/core/instance/lifecycle.js </span> 中：
+
+```js
+Vue.prototype.$forceUpdate = function () {
+  const vm: Component = this;
+  if (vm._watcher) {
+    vm._watcher.update();
+  }
+};
+```
+
+<span :class="$style.red_text">$forceUpdate</span> 的逻辑非常简单，就是调用渲染 watcher 的 update 方法，让渲
+染 <span :class="$style.red_text">watcher</span> 对应的回调函数执行，也就是触发了组件的重新渲染。之所以这么
+做是因为 Vue 通常是数据驱动视图重新渲染，但是在整个异步组件加载过程中
+是没有数据发生变化的，所以通过执行<span :class="$style.red_text"> $forceUpdate </span>可以强制组件重新渲染一
+次。
+
+### Promise 异步组件
+
+```js
+Vue.component(
+  "async-webpack-example",
+  // 该 `import` 函数返回一个 `Promise` 对象。
+  () => import("./my-async-component")
+);
+```
+
+webpack 2+ 支持了异步加载的语法糖：<span :class="$style.red_text">() => import('./my-async-component')</span>，
+当执行完 <span :class="$style.red_text">res = factory(resolve, reject)</span>，返回的值就是<span :class="$style.red_text"> import('./my-async-component') </span> 的返回值，它是一个 <span :class="$style.red_text">Promise</span> 对象。接着进入 if 条件，又判断了<span :class="$style.red_text"> typeof res.then === 'function' </span>，条件满足，执行：
+
+```js
+if (isUndef(factory.resolved)) {
+  res.then(resolve, reject);
+}
+```
+
+当组件异步加载成功后，执行<span :class="$style.red_text"> resolve </span>，加载失败则执行<span :class="$style.red_text"> reject </span>，这样就非常巧妙地实现了配合 webpack 2+ 的异步加载组件的方式（<span :class="$style.red_text">Promise</span>）加载异步
+组件。
+
+### 高级异步组件
+
+由于异步加载组件需要动态加载 JS，有一定网络延时，而且有加载失败的情
+况，所以通常我们在开发异步组件相关逻辑的时候需要设计 loading 组件和
+error 组件，并在适当的时机渲染它们。Vue.js 2.3+ 支持了一种高级异步组件
+的方式，它通过一个简单的对象配置，帮你搞定 loading 组件和 error 组件的
+渲染时机，你完全不用关心细节，非常方便。接下来就从源码的角度来分
+析高级异步组件是怎么实现的。
+
+```js
+const AsyncComp = () => ({
+  // 需要加载的组件。应当是一个 Promise
+  component: import("./MyComp.vue"),
+  // 加载中应当渲染的组件
+  loading: LoadingComp,
+  // 出错时渲染的组件
+  error: ErrorComp,
+  // 渲染加载中组件前的等待时间。默认：200ms。
+  delay: 200,
+  // 最长等待时间。超出此时间则渲染错误组件。默认：Infinity
+  timeout: 3000,
+});
+Vue.component("async-example", AsyncComp);
+```
+
+高级异步组件的初始化逻辑和普通异步组件一样，也是执行<span :class="$style.red_text"> resolveAsyncComponent </span>，当执行完<span :class="$style.red_text"> res = factory(resolve, reject) </span>，返回值就是定义的组件对象，显然满足<span :class="$style.red_text"> else if (isDef(res.component) && typeof res.component.then ==='function') </span>的逻辑，接着执行 res.component.then(resolve, reject)，当异步组件加载成功后，执行 resolve，失败执行 reject。<br>
+
+因为异步组件加载是一个异步过程，它接着又同步执行了如下逻辑：
+
+```js
+if (isDef(res.error)) {
+  factory.errorComp = ensureCtor(res.error, baseCtor);
+}
+if (isDef(res.loading)) {
+  factory.loadingComp = ensureCtor(res.loading, baseCtor);
+  if (res.delay === 0) {
+    factory.loading = true;
+  } else {
+    setTimeout(() => {
+      if (isUndef(factory.resolved) && isUndef(factory.error)) {
+        factory.loading = true;
+        forceRender();
+      }
+    }, res.delay || 200);
+  }
+}
+if (isDef(res.timeout)) {
+  setTimeout(() => {
+    if (isUndef(factory.resolved)) {
+      reject(
+        process.env.NODE_ENV !== "production"
+          ? `timeout (${res.timeout}ms)`
+          : null
+      );
+    }
+  }, res.timeout);
+}
+```
+
+先判断<span :class="$style.red_text"> res.error </span>是否定义了 error 组件，如果有的话则赋值
+给 <span :class="$style.red_text">factory.errorComp</span>。接着判断<span :class="$style.red_text"> res.loading </span> 是否定义了 loading 组件，如果有的话则赋值给 <span :class="$style.red_text">factory.loadingComp</span>，如果设置了 <span :class="$style.red_text">res.delay</span> 且为 0，则设置 <span :class="$style.red_text">factory.loading = true</span>，否则延时 <span :class="$style.red_text">delay</span> 的时间执行：
+
+```js
+if (isUndef(factory.resolved) && isUndef(factory.error)) {
+  factory.loading = true;
+  forceRender();
+}
+```
+
+最后判断 <span :class="$style.red_text">res.timeout</span>，如果配置了该项，则在 <span :class="$style.red_text">res.timeout</span> 时间后，如果组件没有成功加载，执行<span :class="$style.red_text"> reject </span>。 <br>
+在 <span :class="$style.red_text">resolveAsyncComponent</span> 的最后有一段逻辑：
+
+```js
+sync = false;
+return factory.loading ? factory.loadingComp : factory.resolved;
+```
+
+如果 <span :class="$style.red_text">delay</span> 配置为 0，则这次直接渲染 loading 组件，否则则延时 delay 执
+行 <span :class="$style.red_text">forceRender</span>，那么又会再一次执行到<span :class="$style.red_text"> resolveAsyncComponent </span>。<br>
+
+下面有几种情况，按逻辑的执行顺序，对不同的情况做判断。
+
+#### 异步组件加载失败
+
+当异步组件加载失败，会执行 reject 函数：
+
+```js
+const reject = once((reason) => {
+  process.env.NODE_ENV !== "production" &&
+    warn(
+      `Failed to resolve async component: ${String(factory)}` +
+        (reason ? `\nReason: ${reason}` : "")
+    );
+  if (isDef(factory.errorComp)) {
+    factory.error = true;
+    forceRender();
+  }
+});
+```
+
+这个时候会把 <span :class="$style.red_text">factory.error</span> 设置为 <span :class="$style.red_text">true</span>，同时执行 <span :class="$style.red_text">forceRender()</span> 再次执行到 <span :class="$style.red_text">resolveAsyncComponent</span>：
+
+```js
+if (isTrue(factory.error) && isDef(factory.errorComp)) {
+  return factory.errorComp;
+}
+```
+
+那么这个时候就返回 <span :class="$style.red_text">factory.errorComp</span>，直接渲染 <span :class="$style.red_text">error</span> 组件。
+
+#### 异步组件加载成功
+
+当异步组件加载成功，会执行 resolve 函数：
+
+```js
+const resolve = once((res: Object | Class<Component>) => {
+  factory.resolved = ensureCtor(res, baseCtor);
+  if (!sync) {
+    forceRender();
+  }
+});
+```
+
+首先把加载结果缓存到 <span :class="$style.red_text">factory.resolved</span> 中，这个时候因为 sync 已经为
+false，则执行 <span :class="$style.red_text">forceRender()</span> 再次执行到<span :class="$style.red_text"> resolveAsyncComponent </span>：
+
+```js
+if (isDef(factory.resolved)) {
+  return factory.resolved;
+}
+```
+
+那么这个时候直接返回 <span :class="$style.red_text">factory.resolved</span>，渲染成功加载的组件。
+
+#### 异步组件加载中
+
+#### 异步组件加载超时
 
 <style module>
 .special_text {
