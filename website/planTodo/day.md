@@ -1,19 +1,25 @@
+<script setup>
+import listOne from './days/20140510.ts'
+</script>
+
 <div :class="$style.special_text">
   每日学习日志
 </div>
 
 ## 2024-05-10
 
-- <div :class="$style.flex"><span :class="[$style.common,$style.actived]">✓</span>规划总体学习目标。</div>
-- <div :class="$style.flex"><span :class="[$style.common,$style.actived]">✓</span>完成todo List 界面样式更新。</div>
-- <div :class="$style.flex"><span :class="[$style.common,$style.actived]">✓</span>完成响应式原理之响应式对象 30%。</div>
-- <div :class="$style.flex"><span :class="[$style.common,$style.actived]">✓</span>了解uniapp / uniapp X 的 uts 20%。</div>
-- <div :class="$style.flex"><span :class="[$style.common,$style.actived]">✓</span>完成HbuilderX 4.15版本升级。</div>
+<div
+  :class="$style.flex"
+  v-for="(item, index) in listOne"
+  :key="index">
+  <span :class="[$style.common,$style.actived]">✓</span>
+  {{ item.name }}
+</div>
 
 <style module>
 .special_text {
   color: #FFC107; 
-  font-size: 30px;  
+  font-size: 40px;  
   padding: 20px 0;
 }
 .noActive {
@@ -41,5 +47,6 @@
 .flex {
   display: flex;
   align-items: center;
+  margin-bottom: 15px;
 }
 </style>
