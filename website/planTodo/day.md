@@ -1,19 +1,21 @@
 <script setup>
-import list10 from './days/20140510.ts'
-import list11 from './days/20140511.ts'
+import list10 from './days/20240510.ts'
+import list11 from './days/20240511.ts'
+import list12 from './days/20240512.ts'
 </script>
 
 <div :class="$style.special_text">
   每日清单
 </div>
 
-## 2024-05-10
+## 2024-05-12
 
 <div
   :class="$style.flex"
-  v-for="(item, index) in list10"
+  v-for="(item, index) in list12"
   :key="index">
   <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
   <span >{{ item.name }}</span>
 </div>
 
@@ -25,6 +27,16 @@ import list11 from './days/20140511.ts'
   :key="index">
   <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
   <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+</div>
+
+## 2024-05-10
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list10"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
   <span >{{ item.name }}</span>
 </div>
 

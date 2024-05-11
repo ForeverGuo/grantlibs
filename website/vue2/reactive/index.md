@@ -241,6 +241,278 @@ function initData(vm: Component) {
 可以看到，无论是<span :class="$style.red_text"> props </span> 或 <span :class="$style.red_text"> data </span>的初始化都是把它们变成响应式对象，这
 个过程我们接触到几个函数，接下来我们来详细分析它们。
 
+### proxy
+
+首先介绍一下代理，代理的作用是把 <span :class="$style.red_text">props</span> 和 <span :class="$style.red_text">data</span> 上的属性代理到 <span :class="$style.red_text">vm</span> 实
+例上，这也就是为什么比如我们定义了如下 props，却可以通过 vm 实例访问
+到它。
+
+```js
+let comP = {
+  props: {
+    msg: "hello",
+  },
+  methods: {
+    say() {
+      console.log(this.msg);
+    },
+  },
+};
+```
+
+我们可以在 <span :class="$style.red_text">say</span> 函数中通过 <span :class="$style.red_text">this.msg</span> 访问到我们定义在 <span :class="$style.red_text">props</span> 中的 <span :class="$style.red_text">msg</span>，这个过程发生在 <span :class="$style.red_text">proxy</span> 阶段：
+
+```js
+const sharedPropertyDefinition = {
+  enumerable: true,
+  configurable: true,
+  get: noop,
+  set: noop,
+};
+
+// 设置代理，将 key 代理到 target 上
+export function proxy(target: Object, sourceKey: string, key: string) {
+  sharedPropertyDefinition.get = function proxyGetter() {
+    return this[sourceKey][key];
+  };
+  sharedPropertyDefinition.set = function proxySetter(val) {
+    this[sourceKey][key] = val;
+  };
+  Object.defineProperty(target, key, sharedPropertyDefinition);
+}
+```
+
+<span :class="$style.red_text">proxy</span> 方法的实现很简单，通过<span :class="$style.red_text"> Object.defineProperty </span> 把<span :class="$style.red_text"> target[sourceKey][key] </span> 的读写变成了对 target[key] 的读写。所以对于 props 而言，对 <span :class="$style.common_text">vm.\_props.xxx 的读写变成了 vm.xxx 的读写</span>，而对于 vm.\_props.xxx 我们可以访问到定义在 props 中的属性，所以我们就可以通过 vm.xxx 访问到定义在 props 中的 xxx 属性了。同理，对于 data 而言，<span :class="$style.common_text">对 vm.\_data.xxxx 的读写变成了对 vm.xxxx 的读写</span>，而对于 vm.\_data.xxxx 我们可以访问到定义在 data 函数返回
+对象中的属性，所以我们就可以通过 vm.xxxx 访问到定义在 data 函数返回对象中的 xxxx 属性了。
+
+### observe
+
+<span :class="$style.red_text">observe</span> 的功能就是用来监测数据的变化，它的定义在<span :class="$style.red_text"> src/core/observer/index.js </span> 中：
+
+```js
+/**
+ * 响应式处理的真正入口
+ * 为对象创建观察者实例，如果对象已经被观察过，则返回已有的观察者实例，否则创建新的观察者实例
+ * @param {*} value 对象 => {}
+ */
+export function observe(value: any, asRootData: ?boolean): Observer | void {
+  // 非对象和 VNode 实例不做响应式处理
+  if (!isObject(value) || value instanceof VNode) {
+    return;
+  }
+  let ob: Observer | void;
+  if (hasOwn(value, "__ob__") && value.__ob__ instanceof Observer) {
+    // 如果 value 对象上存在 __ob__ 属性，则表示已经做过观察了，直接返回  属性
+    ob = value.__ob__;
+  } else if (
+    shouldObserve &&
+    !isServerRendering() &&
+    (Array.isArray(value) || isPlainObject(value)) &&
+    Object.isExtensible(value) &&
+    !value._isVue
+  ) {
+    // 创建观察者实例
+    ob = new Observer(value);
+  }
+  if (asRootData && ob) {
+    ob.vmCount++;
+  }
+  return ob;
+}
+```
+
+<span :class="$style.red_text">observe</span> 方法的作用就是给非 VNode 的对象类型数据添加一个<span :class="$style.red_text"> Observer </span>，如果已经添加过则直接返回，否则在满足一定条件下去实例化一个 Observer 对象实例。接下来我们来看一下<span :class="$style.red_text"> Observer </span> 的作用。
+
+### Observer
+
+<span :class="$style.red_text">Observer</span> 是一个类，它的作用是给对象的属性添加 getter 和 setter，用于依赖
+收集和派发更新：
+
+```js
+/**
+ * 观察者类，会被附加到每个被观察的对象上，value.__ob__ = this
+ * 而对象的各个属性则会被转换成 getter/setter，并收集依赖和通知更新
+ */
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor(value: any) {
+    this.value = value;
+    // 实例化一个 dep
+    this.dep = new Dep();
+    this.vmCount = 0;
+    // 在 value 对象上设置 __ob__ 属性
+    def(value, "__ob__", this);
+    if (Array.isArray(value)) {
+      /**
+       * value 为数组
+       * hasProto = '__proto__' in {}
+       * 用于判断对象是否存在 __proto__ 属性，通过 obj.__proto__ 可以访问对象的原型链
+       * 但由于 __proto__ 不是标准属性，所以有些浏览器不支持，比如 IE6-10，Opera10.1
+       * 为什么要判断，是因为一会儿要通过 __proto__ 操作数据的原型链
+       * 覆盖数组默认的七个原型方法，以实现数组响应式
+       */
+      if (hasProto) {
+        // 有 __proto__
+        protoAugment(value, arrayMethods);
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys);
+      }
+      this.observeArray(value);
+    } else {
+      // value 为对象，为对象的每个属性（包括嵌套对象）设置响应式
+      this.walk(value);
+    }
+  }
+
+  /**
+   * 遍历对象上的每个 key，为每个 key 设置响应式
+   * 仅当值为对象时才会走这里
+   */
+  walk(obj: Object) {
+    const keys = Object.keys(obj);
+    for (let i = 0; i < keys.length; i++) {
+      defineReactive(obj, keys[i]);
+    }
+  }
+
+  /**
+   * 遍历数组，为数组的每一项设置观察，处理数组元素为对象的情况
+   */
+  observeArray(items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i]);
+    }
+  }
+}
+```
+
+<span :class="$style.red_text">Observer</span> 的构造函数逻辑很简单，首先实例化<span :class="$style.red_text"> Dep </span>对象，这块稍后会介绍，接着通过执行 def 函数把<span :class="$style.red_text">自身实例</span>添加到数据对象 value 的 **ob** 属性上，def 的定义在 src/core/util/lang.js 中：
+
+```js
+/**
+ * Define a property.
+ */
+export function def(obj: Object, key: string, val: any, enumerable?: boolean) {
+  Object.defineProperty(obj, key, {
+    value: val,
+    enumerable: !!enumerable,
+    writable: true,
+    configurable: true,
+  });
+}
+```
+
+<span :class="$style.red_text">def</span> 函数是一个非常简单的<span :class="$style.red_text"> Object.defineProperty </span> 的封装，这就是为什么我在开发中输出<span :class="$style.red_text"> data </span>上对象类型的数据，会发现该对象多了一个原型 ob 的属性。<br>
+回到 <span :class="$style.red_text">Observer</span> 的构造函数，接下来会对 value 做判断，对于数组会调用<span :class="$style.red_text"> observeArray </span>方法，否则对纯对象调用 walk 方法。可以看到 observeArray 是遍
+历数组再次调用 observe 方法，而 walk 方法是遍历对象的 key 调
+用<span :class="$style.red_text"> defineReactive </span>方法，下面看一下这个方法是做什么的。
+
+### defineReactive
+
+<span :class="$style.red_text">defineReactive</span> 的功能就是定义一个响应式对象，给对象动态添加<span :class="$style.red_text"> getter </span> 和 <span :class="$style.red_text"> setter </span>，它的定义在 <span :class="$style.red_text"> src/core/observer/index.js </span> 中：
+
+```js
+/**
+ * 拦截 obj[key] 的读取和设置操作：
+ *   1、在第一次读取时收集依赖，比如执行 render 函数生成虚拟 DOM 时会有读取操作
+ *   2、在更新时设置新值并通知依赖更新
+ */
+export function defineReactive(
+  obj: Object,
+  key: string,
+  val: any,
+  customSetter?: ?Function,
+  shallow?: boolean
+) {
+  // 实例化 dep，一个 key 一个 dep
+  const dep = new Dep();
+
+  // 获取 obj[key] 的属性描述符，发现它是不可配置对象的话直接 return
+  const property = Object.getOwnPropertyDescriptor(obj, key);
+  if (property && property.configurable === false) {
+    return;
+  }
+
+  // 记录 getter 和 setter，获取 val 值
+  const getter = property && property.get;
+  const setter = property && property.set;
+  if ((!getter || setter) && arguments.length === 2) {
+    val = obj[key];
+  }
+
+  // 递归调用，处理 val 即 obj[key] 的值为对象的情况，保证对象中的所有 key 都被观察
+  // shallow 不为true的情况 执行 observer  默认深度观察
+  let childOb = !shallow && observe(val);
+  // 响应式核心
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    // get 拦截对 obj[key] 的读取操作
+    get: function reactiveGetter() {
+      const value = getter ? getter.call(obj) : val;
+      /**
+       * Dep.target 为 Dep 类的一个静态属性，值为 watcher，在实例化 Watcher 时会被设置
+       * 实例化 Watcher 时会执行 new Watcher 时传递的回调函数（computed 除外，因为它懒执行）
+       * 而回调函数中如果有 vm.key 的读取行为，则会触发这里的 读取 拦截，进行依赖收集
+       * 回调函数执行完以后又会将 Dep.target 设置为 null，避免这里重复收集依赖
+       */
+      if (Dep.target) {
+        // 依赖收集，在 dep 中添加 watcher，也在 watcher 中添加 dep
+        dep.depend();
+        // childOb 表示对象中嵌套对象的观察者对象，如果存在也对其进行依赖收集
+        if (childOb) {
+          // 这就是 this.key.chidlKey 被更新时能触发响应式更新的原因
+          childOb.dep.depend();
+          // 如果是 obj[key] 是 数组，则触发数组响应式
+          if (Array.isArray(value)) {
+            // 为数组项为对象的项添加依赖
+            dependArray(value);
+          }
+        }
+      }
+      return value;
+    },
+    // set 拦截对 obj[key] 的设置操作
+    set: function reactiveSetter(newVal) {
+      // 旧的 obj[key]
+      const value = getter ? getter.call(obj) : val;
+      // 如果新老值一样，则直接 return，不跟新更不触发响应式更新过程
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return;
+      }
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== "production" && customSetter) {
+        customSetter();
+      }
+      // setter 不存在说明该属性是一个只读属性，直接 return
+      // #7981: for accessor properties without setter
+      if (getter && !setter) return;
+      // 设置新值
+      if (setter) {
+        setter.call(obj, newVal);
+      } else {
+        val = newVal;
+      }
+      // 对新值进行观察，让新值也是响应式的
+      childOb = !shallow && observe(newVal);
+      // 依赖通知更新
+      dep.notify();
+    },
+  });
+}
+```
+
+defineReactive 函数最开始初始化 Dep 对象的实例，接着拿到 obj 的属性描述
+符，然后对子对象递归调用 observe 方法，这样就保证了无论 obj 的结构多
+复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一
+个嵌套较深的属性，也能触发 getter 和 setter。最后利
+用 Object.defineProperty 去给 obj 的属性 key 添加 getter 和 setter。而关
+于 getter 和 setter 的具体实现，我们会在之后介绍。
+
 ## 依赖收集
 
 ## 派发更新
