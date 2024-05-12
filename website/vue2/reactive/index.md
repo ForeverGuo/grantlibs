@@ -506,14 +506,324 @@ export function defineReactive(
 }
 ```
 
-defineReactive 函数最开始初始化 Dep 对象的实例，接着拿到 obj 的属性描述
-符，然后对子对象递归调用 observe 方法，这样就保证了无论 obj 的结构多
-复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一
-个嵌套较深的属性，也能触发 getter 和 setter。最后利
-用 Object.defineProperty 去给 obj 的属性 key 添加 getter 和 setter。而关
-于 getter 和 setter 的具体实现，我们会在之后介绍。
+<span :class="$style.red_text">defineReactive</span> 函数最开始初始化 Dep 对象的实例，接着拿到 obj 的属性描述符，然后对子对象递归调用 observe 方法，这样就保证了无论 obj 的结构多复杂，它的所有子属性也能变成响应式的对象，这样我们访问或修改 obj 中一个嵌套较深的属性，也能触发 <span :class="$style.red_text">getter</span> 和 <span :class="$style.red_text">setter</span>。最后利用<span :class="$style.red_text"> Object.defineProperty </span>去给 obj 的属性 key 添加 <span :class="$style.red_text">getter</span>和 <span :class="$style.red_text">setter</span>。而关于 getter 和 setter 的具体实现，会在之后介绍。
+
+:::tip
+
+1.  响应式对象的核心是利用 Object.defineProperty 给对象的属性添加 getter 和 setter。
+
+2.  Vue 会把 props，data 等变成响应式对象，在创建过程中，发现子属性也为对象则递归把该对象变成响应式。
+
+:::
 
 ## 依赖收集
+
+上面有讲到 <span :class="$style.red_text">defineReactive </span>函数执行，其中关于依赖收集的部分有两个地方，一个是<span :class="$style.red_text"> const dep = new Dep() </span> 实例化一个 Dep 的实例，另一个是在 get 函数中通过<span :class="$style.red_text"> dep.depend </span> 做依赖收集。
+
+### Dep
+
+Dep 是整个 getter 依赖收集的核心，它的定义在<span :class="$style.red_text"> src/core/observer/dep.js </span> 中：
+
+```js
+/**
+ * 一个 dep 对应一个 obj.key
+ * 在读取响应式数据时，负责收集依赖，每个 dep（或者说 obj.key）依赖的 watcher 有哪些
+ * 在响应式数据更新时，负责通知 dep 中那些 watcher 去执行 update 方法
+ */
+export default class Dep {
+  static target: ?Watcher;
+  id: number;
+  subs: Array<Watcher>;
+
+  constructor() {
+    this.id = uid++;
+    this.subs = [];
+  }
+
+  // 在 dep 中添加 watcher
+  addSub(sub: Watcher) {
+    this.subs.push(sub);
+  }
+
+  removeSub(sub: Watcher) {
+    remove(this.subs, sub);
+  }
+
+  //  向watcher 中添加 dep
+  depend() {
+    if (Dep.target) {
+      Dep.target.addDep(this);
+    }
+  }
+
+  /**
+   * 通知 dep 中的所有 watcher，执行 watcher.update() 方法
+   */
+  notify() {
+    // stabilize the subscriber list first
+    const subs = this.subs.slice();
+    if (process.env.NODE_ENV !== "production" && !config.async) {
+      // subs aren't sorted in scheduler if not running async
+      // we need to sort them now to make sure they fire in correct
+      // order
+      subs.sort((a, b) => a.id - b.id);
+    }
+    // 遍历 dep 中存储的 watcher，执行 watcher.update()
+    for (let i = 0, l = subs.length; i < l; i++) {
+      subs[i].update();
+    }
+  }
+}
+```
+
+<span :class="$style.red_text">Dep</span> 是一个 Class，它定义了一些属性和方法，这里需要特别注意的是它有一个静态属性 <span :class="$style.red_text">target</span>，这是一个全局唯一 <span :class="$style.red_text">Watcher</span>，这是一个非常巧妙的设计，因为在同一时间只能有一个全局的<span :class="$style.red_text"> Watcher </span> 被计算，另外它的自身属性 <span :class="$style.red_text">subs</span> 也是 <span :class="$style.red_text">Watcher</span> 的数组。<br>
+
+<span :class="$style.red_text">Dep</span> 实际上就是对 <span :class="$style.red_text">Watcher</span> 的一种管理，<span :class="$style.red_text">Dep</span> 脱离 <span :class="$style.red_text">Watcher</span> 单独存在是没有意义的，为了完整地讲清楚依赖收集过程，有必要看一下 Watcher 的一些相关实现，它的定义在 src/core/observer/watcher.js 中：
+
+```js
+/**
+ * 一个组件一个 watcher（渲染 watcher）或者一个表达式一个 watcher（用户watcher）
+ * 当数据更新时 watcher 会被触发，访问 this.computedProperty 时也会触发 watcher
+ */
+export default class Watcher {
+  vm: Component;
+  expression: string;
+  cb: Function;
+  id: number;
+  deep: boolean;
+  user: boolean;
+  lazy: boolean;
+  sync: boolean;
+  dirty: boolean;
+  active: boolean;
+  deps: Array<Dep>;
+  newDeps: Array<Dep>;
+  depIds: SimpleSet;
+  newDepIds: SimpleSet;
+  before: ?Function;
+  getter: Function;
+  value: any;
+
+  constructor(
+    vm: Component,
+    expOrFn: string | Function,
+    cb: Function,
+    options?: ?Object,
+    isRenderWatcher?: boolean
+  ) {
+    this.vm = vm;
+    if (isRenderWatcher) {
+      vm._watcher = this;
+    }
+    vm._watchers.push(this);
+    // options
+    if (options) {
+      this.deep = !!options.deep;
+      this.user = !!options.user;
+      this.lazy = !!options.lazy;
+      this.sync = !!options.sync;
+      this.before = options.before;
+    } else {
+      this.deep = this.user = this.lazy = this.sync = false;
+    }
+    this.cb = cb;
+    this.id = ++uid; // uid for batching
+    this.active = true;
+    this.dirty = this.lazy; // for lazy watchers
+    this.deps = [];
+    this.newDeps = [];
+    this.depIds = new Set();
+    this.newDepIds = new Set();
+    this.expression =
+      process.env.NODE_ENV !== "production" ? expOrFn.toString() : "";
+    // parse expression for getter
+    if (typeof expOrFn === "function") {
+      this.getter = expOrFn;
+    } else {
+      // this.getter = function() { return this.xx }
+      // 在 this.get 中执行 this.getter 时会触发依赖收集
+      // 待后续 this.xx 更新时就会触发响应式
+      this.getter = parsePath(expOrFn);
+      if (!this.getter) {
+        this.getter = noop;
+        process.env.NODE_ENV !== "production" &&
+          warn(
+            `Failed watching path: "${expOrFn}" ` +
+              "Watcher only accepts simple dot-delimited paths. " +
+              "For full control, use a function instead.",
+            vm
+          );
+      }
+    }
+    this.value = this.lazy ? undefined : this.get();
+  }
+
+  /**
+   * 执行 this.getter，并重新收集依赖
+   * this.getter 是实例化 watcher 时传递的第二个参数，一个函数或者字符串，比如：updateComponent 或者 parsePath 返回的读取 this.xx 属性值的函数
+   * 为什么要重新收集依赖？
+   *   因为触发更新说明有响应式数据被更新了，但是被更新的数据虽然已经经过 observe 观察了，但是却没有进行依赖收集，
+   *   所以，在更新页面时，会重新执行一次 render 函数，执行期间会触发读取操作，这时候进行依赖收集
+   */
+  get() {
+    // 打开 Dep.target，Dep.target = this
+    pushTarget(this);
+    // value 为回调函数执行的结果
+    let value;
+    const vm = this.vm;
+    try {
+      // 执行回调函数，比如 updateComponent，进入 patch 阶段
+      value = this.getter.call(vm, vm);
+    } catch (e) {
+      if (this.user) {
+        handleError(e, vm, `getter for watcher "${this.expression}"`);
+      } else {
+        throw e;
+      }
+    } finally {
+      // "touch" every property so they are all tracked as
+      // dependencies for deep watching
+      if (this.deep) {
+        traverse(value);
+      }
+      // 关闭 Dep.target，Dep.target = null
+      popTarget();
+      this.cleanupDeps();
+    }
+    return value;
+  }
+
+  /**
+   * Add a dependency to this directive.
+   * 两件事：
+   *   1、添加 dep 给自己（watcher）
+   *   2、添加自己（watcher）到 dep
+   */
+  addDep(dep: Dep) {
+    // 判重，如果 dep 已经存在则不重复添加
+    const id = dep.id;
+    if (!this.newDepIds.has(id)) {
+      // 缓存 dep.id，用于判重
+      this.newDepIds.add(id);
+      // 添加 dep
+      this.newDeps.push(dep);
+      // 避免在 dep 中重复添加 watcher，this.depIds 的设置在 cleanupDeps 方法中
+      if (!this.depIds.has(id)) {
+        // 添加 watcher 自己到 dep
+        dep.addSub(this);
+      }
+    }
+  }
+
+  /**
+   * Clean up for dependency collection.
+   */
+  cleanupDeps() {
+    let i = this.deps.length;
+    while (i--) {
+      const dep = this.deps[i];
+      if (!this.newDepIds.has(dep.id)) {
+        dep.removeSub(this);
+      }
+    }
+    let tmp = this.depIds;
+    this.depIds = this.newDepIds;
+    this.newDepIds = tmp;
+    this.newDepIds.clear();
+    tmp = this.deps;
+    this.deps = this.newDeps;
+    this.newDeps = tmp;
+    this.newDeps.length = 0;
+  }
+
+  // ...
+}
+```
+
+<span :class="$style.red_text">Watcher</span> 是一个 <span :class="$style.red_text">Class</span>，在它的构造函数中，定义了一些和 <span :class="$style.red_text">Dep</span> 相关的属性：
+
+```js
+this.deps = [];
+this.newDeps = [];
+this.depIds = new Set();
+this.newDepIds = new Set();
+```
+
+### 过程分析
+
+之前我们介绍当对数据对象的访问会触发他们的 getter 方法，那么这些对象什
+么时候被访问呢？还记得之前我们介绍过 Vue 的 mount 过程是通
+过 <span :class="$style.red_text">mountComponent</span> 函数，其中有一段比较重要的逻辑，大致如下：
+
+```js
+updateComponent = () => {
+  vm._update(vm._render(), hydrating);
+};
+new Watcher(
+  vm,
+  updateComponent,
+  noop,
+  {
+    before() {
+      if (vm._isMounted) {
+        callHook(vm, "beforeUpdate");
+      }
+    },
+  },
+  true /* isRenderWatcher */
+);
+```
+
+当我们去实例化一个渲染<span :class="$style.red_text"> watcher </span> 的时候，首先进入<span :class="$style.red_text"> watcher </span>的构造函数逻辑，然后会执行它的<span :class="$style.red_text"> this.get() </span> 方法，进入 get 函数，首先会执行：
+
+```js
+pushTarget(this);
+```
+
+<span :class="$style.red_text">pushTarget</span> 的定义在<span :class="$style.red_text"> src/core/observer/dep.js </span> 中：
+
+```js
+export function pushTarget(_target: Watcher) {
+  if (Dep.target) targetStack.push(Dep.target);
+  Dep.target = _target;
+}
+```
+
+实际上就是把 <span :class="$style.red_text">Dep.target</span> 赋值为当前的渲染 watcher 并压栈（为了恢复用）。
+接着又执行了：
+
+```js
+value = this.getter.call(vm, vm);
+```
+
+<span :class="$style.red_text">this.getter</span> 对应就是 <span :class="$style.red_text">updateComponent</span> 函数，这实际上就是在执行：
+
+```js
+vm._update(vm._render(), hydrating);
+```
+
+它会先执行 <span :class="$style.red_text">vm.\_render()</span> 方法，因为之前分析过这个方法会生成 渲染 VNode，并且在这个过程中会对 <span :class="$style.red_text">vm</span> 上的<span :class="$style.red_text">数据访问</span>，这个时候就触发了数据对象的 getter。<br>
+那么每个对象值的<span :class="$style.red_text"> getter </span>都持有一个 <span :class="$style.red_text">dep</span>，在触发 getter 的时候会调
+用<span :class="$style.red_text"> dep.depend() </span>方法，也就会执行 <span :class="$style.red_text">Dep.target.addDep(this)</span>。<br>
+
+刚才提到这个时候<span :class="$style.red_text"> Dep.target </span> 已经被赋值为<span :class="$style.red_text">渲染 watcher </span>，那么就执行
+到<span :class="$style.red_text"> addDep </span>方法：
+
+```js
+addDep (dep: Dep) {
+  const id = dep.id
+  if (!this.newDepIds.has(id)) {
+    this.newDepIds.add(id)
+    this.newDeps.push(dep)
+    if (!this.depIds.has(id)) {
+      dep.addSub(this)
+    }
+  }
+}
+```
+
+这时候会做一些逻辑判断（保证同一数据不会被添加多次）后执行 <span :class="$style.red_text">dep.addSub
+(this)</span>，那么就会执行<span :class="$style.red_text"> this.subs.push(sub)</span>，也就是说把当前的 <span :class="$style.red_text">watcher</span> 订阅到这个数据持有的<span :class="$style.red_text"> dep </span>的 <span :class="$style.red_text">subs</span> 中，这个目的是为后续数据变化时候能通知到哪些 <span :class="$style.red_text">subs</span> 做准备。
 
 ## 派发更新
 

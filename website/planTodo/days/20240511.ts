@@ -1,4 +1,4 @@
-export default [
+export const list11 = [
   {
     name: "了解uniapp / uniapp X 的 uts 50%。",
     done: false,

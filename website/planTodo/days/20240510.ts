@@ -1,4 +1,4 @@
-export default [
+export const list10 = [
   {
     name: "规划总体学习目标。",
     done: true,
