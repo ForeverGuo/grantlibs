@@ -823,7 +823,83 @@ addDep (dep: Dep) {
 ```
 
 这时候会做一些逻辑判断（保证同一数据不会被添加多次）后执行 <span :class="$style.red_text">dep.addSub
-(this)</span>，那么就会执行<span :class="$style.red_text"> this.subs.push(sub)</span>，也就是说把当前的 <span :class="$style.red_text">watcher</span> 订阅到这个数据持有的<span :class="$style.red_text"> dep </span>的 <span :class="$style.red_text">subs</span> 中，这个目的是为后续数据变化时候能通知到哪些 <span :class="$style.red_text">subs</span> 做准备。
+(this)</span>，那么就会执行<span :class="$style.red_text"> this.subs.push(sub)</span>，也就是说把当前的 <span :class="$style.red_text">watcher</span> 订阅到这个数据持有的<span :class="$style.red_text"> dep </span>的 <span :class="$style.red_text">subs</span> 中，这个目的是为后续数据变化时候能通知到哪些 <span :class="$style.red_text">subs</span> 做准备。<br>
+
+所以在 <span :class="$style.red_text">vm.\_render()</span> 过程中，会触发所有数据的 <span :class="$style.red_text">getter</span>，这样实际上已经完成
+了一个<span :class="$style.red_text">依赖收集</span>的过程。那么到这里就结束了么，其实并没有，再完成依赖收
+集后，还有几个逻辑要执行，首先是：
+
+```js
+if (this.deep) {
+  traverse(value);
+}
+```
+
+这个是要递归去访问 <span :class="$style.red_text">value</span>，触发它所有子项的 <span :class="$style.red_text">getter</span>，这个之后会详细讲。接下来执行：
+
+```js
+popTarget();
+```
+
+<span :class="$style.red_text">popTarget</span> 的定义在 <span :class="$style.red_text">src/core/observer/dep.js</span> 中：
+
+```js
+Dep.target = targetStack.pop();
+```
+
+实际上就是把 <span :class="$style.red_text">Dep.target</span> 恢复成上一个状态，因为当前 <span :class="$style.red_text">vm</span> 的数据依赖收集已经完成，那么对应的渲染 <span :class="$style.red_text">Dep.target</span> 也需要改变。最后执行：
+
+```js
+this.cleanupDeps();
+```
+
+其实很多人都分析过并了解到<span :class="$style.red_text"> Vue </span> 有依赖收集的过程，但几乎没有看到有人
+分析依赖清空的过程，其实这是大部分同学会忽视的一点，也是 Vue 考虑特别细的一点。
+
+```js
+/**
+   * Clean up for dependency collection.
+   */
+  cleanupDeps () {
+    let i = this.deps.length
+    while (i--) {
+      const dep = this.deps[i]
+      if (!this.newDepIds.has(dep.id)) {
+        dep.removeSub(this)
+      }
+    }
+    let tmp = this.depIds
+    this.depIds = this.newDepIds
+    this.newDepIds = tmp
+    this.newDepIds.clear()
+    tmp = this.deps
+    this.deps = this.newDeps
+    this.newDeps = tmp
+    this.newDeps.length = 0
+  }
+```
+
+考虑到 <span :class="$style.red_text">Vue</span> 是数据驱动的，所以每次数据变化都会重新 <span :class="$style.red_text">render</span>，那么 <span :class="$style.red_text">vm.\_render()</span> 方法又会再次执行，并再次触发数据的<span :class="$style.red_text"> getters </span>，所以 <span :class="$style.red_text">Wathcer</span> 在构造函数中会初始化 2 个 Dep 实例数组，<span :class="$style.red_text">newDeps</span> 表示新添加的 Dep 实例数组，而 <span :class="$style.red_text">deps</span> 表示上一次添加的 Dep 实例数组。<br>
+
+在执行 <span :class="$style.red_text">cleanupDeps</span> 函数的时候，会首先遍历 <span :class="$style.red_text">deps</span>，移除对 <span :class="$style.red_text">dep</span> 的订阅，然
+后把 <span :class="$style.red_text">newDepIds</span> 和 <span :class="$style.red_text">depIds</span> 交换，<span :class="$style.red_text">newDeps</span> 和 <span :class="$style.red_text">deps</span> 交换，并把<span :class="$style.red_text"> newDepIds 和 newDeps </span> 清空。<br>
+
+那么为什么需要做 <span :class="$style.red_text">deps</span> 订阅的移除呢，在添加 <span :class="$style.red_text">deps</span> 的订阅过程，已经能通过 id 去重避免重复订阅了。<br>
+
+考虑到一种场景，我们的模板会根据 <span :class="$style.red_text">v-if</span> 去渲染不同子模板 a 和 b，当我们
+满足某种条件的时候渲染 a 的时候，会访问到 a 中的数据，这时候我们对 a
+使用的数据添加了<span :class="$style.red_text"> getter </span>，做了依赖收集，那么当我们去修改 a 的数据的时候，
+理应通知到这些订阅者。那么如果我们一旦改变了条件渲染了 b 模板，又会对 b 使用的数据添加了 getter，如果我们没有依赖移除的过程，那么这时候我去修改 a 模板的数据，会通知 a 数据的订阅的回调，这显然是有浪费的。<br>
+
+因此 <span :class="$style.red_text">Vue</span> 设计了在每次添加完新的订阅，会移除掉旧的订阅，这样就保证了在
+我们刚才的场景中，如果渲染 b 模板的时候去修改 a 模板的数据，a 数据订阅回调已经被移除了，所以不会有任何浪费。
+
+::: tip
+通过这一节的分析，我们对 Vue 数据的依赖收集过程已经有了认识，并且对这
+其中的一些细节做了分析。收集依赖的目的是为了当这些响应式数据发送变化，
+触发它们的 setter 的时候，能知道应该通知哪些订阅者去做相应的逻辑处理，
+这个过程叫派发更新，其实 <span :class="$style.red_text">Watcher</span> 和 <span :class="$style.red_text">Dep</span> 就是一个非常经典的<span :class="$style.common_text">观察者设计模式</span>的实现。
+:::
 
 ## 派发更新
 
