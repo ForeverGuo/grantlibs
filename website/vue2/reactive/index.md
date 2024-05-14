@@ -903,6 +903,79 @@ this.cleanupDeps();
 
 ## 派发更新
 
+通过上一节分析我们了解了响应式数据依赖收集过程，收集的目的就是为了当我们修改数据的时候，可以对相关的依赖派发更新，那么这一节我们来详细分析这个过程。<br>
+先来回顾一下 <span :class="$style.red_text">setter</span> 部分的逻辑：
+
+```js
+/**
+ * Define a reactive property on an Object.
+ */
+export function defineReactive(
+  obj: Object,
+  key: string,
+  val: any,
+  customSetter?: ?Function,
+  shallow?: boolean
+) {
+  const dep = new Dep();
+  const property = Object.getOwnPropertyDescriptor(obj, key);
+  if (property && property.configurable === false) {
+    return;
+  }
+  // cater for pre-defined getter/setters
+  const getter = property && property.get;
+  const setter = property && property.set;
+  if ((!getter || setter) && arguments.length === 2) {
+    val = obj[key];
+  }
+  let childOb = !shallow && observe(val);
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    // ...
+    set: function reactiveSetter(newVal) {
+      const value = getter ? getter.call(obj) : val;
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return;
+      }
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== "production" && customSetter) {
+        customSetter();
+      }
+      if (setter) {
+        setter.call(obj, newVal);
+      } else {
+        val = newVal;
+      }
+      childOb = !shallow && observe(newVal);
+      dep.notify();
+    },
+  });
+}
+```
+
+<span :class="$style.red_text">setter</span> 的逻辑有 2 个关键的点，一个是 <span :class="$style.red_text">childOb = !shallow &&observe(newVal) </span>，如果 shallow 为 false 的情况，会对新设置的值变成一个响应式对象；另一个是 <span :class="$style.red_text">dep.notify()</span>，通知所有的订阅者，这是本节的关键，接
+下来完整的分析整个派发更新的过程。
+
+### 过程分析
+
+当我们在组件中对响应的数据做了修改，就会触发 <span :class="$style.red_text">setter</span> 的逻辑，最后调
+用 <span :class="$style.red_text">dep.notify()</span> 方法，它是 Dep 的一个实例方法，定义在<span :class="$style.red_text">src/core/observer/dep.js</span> 中：
+
+```js
+class Dep {
+  // ...
+  notify() {
+    // stabilize the subscriber list first
+    const subs = this.subs.slice();
+    for (let i = 0, l = subs.length; i < l; i++) {
+      subs[i].update();
+    }
+  }
+}
+```
+
 ## nextTick
 
 ## 检测变化的注意事项

@@ -4,6 +4,10 @@ export const planMenu = [
     link: '/planTodo/day'
   },
   {
+    text: 'English',
+    link: '/planTodo/english'
+  },
+  {
     text: 'Vue2',
     link: '/planTodo/vue2'
   },
@@ -12,11 +16,7 @@ export const planMenu = [
     link: '/planTodo/vue3'
   },
   {
-    text: 'Java',
-    link: '/planTodo/java'
+    text: 'Python',
+    link: '/planTodo/python'
   },
-  {
-    text: 'SpringBoot',
-    link: '/planTodo/springBoot'
-  }
 ]
