@@ -976,6 +976,283 @@ class Dep {
 }
 ```
 
+这里的逻辑非常简单，遍历所有的 <span :class="$style.red_text">subs</span>，也就是 <span :class="$style.red_text">Watcher</span> 的实例数组，然后调用每一个 watcher 的 update 方法，它的定义在 <span :class="$style.red_text">src/core/observer/watcher.js</span> 中：
+
+```js
+class Watcher {
+// ...
+/**
+   * 根据 watcher 配置项，决定接下来怎么走，一般是 queueWatcher
+   */
+  update () {
+    /* istanbul ignore else */
+    if (this.lazy) {
+      // 懒执行时走这里，比如 computed
+      // 将 dirty 置为 true，可以让 computedGetter 执行时重新计算 computed 回调函数的执行结果
+      this.dirty = true
+    } else if (this.sync) {
+      // 同步执行，在使用 vm.$watch 或者 watch 选项时可以传一个 sync 选项，
+      // 当为 true 时在数据更新时该 watcher 就不走异步更新队列，直接执行 this.run
+      // 方法进行更新
+      // 这个属性在官方文档中没有出现
+      this.run()
+    } else {
+      // 更新时一般都这里，将 watcher 放入 watcher 队列
+      queueWatcher(this)
+    }
+  }
+```
+
+这里更新一般走 queueWatcher(this)，先分析这个逻辑，<span :class="$style.red_text">queueWatcher</span> 的定义在 <span :class="$style.red_text">src/core/observer/scheduler.js</span> 中：
+
+```js
+const queue: Array<Watcher> = [];
+const activatedChildren: Array<Component> = [];
+let has: { [key: number]: ?true } = {};
+let circular: { [key: number]: number } = {};
+let waiting = false;
+let flushing = false;
+let index = 0;
+/**
+ * 将 watcher 放入 watcher 队列
+ */
+export function queueWatcher(watcher: Watcher) {
+  const id = watcher.id;
+  // 如果 watcher 已经存在，则跳过，不会重复入队
+  if (has[id] == null) {
+    // 缓存 watcher.id，用于判断 watcher 是否已经入队
+    has[id] = true;
+    if (!flushing) {
+      // 当前没有处于刷新队列状态，watcher 直接入队
+      queue.push(watcher);
+    } else {
+      // 已经在刷新队列了
+      // 从队列末尾开始倒序遍历，根据当前 watcher.id 找到它大于的 watcher.id 的位置，然后将自己插入到该位置之后的下一个位置
+      // 即将当前 watcher 放入已排序的队列中，且队列仍是有序的
+      let i = queue.length - 1;
+      while (i > index && queue[i].id > watcher.id) {
+        i--;
+      }
+      queue.splice(i + 1, 0, watcher);
+    }
+    // queue the flush
+    if (!waiting) {
+      waiting = true;
+
+      if (process.env.NODE_ENV !== "production" && !config.async) {
+        // 直接刷新调度队列
+        // 一般不会走这儿，Vue 默认是异步执行，如果改为同步执行，性能会大打折扣
+        flushSchedulerQueue();
+        return;
+      }
+      /**
+       * 熟悉的 nextTick => vm.$nextTick、Vue.nextTick
+       *   1、将 回调函数（flushSchedulerQueue） 放入 callbacks 数组
+       *   2、通过 pending 控制向浏览器任务队列中添加 flushCallbacks 函数
+       */
+      nextTick(flushSchedulerQueue);
+    }
+  }
+}
+```
+
+这里引入了一个<span :class="$style.red_text">队列</span>的概念，这也是 <span :class="$style.red_text">Vue</span> 在做派发更新的时候的一个优化的点，它并不会每次数据改变都触发 watcher 的回调，而是把这些 watcher 先添加
+到一个队列里，然后在 <span :class="$style.red_text">nextTick</span> 后执行 <span :class="$style.red_text">flushSchedulerQueue</span>。<br>
+这里有几个细节要注意一下，首先用 <span :class="$style.red_text">has</span> 对象保证同一个 <span :class="$style.red_text">Watcher</span> 只添加一次；接着对 flushing 的判断，else 部分的逻辑稍后我会讲；最后通过 wating 保证对 <span :class="$style.red_text">nextTick(flushSchedulerQueue)</span> 的调用逻辑只有一次，另外 <span :class="$style.red_text">nextTick</span> 的实现我之后会抽一小节专门去讲，目前就可以理解它是在下一个
+tick，也就是异步的去执行 flushSchedulerQueue。<br>
+接下来我们来看 flushSchedulerQueue 的实现，它的定义在 <span :class="$style.red_text">src/core/observer/scheduler.js</span> 中。
+
+```js
+/**
+ * Flush both queues and run the watchers.
+ * 刷新队列，由 flushCallbacks 函数负责调用，主要做了如下两件事：
+ *   1、更新 flushing 为 ture，表示正在刷新队列，在此期间往队列中 push 新的 watcher 时需要特殊处理（将其放在队列的合适位置）
+ *   2、按照队列中的 watcher.id 从小到大排序，保证先创建的 watcher 先执行，也配合 第一步
+ *   3、遍历 watcher 队列，依次执行 watcher.before、watcher.run，并清除缓存的 watcher
+ */
+function flushSchedulerQueue() {
+  currentFlushTimestamp = getNow();
+  // 标志现在正在刷新队列
+  flushing = true;
+  let watcher, id;
+
+  /**
+   * 刷新队列之前先给队列排序（升序），可以保证：
+   *   1、组件的更新顺序为从父级到子级，因为父组件总是在子组件之前被创建
+   *   2、一个组件的用户 watcher 在其渲染 watcher 之前被执行，因为用户 watcher 先于 渲染 watcher 创建
+   *   3、如果一个组件在其父组件的 watcher 执行期间被销毁，则它的 watcher 可以被跳过
+   * 排序以后在刷新队列期间新进来的 watcher 也会按顺序放入队列的合适位置
+   */
+  queue.sort((a, b) => a.id - b.id);
+
+  // 这里直接使用了 queue.length，动态计算队列的长度，没有缓存长度，是因为在执行现有 watcher 期间队列中可能会被 push 进新的 watcher
+  for (index = 0; index < queue.length; index++) {
+    watcher = queue[index];
+    // 执行 before 钩子，在使用 vm.$watch 或者 watch 选项时可以通过配置项（options.before）传递
+    if (watcher.before) {
+      watcher.before();
+    }
+    // 将缓存的 watcher 清除
+    id = watcher.id;
+    has[id] = null;
+
+    // 执行 watcher.run，最终触发更新函数，比如 updateComponent 或者 获取 this.xx（xx 为用户 watch 的第二个参数），当然第二个参数也有可能是一个函数，那就直接执行
+    watcher.run();
+    // in dev build, check and stop circular updates.
+    if (process.env.NODE_ENV !== "production" && has[id] != null) {
+      circular[id] = (circular[id] || 0) + 1;
+      if (circular[id] > MAX_UPDATE_COUNT) {
+        warn(
+          "You may have an infinite update loop " +
+            (watcher.user
+              ? `in watcher with expression "${watcher.expression}"`
+              : `in a component render function.`),
+          watcher.vm
+        );
+        break;
+      }
+    }
+  }
+
+  // keep copies of post queues before resetting state
+  const activatedQueue = activatedChildren.slice();
+  const updatedQueue = queue.slice();
+
+  /**
+   * 重置调度状态：
+   *   1、重置 has 缓存对象，has = {}
+   *   2、waiting = flushing = false，表示刷新队列结束
+   *     waiting = flushing = false，表示可以像 callbacks 数组中放入新的 flushSchedulerQueue 函数，并且可以向浏览器的任务队列放入下一个 flushCallbacks 函数了
+   */
+  resetSchedulerState();
+
+  // call component updated and activated hooks
+  callActivatedHooks(activatedQueue);
+  callUpdatedHooks(updatedQueue);
+
+  // devtool hook
+  /* istanbul ignore if */
+  if (devtools && config.devtools) {
+    devtools.emit("flush");
+  }
+}
+```
+
+这里有几个重要的逻辑要梳理一下，对于一些分支逻辑如 keep-alive 组件相
+关和之前提到过的 updated 钩子函数的执行会略过。
+
+- 队列排序
+  <span :class="$style.red_text">queue.sort((a, b) => a.id - b.id)</span> 对队列做了从小到大的排序，这么做主要确保以下几点：
+
+  1. 组件的更新由父到子；因为父组件的创建过程是先于子的，所以 watcher 的
+     创建也是先父后子，执行顺序也应该保持先父后子。
+
+  2. 用户的自定义 <span :class="$style.red_text">watcher</span> 要优先于渲染 <span :class="$style.red_text">watcher</span> 执行；因为用户自定义 <span :class="$style.red_text">watcher</span> 是在渲染 watcher 之前创建的。
+
+  3. 如果一个组件在父组件的 watcher 执行期间被销毁，那么它对应的 watcher
+     执行都可以被跳过，所以父组件的 watcher 应该先执行。
+
+- 队列遍历
+
+  在对 <span :class="$style.red_text">queue</span> 排序后，接着就是要对它做遍历，拿到对应的 <span :class="$style.red_text">watcher</span>，执行 watcher.run()。这里需要注意一个细节，在遍历的时候每次都会对 queue.length 求值，因为在 watcher.run() 的时候，很可能用户会再次添加新的 watcher，
+  这样会再次执行到 <span :class="$style.red_text">queueWatcher</span>，如下：
+
+```js
+export function queueWatcher(watcher: Watcher) {
+  const id = watcher.id;
+  if (has[id] == null) {
+    has[id] = true;
+    if (!flushing) {
+      queue.push(watcher);
+    } else {
+      // if already flushing, splice the watcher based on its id
+      // if already past its id, it will be run next immediately.
+      let i = queue.length - 1;
+      while (i > index && queue[i].id > watcher.id) {
+        i--;
+      }
+      queue.splice(i + 1, 0, watcher);
+    }
+    // ...
+  }
+}
+```
+
+可以看到，这时候 <span :class="$style.red_text">flushing</span> 为 true，就会执行到 else 的逻辑，然后就会从后
+往前找，找到第一个待插入 <span :class="$style.red_text">watcher</span> 的 id 比当前队列中 watcher 的 id 大的
+位置。把 <span :class="$style.red_text">watcher</span> 按照 <span :class="$style.red_text">id</span>插入到队列中，因此 queue 的长度发生了变化。
+
+- 状态恢复
+  这个过程就是执行 <span :class="$style.red_text">resetSchedulerState</span> 函数，它的定义在 <span :class="$style.red_text">src/core/observer/scheduler.js</span> 中。
+
+```js
+/**
+ * Reset the scheduler's state.
+ */
+function resetSchedulerState() {
+  index = queue.length = activatedChildren.length = 0;
+  has = {};
+  if (process.env.NODE_ENV !== "production") {
+    circular = {};
+  }
+  waiting = flushing = false;
+}
+```
+
+逻辑就是把这些控制流程状态的一些变量恢复到初始值，把 <span :class="$style.red_text">watcher</span> 队列清空。
+
+```js
+/**
+   * 由 刷新队列函数 flushSchedulerQueue 调用，如果是同步 watch，则由 this.update 直接调用，完成如下几件事：
+   *   1、执行实例化 watcher 传递的第二个参数，updateComponent 或者 获取 this.xx 的一个函数(parsePath 返回的函数)
+   *   2、更新旧值为新值
+   *   3、执行实例化 watcher 时传递的第三个参数，比如用户 watcher 的回调函数
+   */
+  run () {
+    if (this.active) {
+      // 调用 this.get 方法
+      const value = this.get()
+      if (
+        value !== this.value ||
+        // Deep watchers and watchers on Object/Arrays should fire even
+        // when the value is the same, because the value may
+        // have mutated.
+        isObject(value) ||
+        this.deep
+      ) {
+        // 更新旧值为新值
+        const oldValue = this.value
+        this.value = value
+
+        if (this.user) {
+          // 如果是用户 watcher，则执行用户传递的第三个参数 —— 回调函数，参数为 val 和 oldVal
+          try {
+            this.cb.call(this.vm, value, oldValue)
+          } catch (e) {
+            handleError(e, this.vm, `callback for watcher "${this.expression}"`)
+          }
+        } else {
+          // 渲染 watcher，this.cb = noop，一个空函数
+          this.cb.call(this.vm, value, oldValue)
+        }
+      }
+    }
+  }
+```
+
+通过 <span :class="$style.red_text">this.get()</span> 得到它当前的值，然后做判断，如果满足新旧值不等、新值是对象类型、deep 模式任何一个条件，则执行 <span :class="$style.red_text">watcher</span> 的回调，注意回调函数执行的时候会把第一个和第二个参数传入<span :class="$style.red_text">新值 value</span> 和<span :class="$style.red_text">旧值 oldValue</span>，这就是当我们添加自定义 watcher 的时候能在回
+调函数的参数中拿到新旧值的原因。<br>
+那么对于渲染 <span :class="$style.red_text">watcher</span> 而言，它在执行 <span :class="$style.red_text">this.get()</span> 方法求值的时候，会执行 <span :class="$style.red_text">getter</span> 方法：
+
+```js
+updateComponent = () => {
+  vm._update(vm._render(), hydrating);
+};
+```
+
+这就是当我们去修改组件相关的响应式数据的时候，会触发组件重新渲染
+的原因，接着就会重新执行 <span :class="$style.red_text">patch</span> 的过程，但它和首次渲染有所不同。
+
 ## nextTick
 
 ## 检测变化的注意事项
