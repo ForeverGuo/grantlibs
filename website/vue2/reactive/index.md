@@ -1255,6 +1255,178 @@ updateComponent = () => {
 
 ## nextTick
 
+<span :class="$style.red_text">nextTick</span> 是 Vue 的一个核心实现，在介绍 Vue 的 nextTick 之前，为了方便大
+家理解，先简单介绍一下 JS 的运行机制。
+
+### JS 运行机制
+
+JS 执行是单线程的，它是基于事件循环的。事件循环大致分为以下几个步骤：
+
+1. 所有同步任务都在主线程上执行，形成一个执行栈（execution context stack）。
+2. 主线程之外，还存在一个<span :class="$style.red_text">"任务队列"（task queue）</span>。只要异步任务有了运行结果，就在"任务队列"之中放置一个事件。
+3. 一旦"执行栈"中的所有同步任务执行完毕，系统就会读取"任务队列"，看看里面有哪些事件。那些对应的异步任务，于是结束等待状态，进入执行栈，开始执行。
+4. 主线程不断重复上面的第三步。
+
+主线程的执行过程就是一个<span :class="$style.red_text"> tick </span>，而所有的异步结果都是通过 “任务队列” 来调度被调度。 消息队列中存放的是一个个的任务（task）。 规范中规定 task 分为两大类，分别是<span :class="$style.red_text"> macro task </span> 和<span :class="$style.red_text"> micro task </span>，并且每个 macro task 结束后，都要清空所有的 micro task。<br>
+关于 macro task 和 micro task 的概念，简单通过一段代码演示他们的执行顺序：
+
+```js
+for (macroTask of macroTaskQueue) {
+  // 1. Handle current MACRO-TASK
+  handleMacroTask();
+  // 2. Handle all MICRO-TASK
+  for (microTask of microTaskQueue) {
+    handleMicroTask(microTask);
+  }
+}
+```
+
+在浏览器环境中，常见的 macro task 有 setTimeout、MessageChannel、postMessage、setImmediate；常见的
+micro task 有 MutationObsever 和 Promise.then。
+
+### Vue 的实现
+
+它的源码并不多，总共也就 100 多行。接下来我们来看一下它的实现，
+在 <span :class="$style.red_text">src/core/util/next-tick.js</span> 中：
+
+```js
+/**
+ * 做了三件事：
+ *   1、将 pending 置为 false
+ *   2、清空 callbacks 数组
+ *   3、执行 callbacks 数组中的每一个函数（flushSchedulerQueue）
+ */
+function flushCallbacks() {
+  pending = false;
+  const copies = callbacks.slice(0);
+  callbacks.length = 0;
+  // 遍历 callbacks 数组，执行其中存储的每个 flushSchedulerQueue 函数
+  for (let i = 0; i < copies.length; i++) {
+    copies[i]();
+  }
+}
+
+let timerFunc;
+
+// The nextTick behavior leverages the microtask queue, which can be accessed
+// via either native Promise.then or MutationObserver.
+// MutationObserver has wider support, however it is seriously bugged in
+// UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
+// completely stops working after triggering a few times... so, if native
+// Promise is available, we will use it:
+/* istanbul ignore next, $flow-disable-line */
+if (typeof Promise !== "undefined" && isNative(Promise)) {
+  const p = Promise.resolve();
+  // 首选 Promise.resolve().then()
+  timerFunc = () => {
+    // 在 微任务队列 中放入 flushCallbacks 函数
+    p.then(flushCallbacks);
+    /**
+     * 在有问题的UIWebViews中，Promise.then不会完全中断，但是它可能会陷入怪异的状态，
+     * 在这种状态下，回调被推入微任务队列，但队列没有被刷新，直到浏览器需要执行其他工作，例如处理一个计时器。
+     * 因此，我们可以通过添加空计时器来“强制”刷新微任务队列。
+     */
+    if (isIOS) setTimeout(noop);
+  };
+  isUsingMicroTask = true;
+} else if (
+  !isIE &&
+  typeof MutationObserver !== "undefined" &&
+  (isNative(MutationObserver) ||
+    // PhantomJS and iOS 7.x
+    MutationObserver.toString() === "[object MutationObserverConstructor]")
+) {
+  // MutationObserver 次之
+  // Use MutationObserver where native Promise is not available,
+  // e.g. PhantomJS, iOS7, Android 4.4
+  // (#6466 MutationObserver is unreliable in IE11)
+  let counter = 1;
+  const observer = new MutationObserver(flushCallbacks);
+  const textNode = document.createTextNode(String(counter));
+  observer.observe(textNode, {
+    characterData: true,
+  });
+  timerFunc = () => {
+    counter = (counter + 1) % 2;
+    textNode.data = String(counter);
+  };
+  isUsingMicroTask = true;
+} else if (typeof setImmediate !== "undefined" && isNative(setImmediate)) {
+  // 再就是 setImmediate，它其实已经是一个宏任务了，但仍然比 setTimeout 要好
+  timerFunc = () => {
+    setImmediate(flushCallbacks);
+  };
+} else {
+  // 最后没办法，则使用 setTimeout
+  timerFunc = () => {
+    setTimeout(flushCallbacks, 0);
+  };
+}
+
+/**
+ * 完成两件事：
+ *   1、用 try catch 包装 flushSchedulerQueue 函数，然后将其放入 callbacks 数组
+ *   2、如果 pending 为 false，表示现在浏览器的任务队列中没有 flushCallbacks 函数
+ *     如果 pending 为 true，则表示浏览器的任务队列中已经被放入了 flushCallbacks 函数，
+ *     待执行 flushCallbacks 函数时，pending 会被再次置为 false，表示下一个 flushCallbacks 函数可以进入
+ *     浏览器的任务队列了
+ * pending 的作用：保证在同一时刻，浏览器的任务队列中只有一个 flushCallbacks 函数
+ * @param {*} cb 接收一个回调函数 => flushSchedulerQueue
+ * @param {*} ctx 上下文
+ * @returns
+ */
+export function nextTick(cb?: Function, ctx?: Object) {
+  let _resolve;
+  // 用 callbacks 数组存储经过包装的 cb 函数
+  callbacks.push(() => {
+    if (cb) {
+      // 用 try catch 包装回调函数，便于错误捕获
+      try {
+        cb.call(ctx);
+      } catch (e) {
+        handleError(e, ctx, "nextTick");
+      }
+    } else if (_resolve) {
+      _resolve(ctx);
+    }
+  });
+  if (!pending) {
+    pending = true;
+    // 执行 timerFunc，在浏览器的任务队列中（首选微任务队列）放入 flushCallbacks 函数
+    timerFunc();
+  }
+  // $flow-disable-line
+  if (!cb && typeof Promise !== "undefined") {
+    return new Promise((resolve) => {
+      _resolve = resolve;
+    });
+  }
+}
+```
+
+这里的任务队列 timerFunc 首选是 <span :class="$style.red_text">Promise</span> ，然后是 <span :class="$style.red_text">MutationObserver</span>，其次是 <span :class="$style.red_text">setImmediate（其实是一个宏任务）</span>，最后是 <span :class="$style.red_text">setTimeout</span> <br>
+<span :class="$style.red_text">next-tick.js</span> 对外暴露 <span :class="$style.red_text">nextTick(flushSchedulerQueue)</span> 所用到的函数。它的逻辑也很简单，把传入的回调函数 cb 压入 callbacks 数组，最后一次性地执行 timerFunc ，而它们都会在下一个 <span :class="$style.red_text">tick</span> 执行 <span :class="$style.red_text">flushCallbacks</span>，flushCallbacks 的逻辑非常简单，对 callbacks 遍历，然后执行相应的回调函数。<br>
+
+这里使用 callbacks 而不是直接在 nextTick 中执行回调函数的原因是保证在
+同一个 tick 内多次执行 <span :class="$style.red_text">nextTick</span>，不会开启多个异步任务，而把这些异步任
+务都压成一个<span :class="$style.red_text">同步任务</span>，在下一个 <span :class="$style.red_text">tick</span> 执行完毕。<br>
+
+<span :class="$style.red_text">nextTick</span> 函数最后还有一段逻辑：
+
+```js
+if (!cb && typeof Promise !== "undefined") {
+  return new Promise((resolve) => {
+    _resolve = resolve;
+  });
+}
+```
+
+这是当 <span :class="$style.red_text">nextTick</span> 不传 cb 参数的时候，提供一个 Promise 化的调用，比如：
+
+```js
+nextTick().then(() => {});
+```
+
 ## 检测变化的注意事项
 
 <style module>

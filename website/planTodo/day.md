@@ -1,9 +1,21 @@
 <script setup>
-import { list10, list11, list12, list13, list14, list15 } from './days/index.ts'
+import { list10, list11, list12, list13, list14, list15, list16 } from './days/index.ts'
 </script>
 
 <div :class="$style.special_text">
   每日清单
+</div>
+
+## 2024-05-16
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list16"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
 </div>
 
 ## 2024-05-15

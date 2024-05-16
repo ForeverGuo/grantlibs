@@ -1,3 +1,41 @@
+## 20240516
+
+1. <div :class="$style.common_text">concepts</div>
+   概念
+
+2. <div :class="$style.common_text">harmonious</div>
+   悦耳的，和谐的，协调的
+   <div :class="$style.special_text">there should be a harmonious alliance between managment and workers.</div>
+
+3. <div :class="$style.common_text">mount</div>
+   组织，开展
+
+4. <div :class="$style.common_text">exemplify</div>
+   典型，典范
+
+5. <div :class="$style.common_text">resident</div>
+   居民，居住，寄宿生
+   <div :class="$style.special_text">resident polulation 常住人口</div>
+
+6. <div :class="$style.common_text">symmetrical</div>
+   对称的
+
+7. <div :class="$style.common_text">claim</div>
+   声称，主张
+   <div :class="$style.special_text">Scientists are claiming a major breakthrough in the fight against cancer.</div>
+
+8. <div :class="$style.common_text">slit</div>
+    裂缝，撕开
+   <div :class="$style.special_text"> he slit open the envelope and took out the letter</div>
+
+9. <div :class="$style.common_text">foster</div>
+   促进，培养 照料
+   <div :class="$style.special_text">they have fostered over 60 children during the past ten years.</div>
+
+10. <div :class="$style.common_text">settlement</div>
+    协议，结算，下陷
+    <div :class="$style.special_text">a divorce settlement</div>
+
 ## 20240515
 
 1. <div :class="$style.common_text">coincide</div>
