@@ -1,11 +1,11 @@
-export const list16 = [
+export const list17 = [
   {
-    name: "完成响应式原理之nextTick 100%。",
+    name: "完成响应式原理之检测变化注意事项 100%。",
     done: false,
     status: 'will'
   },
   {
-    name: "完成响应式原理之nextTick。",
+    name: "完成响应式原理之检测变化注意事项。",
     done: true,
     status: 'done',
     rate: '100%'
@@ -19,6 +19,6 @@ export const list16 = [
     name: "背10个单词。",
     done: true,
     status: 'done',
-    rate: '100%'
-  }
+    rate: '0%'
+  },
 ]

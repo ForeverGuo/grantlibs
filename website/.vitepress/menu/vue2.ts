@@ -12,7 +12,7 @@ export const vue2Menu = [
     link: '/vue2/component/index'
   },
   {
-    text: '响应式原理',
+    text: '响应式原理（上）',
     link: '/vue2/reactive/index'
   },
 ]
