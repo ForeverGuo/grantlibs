@@ -1,3 +1,38 @@
+## 20240519
+
+1. <div :class="$style.common_text">hail</div>
+   出生地，来自，冰雹
+
+2. <div :class="$style.common_text">depression</div>
+   沮丧，抑郁，萧条
+    <div :class="$style.special_text">loneliness has been linked to depression</div>
+
+3. <div :class="$style.common_text">constraint</div>
+   限制，限定，严管
+    <div :class="$style.special_text">there are major financial constraints on all schools</div>
+
+4. <div :class="$style.common_text">excel</div>
+   超过，突出
+
+5. <div :class="$style.common_text">greed</div>
+   贪婪，贪心
+    <div :class="$style.special_text">his action is out of greed</div>
+
+6. <div :class="$style.common_text">related topic</div>
+   相关主题
+
+7. <div :class="$style.common_text">section</div>
+   部分
+
+8. <div :class="$style.common_text">essentials</div>
+   必需，要领
+
+9. <div :class="$style.common_text">arbitrarily</div>
+   任意的，随意的位置
+
+10. <div :class="$style.common_text">Coroutines</div>
+    协程
+
 ## 20240516
 
 1. <div :class="$style.common_text">concepts</div>
