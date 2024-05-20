@@ -245,6 +245,264 @@ evaluate () {
 
 ### watch
 
+侦听属性的初始化也是发生在 <span :class="$style.red_text">Vue</span> 的实例初始化阶段的 <span :class="$style.red_text">initState</span> 函数中，在 <span :class="$style.red_text">computed</span> 初始化之后，执行了：
+
+```js
+/**
+ * 做了三件事：
+ *   1、处理 watch 对象
+ *   2、为 每个 watch.key 创建 watcher 实例，key 和 watcher 实例可能是 一对多 的关系
+ *   3、如果设置了 immediate，则立即执行 回调函数
+ */
+if (opts.watch && opts.watch !== nativeWatch) {
+  initWatch(vm, opts.watch);
+}
+```
+
+来看一下 <span :class="$style.red_text">initWatch</span> 的实现，它的定义在 <span :class="$style.red_text">src/core/instance/state.js</span> 中：
+
+```js
+function initWatch(vm: Component, watch: Object) {
+  // 遍历 watch 对象
+  for (const key in watch) {
+    const handler = watch[key];
+    if (Array.isArray(handler)) {
+      // handler 为数组，遍历数组，获取其中的每一项，然后调用 createWatcher
+      for (let i = 0; i < handler.length; i++) {
+        createWatcher(vm, key, handler[i]);
+      }
+    } else {
+      createWatcher(vm, key, handler);
+    }
+  }
+}
+```
+
+这里就是对 <span :class="$style.red_text">watch</span> 对象做遍历，拿到每一个 <span :class="$style.red_text">handler</span>，因为 <span :class="$style.red_text">Vue</span> 是支
+持 <span :class="$style.red_text">watch</span> 的同一个 key 对应多个 <span :class="$style.red_text">handler</span>，所以如果 handler 是一个数组，则遍历这个数组，调用 <span :class="$style.red_text">createWatcher</span> 方法，否则直接调用 <span :class="$style.red_text">createWatcher</span>：
+
+```js
+/**
+ * 两件事：
+ *   1、兼容性处理，保证 handler 肯定是一个函数
+ *   2、调用 $watch
+ * @returns
+ */
+function createWatcher(
+  vm: Component,
+  expOrFn: string | Function,
+  handler: any,
+  options?: Object
+) {
+  // 如果 handler 为对象，则获取其中的 handler 选项的值
+  if (isPlainObject(handler)) {
+    options = handler;
+    handler = handler.handler;
+  }
+  // 如果 hander 为字符串，则说明是一个 methods 方法，获取 vm[handler]
+  if (typeof handler === "string") {
+    handler = vm[handler];
+  }
+  return vm.$watch(expOrFn, handler, options);
+}
+```
+
+这里的逻辑也很简单，首先对 <span :class="$style.red_text">handler</span> 的类型做判断，拿到它最终的回调函数，
+最后调用 <span :class="$style.red_text">vm.$watch(keyOrFn, handler, options)</span> 函数，<span :class="$style.red_text">$watch</span> 是 Vue 原型上的方法，它是在执行 <span :class="$style.red_text">stateMixin</span> 的时候定义的：
+
+```js
+/**
+ * 创建 watcher，返回 unwatch，共完成如下 5 件事：
+ *   1、兼容性处理，保证最后 new Watcher 时的 cb 为函数
+ *   2、标示用户 watcher
+ *   3、创建 watcher 实例
+ *   4、如果设置了 immediate，则立即执行一次 cb
+ *   5、返回 unwatch
+ * @param {*} expOrFn key
+ * @param {*} cb 回调函数
+ * @param {*} options 配置项，用户直接调用 this.$watch 时可能会传递一个 配置项
+ * @returns 返回 unwatch 函数，用于取消 watch 监听
+ */
+Vue.prototype.$watch = function (
+  expOrFn: string | Function,
+  cb: any,
+  options?: Object
+): Function {
+  const vm: Component = this;
+  // 兼容性处理，因为用户调用 vm.$watch 时设置的 cb 可能是对象
+  if (isPlainObject(cb)) {
+    return createWatcher(vm, expOrFn, cb, options);
+  }
+  // options.user 表示用户 watcher，还有渲染 watcher，即 updateComponent 方法中实例化的 watcher
+  options = options || {};
+  options.user = true;
+  // 创建 watcher
+  const watcher = new Watcher(vm, expOrFn, cb, options);
+  // 如果用户设置了 immediate 为 true，则立即执行一次回调函数
+  if (options.immediate) {
+    try {
+      cb.call(vm, watcher.value);
+    } catch (error) {
+      handleError(
+        error,
+        vm,
+        `callback for immediate watcher "${watcher.expression}"`
+      );
+    }
+  }
+  // 返回一个 unwatch 函数，用于解除监听
+  return function unwatchFn() {
+    watcher.teardown();
+  };
+};
+```
+
+也就是说，侦听属性 <span :class="$style.red_text">watch</span> 最终会调用 <span :class="$style.red_text">$watch</span> 方法，这个方法首先判断 <span :class="$style.red_text">cb</span> 如果是一个对象，则调用 <span :class="$style.red_text">createWatcher</span> 方法，这是因为 <span :class="$style.red_text">$watch</span> 方法是用户可以直接调用的，它可以传递一个对象，也可以传递函数。接着执行 <span :class="$style.red_text">const watcher = new Watcher(vm, expOrFn, cb, options)</span> 实例化了一个 watcher，这里需要注意一点这是一个 <span :class="$style.red_text">user watcher</span>，因为 <span :class="$style.red_text">options.user = true</span>。通过实例化 <span :class="$style.red_text">watcher</span> 的方式，一旦我们 watch 的数据发送变化，它最终会执行 watcher 的 run 方法，执行回调函数 cb，并且如果我们设置了 <span :class="$style.red_text">immediate</span> 为 <span :class="$style.red_text">true</span>，则直接会执行回调函数 cb。最后返回了一个 <span :class="$style.red_text">unwatchFn</span> 方法，它会调用 <span :class="$style.red_text">teardown</span> 方法去移除这个 <span :class="$style.red_text">watcher</span>。<br>
+所以本质上侦听属性也是基于 <span :class="$style.red_text">Watcher</span> 实现的，它是一个 <span :class="$style.red_text">user watcher</span>。其实 Watcher 支持了不同的类型，下面我们梳理一下它有哪些类型以及它们的作用。
+
+### Watcher options
+
+<span :class="$style.red_text">Watcher</span> 的构造函数对 <span :class="$style.red_text">options</span> 做的处理，代码如下：
+
+```js
+if (options) {
+  this.deep = !!options.deep;
+  this.user = !!options.user;
+  this.computed = !!options.computed;
+  this.sync = !!options.sync;
+  // ...
+} else {
+  this.deep = this.user = this.computed = this.sync = false;
+}
+```
+
+### deep watcher
+
+通常，如果我们想对一下对象做深度观测的时候，需要设置这个属性为 true，
+考虑到这种情况：
+
+```js
+var vm = new Vue({
+  data() {
+    a: {
+      b: 1;
+    }
+  },
+  watch: {
+    a: {
+      handler(newVal) {
+        console.log(newVal);
+      },
+    },
+  },
+});
+vm.a.b = 2;
+```
+
+这个时候是不会 log 任何数据的，因为我们是 watch 了 <span :class="$style.red_text">a</span> 对象，只触发
+了 a 的 getter，并没有触发 <span :class="$style.red_text">a.b</span> 的 getter，所以并没有订阅它的变化，导致
+我们对 <span :class="$style.red_text">vm.a.b = 2</span> 赋值的时候，虽然触发了 <span :class="$style.red_text">setter</span>，但没有可通知的对象，所以也并不会触发 <span :class="$style.red_text">watch</span> 的回调函数了。<br>
+而我们只需要对代码做稍稍修改，就可以观测到这个变化了.
+
+```js
+watch: {
+  a: {
+    deep: true,
+    handler(newVal) {
+      console.log(newVal)
+    }
+  }
+}
+```
+
+这样就创建了一个 <span :class="$style.red_text">deep watcher</span> 了，在 <span :class="$style.red_text">watcher</span> 执行 <span :class="$style.red_text">get</span> 求值的过程中有一段逻辑：
+
+```js
+get() {
+  let value = this.getter.call(vm, vm)
+  // ...
+  if (this.deep) {
+    traverse(value)
+  }
+}
+```
+
+在对 <span :class="$style.red_text">watch</span> 的表达式或者函数求值后，会调用 <span :class="$style.red_text">traverse</span> 函数，它的定义
+在 src/core/observer/traverse.js 中：
+
+```js
+function _traverse(val: any, seen: SimpleSet) {
+  let i, keys;
+  const isA = Array.isArray(val);
+  if (
+    (!isA && !isObject(val)) ||
+    Object.isFrozen(val) ||
+    val instanceof VNode
+  ) {
+    return;
+  }
+  if (val.__ob__) {
+    const depId = val.__ob__.dep.id;
+    if (seen.has(depId)) {
+      return;
+    }
+    seen.add(depId);
+  }
+  if (isA) {
+    i = val.length;
+    while (i--) _traverse(val[i], seen);
+  } else {
+    keys = Object.keys(val);
+    i = keys.length;
+    while (i--) _traverse(val[keys[i]], seen);
+  }
+}
+```
+
+<span :class="$style.red_text">traverse</span> 的逻辑也很简单，它实际上就是对一个对象做深层递归遍历，因为遍
+历过程中就是对一个子对象的访问，会触发它们的 <span :class="$style.red_text">getter</span> 过程，这样就可以收
+集到依赖，也就是订阅它们变化的 <span :class="$style.red_text">watcher</span>，这个函数实现还有一个小的优化，
+遍历过程中会把子响应式对象通过它们的 <span :class="$style.red_text">dep id</span> 记录到 <span :class="$style.red_text">seenObjects</span>，避免
+以后重复访问。<br>
+那么在执行了 traverse 后，我们再对 watch 的对象内部任何一个值做修改，
+也会调用 watcher 的回调函数了。<br>
+对 deep watcher 的理解非常重要，今后工作中如果大家观测了一个<span :class="$style.red_text">复杂对象</span>，
+并且会改变对象内部深层某个值的时候也希望触发回调，一定要设置 <span :class="$style.red_text">deep 为
+true</span>，但是因为设置了 deep 后会执行 <span :class="$style.red_text">traverse</span> 函数，会有一定的性能开销，所以一定要根据应用场景权衡是否要开启这个配置。
+
+### user watcher
+
+通过 <span :class="$style.red_text">vm.$watch</span> 创建的 <span :class="$style.red_text">watcher</span> 是一个 <span :class="$style.red_text">user watcher</span>，其实它的功能很简单，在对 <span :class="$style.red_text">watcher</span> 求值以及在执行回调函数的时候，会处理一下错误，
+
+```js
+// 创建 watcher
+const watcher = new Watcher(vm, expOrFn, cb, options);
+// 如果用户设置了 immediate 为 true，则立即执行一次回调函数
+if (options.immediate) {
+  try {
+    cb.call(vm, watcher.value);
+  } catch (error) {
+    handleError(
+      error,
+      vm,
+      `callback for immediate watcher "${watcher.expression}"`
+    );
+  }
+}
+```
+
+### computed watcher
+
+计算属性刚刚已经讨论过了～
+
+### sync watcher
+
+在我们之前对 <span :class="$style.red_text">setter</span> 的分析过程知道，当响应式数据发送变化后，触发了 <span :class="$style.red_text">watcher.update()</span>，只是把这个 <span :class="$style.red_text">watcher</span> 推送到一个队列中，在 <span :class="$style.red_text">nextTick</span> 后才
+会真正执行 <span :class="$style.red_text">watcher</span> 的回调函数。而一旦我们设置了 sync，就可以在<span :class="$style.red_text">当前 Tick 中同步执行 watcher</span> 的回调函数。<br>
+
+只有当我们需要 watch 的值的变化到执行 watcher 的回调函数是一个同步过
+程的时候才会去设置该属性为 true。
+
 ## 组件更新
 
 <style module>
