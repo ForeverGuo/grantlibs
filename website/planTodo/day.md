@@ -6,12 +6,38 @@ import {
   list17,
   list18,
   list19,
-  list20
+  list20,
+  list21,
+  list22
 } from './days/index.ts'
 </script>
 
 <div :class="$style.special_text">
   每日清单
+</div>
+
+## 2024-05-22
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list22"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
+</div>
+
+## 2024-05-21
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list21"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
 </div>
 
 ## 2024-05-20

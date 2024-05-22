@@ -505,6 +505,692 @@ if (options.immediate) {
 
 ## 组件更新
 
+在组件化章节，我们介绍了 <span :class="$style.red_text">Vue</span> 的组件化实现过程，不过只讲了 Vue 组
+件的创建过程，并没有涉及到组件数据发生变化，更新组件的过程。而通过我们这一章对数据响应式原理的分析，了解到当数据发生变化的时候，会触发渲染 <span :class="$style.red_text">watcher</span> 的回调函数，进而执行组件的更新过程，接下来详细分析这一过程。
+
+```js
+updateComponent = () => {
+  vm._update(vm._render(), hydrating);
+};
+new Watcher(
+  vm,
+  updateComponent,
+  noop,
+  {
+    before() {
+      if (vm._isMounted) {
+        callHook(vm, "beforeUpdate");
+      }
+    },
+  },
+  true /* isRenderWatcher */
+);
+```
+
+组件的更新还是调用了<span :class="$style.red_text"> vm.\_update </span> 方法，再回顾一下这个方法，它的定
+义在 <span :class="$style.red_text">src/core/instance/lifecycle.js</span> 中：
+
+```js
+Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
+  const vm: Component = this;
+  // ...
+  const prevVnode = vm._vnode;
+  if (!prevVnode) {
+    // initial render
+    vm.$el = vm.__patch__(
+      vm.$el,
+      vnode,
+      hydrating,
+      false
+      /* removeOnly
+       */
+    );
+  } else {
+    // updates
+    vm.$el = vm.__patch__(prevVnode, vnode);
+  }
+  // ...
+};
+```
+
+组件更新的过程，会执行 <span :class="$style.red_text">vm.$el = vm.__patch__(prevVnode, vnode)</span>，它仍然会调用 <span :class="$style.red_text">patch</span> 函数，在 <span :class="$style.red_text">src/core/vdom/patch.js</span> 中定义：
+
+```js
+/**
+ * vm.__patch__
+ *   1、新节点不存在，老节点存在，调用 destroy，销毁老节点
+ *   2、如果 oldVnode 是真实元素，则表示首次渲染，创建新节点，并插入 body，然后移除老节点
+ *   3、如果 oldVnode 不是真实元素，则表示更新阶段，执行 patchVnode
+ */
+function patch(oldVnode, vnode, hydrating, removeOnly) {
+  // 如果新节点不存在，老节点存在，则调用 destroy，销毁老节点
+  if (isUndef(vnode)) {
+    if (isDef(oldVnode)) invokeDestroyHook(oldVnode);
+    return;
+  }
+
+  let isInitialPatch = false;
+  const insertedVnodeQueue = [];
+
+  if (isUndef(oldVnode)) {
+    // 新的 VNode 存在，老的 VNode 不存在，这种情况会在一个组件初次渲染的时候出现，比如：
+    // <div id="app"><comp></comp></div>
+    // 这里的 comp 组件初次渲染时就会走这儿
+    // empty mount (likely as component), create new root element
+    isInitialPatch = true;
+    createElm(vnode, insertedVnodeQueue);
+  } else {
+    // 判断 oldVnode 是否为真实元素
+    const isRealElement = isDef(oldVnode.nodeType);
+    if (!isRealElement && sameVnode(oldVnode, vnode)) {
+      // 不是真实元素，但是老节点和新节点是同一个节点，则是更新阶段，执行 patch 更新节点
+      patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly);
+    } else {
+      // 是真实元素，则表示初次渲染
+      if (isRealElement) {
+        // 挂载到真实元素以及处理服务端渲染的情况
+        // mounting to a real element
+        // check if this is server-rendered content and if we can perform
+        // a successful hydration.
+        if (oldVnode.nodeType === 1 && oldVnode.hasAttribute(SSR_ATTR)) {
+          oldVnode.removeAttribute(SSR_ATTR);
+          hydrating = true;
+        }
+        if (isTrue(hydrating)) {
+          if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
+            invokeInsertHook(vnode, insertedVnodeQueue, true);
+            return oldVnode;
+          } else if (process.env.NODE_ENV !== "production") {
+            warn(
+              "The client-side rendered virtual DOM tree is not matching " +
+                "server-rendered content. This is likely caused by incorrect " +
+                "HTML markup, for example nesting block-level elements inside " +
+                "<p>, or missing <tbody>. Bailing hydration and performing " +
+                "full client-side render."
+            );
+          }
+        }
+        // 走到这儿说明不是服务端渲染，或者 hydration 失败，则根据 oldVnode 创建一个 vnode 节点
+        // either not server-rendered, or hydration failed.
+        // create an empty node and replace it
+        oldVnode = emptyNodeAt(oldVnode);
+      }
+
+      // 拿到老节点的真实元素
+      const oldElm = oldVnode.elm;
+      // 获取老节点的父元素，即 body
+      const parentElm = nodeOps.parentNode(oldElm);
+
+      // 基于 vnode 创建整棵节点树并插入到 body 元素下
+      createElm(
+        vnode,
+        insertedVnodeQueue,
+        // extremely rare edge case: do not insert if old element is in a
+        // leaving transition. Only happens when combining transition +
+        // keep-alive + HOCs. (#4590)
+        oldElm._leaveCb ? null : parentElm,
+        nodeOps.nextSibling(oldElm)
+      );
+
+      // 递归更新父占位符节点元素
+      if (isDef(vnode.parent)) {
+        let ancestor = vnode.parent;
+        const patchable = isPatchable(vnode);
+        while (ancestor) {
+          for (let i = 0; i < cbs.destroy.length; ++i) {
+            cbs.destroy[i](ancestor);
+          }
+          ancestor.elm = vnode.elm;
+          if (patchable) {
+            for (let i = 0; i < cbs.create.length; ++i) {
+              cbs.create[i](emptyNode, ancestor);
+            }
+            // #6513
+            // invoke insert hooks that may have been merged by create hooks.
+            // e.g. for directives that uses the "inserted" hook.
+            const insert = ancestor.data.hook.insert;
+            if (insert.merged) {
+              // start at index 1 to avoid re-invoking component mounted hook
+              for (let i = 1; i < insert.fns.length; i++) {
+                insert.fns[i]();
+              }
+            }
+          } else {
+            registerRef(ancestor);
+          }
+          ancestor = ancestor.parent;
+        }
+      }
+
+      // 移除老节点
+      if (isDef(parentElm)) {
+        removeVnodes([oldVnode], 0, 0);
+      } else if (isDef(oldVnode.tag)) {
+        invokeDestroyHook(oldVnode);
+      }
+    }
+  }
+
+  invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch);
+  return vnode.elm;
+}
+```
+
+这里执行 <span :class="$style.red_text">patch</span> 的逻辑和首次渲染是不一样的，因为 <span :class="$style.red_text">oldVnode</span> 不为空，并且
+它和 <span :class="$style.red_text">vnode</span> 都是 VNode 类型，接下来会通过 <span :class="$style.red_text">sameVNode(oldVnode, vnode)</span> 判断它们是否是相同的 VNode 来决定走不同的更新逻辑：
+
+```js
+/**
+ * 判读两个节点是否相同
+ */
+function sameVnode(a, b) {
+  return (
+    // key 必须相同，需要注意的是 undefined === undefined => true
+    a.key === b.key && // 标签相同
+    ((a.tag === b.tag &&
+      // 都是注释节点
+      a.isComment === b.isComment &&
+      // 都有 data 属性
+      isDef(a.data) === isDef(b.data) &&
+      // input 标签的情况
+      sameInputType(a, b)) ||
+      // 异步占位符节点
+      (isTrue(a.isAsyncPlaceholder) &&
+        a.asyncFactory === b.asyncFactory &&
+        isUndef(b.asyncFactory.error)))
+  );
+}
+```
+
+<span :class="$style.red_text">sameVnode</span> 的逻辑非常简单，如果两个 <span :class="$style.red_text">vnode</span> 的 <span :class="$style.red_text">key</span> 不相等，则是不同的；否
+则继续判断对于同步组件，则判断 isComment、data、input 类型等是否相同，对于异步组件，则判断 asyncFactory 是否相同。<br>
+所以根据新旧 vnode 是否为 sameVnode，会走到不同的更新逻辑，我们先来说
+一下不同的情况。
+
+### 新旧节点不同
+
+1. 创建新节点
+
+```js
+// 拿到老节点的真实元素
+const oldElm = oldVnode.elm;
+// 获取老节点的父元素，即 body
+const parentElm = nodeOps.parentNode(oldElm);
+
+// 基于 vnode 创建整棵节点树并插入到 body 元素下
+createElm(
+  vnode,
+  insertedVnodeQueue,
+  // extremely rare edge case: do not insert if old element is in a
+  // leaving transition. Only happens when combining transition +
+  // keep-alive + HOCs. (#4590)
+  oldElm._leaveCb ? null : parentElm,
+  nodeOps.nextSibling(oldElm)
+);
+```
+
+以当前旧节点为参考节点，创建新的节点，并插入到 DOM 中，<span :class="$style.red_text">createElm</span> 的逻
+辑之前分析过。
+
+2. 更新父的占位符节点
+
+```js
+// 递归更新父占位符节点元素
+if (isDef(vnode.parent)) {
+  let ancestor = vnode.parent;
+  const patchable = isPatchable(vnode);
+  while (ancestor) {
+    for (let i = 0; i < cbs.destroy.length; ++i) {
+      cbs.destroy[i](ancestor);
+    }
+    ancestor.elm = vnode.elm;
+    if (patchable) {
+      for (let i = 0; i < cbs.create.length; ++i) {
+        cbs.create[i](emptyNode, ancestor);
+      }
+      // #6513
+      // invoke insert hooks that may have been merged by create hooks.
+      // e.g. for directives that uses the "inserted" hook.
+      const insert = ancestor.data.hook.insert;
+      if (insert.merged) {
+        // start at index 1 to avoid re-invoking component mounted hook
+        for (let i = 1; i < insert.fns.length; i++) {
+          insert.fns[i]();
+        }
+      }
+    } else {
+      registerRef(ancestor);
+    }
+    ancestor = ancestor.parent;
+  }
+}
+```
+
+只关注主要逻辑即可，找到当前 <span :class="$style.red_text">vnode</span> 的父的占位符节点，先执行各个
+<span :class="$style.red_text">module</span> 的 <span :class="$style.red_text">destroy</span> 的钩子函数，如果当前占位符是一个可挂载的节点，则执行 <span :class="$style.red_text">module</span> 的 <span :class="$style.red_text">create</span> 钩子函数。对于这些钩子函数的作用，在之后的章节会详细介绍。
+
+3. 删除旧节点
+
+```js
+// 移除老节点
+if (isDef(parentElm)) {
+  removeVnodes([oldVnode], 0, 0);
+} else if (isDef(oldVnode.tag)) {
+  invokeDestroyHook(oldVnode);
+}
+```
+
+把 <span :class="$style.red_text">oldVnode</span> 从当前 DOM 树中删除，如果父节点存在，则执行 <span :class="$style.red_text">removeVnodes</span>方法：
+
+```js
+/**
+ * 销毁节点：
+ *   执行组件的 destroy 钩子，即执行 $destroy 方法
+ *   执行组件各个模块(style、class、directive 等）的 destroy 方法
+ *   如果 vnode 还存在子节点，则递归调用 invokeDestroyHook
+ */
+function invokeDestroyHook(vnode) {
+  let i, j;
+  const data = vnode.data;
+  if (isDef(data)) {
+    if (isDef((i = data.hook)) && isDef((i = i.destroy))) i(vnode);
+    for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode);
+  }
+  if (isDef((i = vnode.children))) {
+    for (j = 0; j < vnode.children.length; ++j) {
+      invokeDestroyHook(vnode.children[j]);
+    }
+  }
+}
+
+/**
+ * 移除指定索引范围（startIdx —— endIdx）内的节点
+ */
+function removeVnodes(vnodes, startIdx, endIdx) {
+  for (; startIdx <= endIdx; ++startIdx) {
+    const ch = vnodes[startIdx];
+    if (isDef(ch)) {
+      if (isDef(ch.tag)) {
+        removeAndInvokeRemoveHook(ch);
+        invokeDestroyHook(ch);
+      } else {
+        // Text node
+        removeNode(ch.elm);
+      }
+    }
+  }
+}
+
+function removeAndInvokeRemoveHook(vnode, rm) {
+  if (isDef(rm) || isDef(vnode.data)) {
+    let i;
+    const listeners = cbs.remove.length + 1;
+    if (isDef(rm)) {
+      // we have a recursively passed down rm callback
+      // increase the listeners count
+      rm.listeners += listeners;
+    } else {
+      // directly removing
+      rm = createRmCb(vnode.elm, listeners);
+    }
+    // recursively invoke hooks on child component root node
+    if (
+      isDef((i = vnode.componentInstance)) &&
+      isDef((i = i._vnode)) &&
+      isDef(i.data)
+    ) {
+      removeAndInvokeRemoveHook(i, rm);
+    }
+    for (i = 0; i < cbs.remove.length; ++i) {
+      cbs.remove[i](vnode, rm);
+    }
+    if (isDef((i = vnode.data.hook)) && isDef((i = i.remove))) {
+      i(vnode, rm);
+    } else {
+      rm();
+    }
+  } else {
+    removeNode(vnode.elm);
+  }
+}
+```
+
+删除节点逻辑很简单，就是遍历待删除的 <span :class="$style.red_text">vnodes</span> 做删除，其中 <span :class="$style.red_text">removeAndInvokeRemoveHook</span> 的作用是从 DOM 中移除节点并执行 module 的 remove 钩子函数，并对它的子节点递归调用 removeAndInvokeRemoveHook 函数；invokeDestroyHook
+是执行 module 的 destory 钩子函数以及 vnode 的 destory 钩子函数，并对它的子 vnode 递归调用 invokeDestroyHook 函数；<span :class="$style.red_text">removeNode</span> 就是调用平台的
+<span :class="$style.red_text">DOM API</span> 去把真正的 DOM 节点移除。<br>
+在之前介绍组件生命周期的时候提到 <span :class="$style.red_text">beforeDestroy & destroyed</span> 这两个生命周期钩子函数，它们就是在执行 <span :class="$style.red_text">invokeDestroyHook</span> 过程中，执行了 vnode 的 <span :class="$style.red_text">destory</span> 钩子函数，它的定义在<span :class="$style.red_text"> src/core/vdom/create-component.js</span> 中：
+
+```js
+/**
+ * 销毁组件
+ *   1、如果组件被 keep-alive 组件包裹，则使组件失活，不销毁组件实例，从而缓存组件的状态
+ *   2、如果组件没有被 keep-alive 包裹，则直接调用实例的 $destroy 方法销毁组件
+ */
+ destroy (vnode: MountedComponentVNode) {
+  // 从 vnode 上获取组件实例
+  const { componentInstance } = vnode
+  if (!componentInstance._isDestroyed) {
+    // 如果组件实例没有被销毁
+    if (!vnode.data.keepAlive) {
+      // 组件没有被 keep-alive 组件包裹，则直接调用 $destroy 方法销毁组件
+      componentInstance.$destroy()
+    } else {
+      // 负责让组件失活，不销毁组件实例，从而缓存组件的状态
+      deactivateChildComponent(componentInstance, true /* direct */)
+    }
+  }
+}
+```
+
+当组件并不是 <span :class="$style.red_text">keepAlive</span> 的时候，会执行 <span :class="$style.red_text">componentInstance.$destroy()</span> 方法，
+然后就会执行 <span :class="$style.red_text">beforeDestroy & destroyed</span> 两个钩子函数。
+
+### 新旧节点相同
+
+对于新旧节点不同的情况，这种创建新节点 -> 更新占位符节点 -> 删除旧节点
+的逻辑。还有一种组件 vnode 的更新情况是新旧节点相同，它
+会调用 <span :class="$style.red_text">patchVNode</span> 方法，它的定义在 <span :class="$style.red_text">src/core/vdom/patch.js</span> 中：
+
+```js
+/**
+ * 更新节点
+ *   全量的属性更新
+ *   如果新老节点都有孩子，则递归执行 diff
+ *   如果新节点有孩子，老节点没孩子，则新增新节点的这些孩子节点
+ *   如果老节点有孩子，新节点没孩子，则删除老节点的这些孩子
+ *   更新文本节点
+ */
+function patchVnode(
+  oldVnode,
+  vnode,
+  insertedVnodeQueue,
+  ownerArray,
+  index,
+  removeOnly
+) {
+  // 老节点和新节点相同，直接返回
+  if (oldVnode === vnode) {
+    return;
+  }
+
+  if (isDef(vnode.elm) && isDef(ownerArray)) {
+    // clone reused vnode
+    vnode = ownerArray[index] = cloneVNode(vnode);
+  }
+
+  const elm = (vnode.elm = oldVnode.elm);
+
+  // 异步占位符节点
+  if (isTrue(oldVnode.isAsyncPlaceholder)) {
+    if (isDef(vnode.asyncFactory.resolved)) {
+      hydrate(oldVnode.elm, vnode, insertedVnodeQueue);
+    } else {
+      vnode.isAsyncPlaceholder = true;
+    }
+    return;
+  }
+
+  // 跳过静态节点的更新
+  // reuse element for static trees.
+  // note we only do this if the vnode is cloned -
+  // if the new node is not cloned it means the render functions have been
+  // reset by the hot-reload-api and we need to do a proper re-render.
+  if (
+    isTrue(vnode.isStatic) &&
+    isTrue(oldVnode.isStatic) &&
+    vnode.key === oldVnode.key &&
+    (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))
+  ) {
+    // 新旧节点都是静态的而且两个节点的 key 一样，并且新节点被 clone 了 或者 新节点有 v-once指令，则重用这部分节点
+    vnode.componentInstance = oldVnode.componentInstance;
+    return;
+  }
+
+  // 执行组件的 prepatch 钩子
+  let i;
+  const data = vnode.data;
+  if (isDef(data) && isDef((i = data.hook)) && isDef((i = i.prepatch))) {
+    i(oldVnode, vnode);
+  }
+
+  // 老节点的孩子
+  const oldCh = oldVnode.children;
+  // 新节点的孩子
+  const ch = vnode.children;
+  // 全量更新新节点的属性，Vue 3.0 在这里做了很多的优化
+  if (isDef(data) && isPatchable(vnode)) {
+    // 执行新节点所有的属性更新
+    for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+    if (isDef((i = data.hook)) && isDef((i = i.update))) i(oldVnode, vnode);
+  }
+  if (isUndef(vnode.text)) {
+    // 新节点不是文本节点
+    if (isDef(oldCh) && isDef(ch)) {
+      // 如果新老节点都有孩子，则递归执行 diff 过程
+      if (oldCh !== ch)
+        updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly);
+    } else if (isDef(ch)) {
+      // 老孩子不存在，新孩子存在，则创建这些新孩子节点
+      if (process.env.NODE_ENV !== "production") {
+        checkDuplicateKeys(ch);
+      }
+      if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, "");
+      addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
+    } else if (isDef(oldCh)) {
+      // 老孩子存在，新孩子不存在，则移除这些老孩子节点
+      removeVnodes(oldCh, 0, oldCh.length - 1);
+    } else if (isDef(oldVnode.text)) {
+      // 老节点是文本节点，则将文本内容置空
+      nodeOps.setTextContent(elm, "");
+    }
+  } else if (oldVnode.text !== vnode.text) {
+    // 新节点是文本节点，则更新文本节点
+    nodeOps.setTextContent(elm, vnode.text);
+  }
+  if (isDef(data)) {
+    if (isDef((i = data.hook)) && isDef((i = i.postpatch))) i(oldVnode, vnode);
+  }
+}
+```
+
+<span :class="$style.red_text">patchVnode</span> 的作用就是把新的 <span :class="$style.red_text">vnode</span> patch 到旧的 <span :class="$style.red_text">vnode</span> 上，这里只关注
+关键的核心逻辑，把它拆成四步骤：
+
+### prepatch
+
+```js
+let i;
+const data = vnode.data;
+if (isDef(data) && isDef((i = data.hook)) && isDef((i = i.prepatch))) {
+  i(oldVnode, vnode);
+}
+```
+
+当更新的 <span :class="$style.red_text">vnode</span> 是一个<span :class="$style.red_text">组件 vnode </span> 的时候，会执行 <span :class="$style.red_text">prepatch</span> 的方法，它的
+定义在 <span :class="$style.red_text">src/core/vdom/create-component.js</span> 中：
+
+```js
+// 更新 VNode，用新的 VNode 配置更新旧的 VNode 上的各种属性
+prepatch(oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
+  // 新 VNode 的组件配置项
+  const options = vnode.componentOptions
+  // 老 VNode 的组件实例
+  const child = vnode.componentInstance = oldVnode.componentInstance
+  // 用 vnode 上的属性更新 child 上的各种属性
+  updateChildComponent(
+    child,
+    options.propsData, // updated props
+    options.listeners, // updated listeners
+    vnode, // new parent vnode
+    options.children // new children
+  )
+}
+```
+
+<span :class="$style.red_text">prepatch</span> 方法就是拿到新的 <span :class="$style.red_text">vnode</span> 的组件配置以及组件实例，去执行 <span :class="$style.red_text">updateC
+hildComponent</span> 方法，它的定义在 <span :class="$style.red_text">src/core/instance/lifecycle.js </span>中：
+
+```js
+export function updateChildComponent(
+  vm: Component,
+  propsData: ?Object,
+  listeners: ?Object,
+  parentVnode: MountedComponentVNode,
+  renderChildren: ?Array<VNode>
+) {
+  if (process.env.NODE_ENV !== "production") {
+    isUpdatingChildComponent = true;
+  }
+
+  // determine whether component has slot children
+  // we need to do this before overwriting $options._renderChildren.
+
+  // check if there are dynamic scopedSlots (hand-written or compiled but with
+  // dynamic slot names). Static scoped slots compiled from template has the
+  // "$stable" marker.
+  const newScopedSlots = parentVnode.data.scopedSlots;
+  const oldScopedSlots = vm.$scopedSlots;
+  const hasDynamicScopedSlot = !!(
+    (newScopedSlots && !newScopedSlots.$stable) ||
+    (oldScopedSlots !== emptyObject && !oldScopedSlots.$stable) ||
+    (newScopedSlots && vm.$scopedSlots.$key !== newScopedSlots.$key)
+  );
+
+  // Any static slot children from the parent may have changed during parent's
+  // update. Dynamic scoped slots may also have changed. In such cases, a forced
+  // update is necessary to ensure correctness.
+  const needsForceUpdate = !!(
+    renderChildren || // has new static slots
+    vm.$options._renderChildren || // has old static slots
+    hasDynamicScopedSlot
+  );
+
+  vm.$options._parentVnode = parentVnode;
+  vm.$vnode = parentVnode; // update vm's placeholder node without re-render
+
+  if (vm._vnode) {
+    // update child tree's parent
+    vm._vnode.parent = parentVnode;
+  }
+  vm.$options._renderChildren = renderChildren;
+
+  // update $attrs and $listeners hash
+  // these are also reactive so they may trigger child update if the child
+  // used them during render
+  vm.$attrs = parentVnode.data.attrs || emptyObject;
+  vm.$listeners = listeners || emptyObject;
+
+  // update props
+  if (propsData && vm.$options.props) {
+    toggleObserving(false);
+    const props = vm._props;
+    const propKeys = vm.$options._propKeys || [];
+    for (let i = 0; i < propKeys.length; i++) {
+      const key = propKeys[i];
+      const propOptions: any = vm.$options.props; // wtf flow?
+      props[key] = validateProp(key, propOptions, propsData, vm);
+    }
+    toggleObserving(true);
+    // keep a copy of raw propsData
+    vm.$options.propsData = propsData;
+  }
+
+  // update listeners
+  listeners = listeners || emptyObject;
+  const oldListeners = vm.$options._parentListeners;
+  vm.$options._parentListeners = listeners;
+  updateComponentListeners(vm, listeners, oldListeners);
+
+  // resolve slots + force update if has children
+  if (needsForceUpdate) {
+    vm.$slots = resolveSlots(renderChildren, parentVnode.context);
+    vm.$forceUpdate();
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    isUpdatingChildComponent = false;
+  }
+}
+```
+
+updateChildComponent 的逻辑也非常简单，由于更新了 vnode，那么 vnode 对
+应的实例 vm 的一系列属性也会发生变化，包括占位符 <span :class="$style.red_text">vm.$vnode</span> 的更新、
+<span :class="$style.red_text">slot</span> 的更新，<span :class="$style.red_text">listeners</span> 的更新，<span :class="$style.red_text">props</span> 的更新等等。
+
+### 执行 update 钩子函数
+
+```js
+if (isDef(data) && isPatchable(vnode)) {
+  for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+  if (isDef((i = data.hook)) && isDef((i = i.update))) i(oldVnode, vnode);
+}
+```
+
+回到 <span :class="$style.red_text">patchVNode</span> 函数，在执行完新的 vnode 的 prepatch 钩子函数，会执行所有 <span :class="$style.red_text">module</span> 的 <span :class="$style.red_text">update</span> 钩子函数以及用户自定义 <span :class="$style.red_text">update</span> 钩子函数，对于 <span :class="$style.red_text">module</span> 的钩子函数。
+
+### 完成 patch 过程
+
+```js
+// 老节点的孩子
+const oldCh = oldVnode.children;
+// 新节点的孩子
+const ch = vnode.children;
+// 全量更新新节点的属性，Vue 3.0 在这里做了很多的优化
+if (isDef(data) && isPatchable(vnode)) {
+  // 执行新节点所有的属性更新
+  for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode);
+  if (isDef((i = data.hook)) && isDef((i = i.update))) i(oldVnode, vnode);
+}
+if (isUndef(vnode.text)) {
+  // 新节点不是文本节点
+  if (isDef(oldCh) && isDef(ch)) {
+    // 如果新老节点都有孩子，则递归执行 diff 过程
+    if (oldCh !== ch)
+      updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly);
+  } else if (isDef(ch)) {
+    // 老孩子不存在，新孩子存在，则创建这些新孩子节点
+    if (process.env.NODE_ENV !== "production") {
+      checkDuplicateKeys(ch);
+    }
+    if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, "");
+    addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
+  } else if (isDef(oldCh)) {
+    // 老孩子存在，新孩子不存在，则移除这些老孩子节点
+    removeVnodes(oldCh, 0, oldCh.length - 1);
+  } else if (isDef(oldVnode.text)) {
+    // 老节点是文本节点，则将文本内容置空
+    nodeOps.setTextContent(elm, "");
+  }
+} else if (oldVnode.text !== vnode.text) {
+  // 新节点是文本节点，则更新文本节点
+  nodeOps.setTextContent(elm, vnode.text);
+}
+```
+
+如果 <span :class="$style.red_text">vnode</span> 是个文本节点且新旧文本不相同，则直接替换文本内容。如果不是
+文本节点，则判断它们的子节点，并分了几种情况处理：<br>
+
+1. <span :class="$style.red_text">oldCh</span> 与 <span :class="$style.red_text">ch</span> 都存在且不相同时，使用 updateChildren 函数来更新子节点，这个
+   后面重点讲。
+
+2. 如果只有 <span :class="$style.red_text">ch</span> 存在，表示旧节点不需要了。如果旧的节点是文本节点则先将
+   节点的文本清除，然后通过 addVnodes 将 ch 批量插入到新节点 elm 下。
+
+3. 如果只有 <span :class="$style.red_text">oldCh</span> 存在，表示更新的是空节点，则需要将旧的节点通过 remov
+   eVnodes 全部清除。
+
+4. 当只有旧节点是文本节点的时候，则清除其节点文本内容。
+
+### 执行 postpatch 钩子函数
+
+```js
+if (isDef(data)) {
+  if (isDef((i = data.hook)) && isDef((i = i.postpatch))) i(oldVnode, vnode);
+}
+```
+
+再执行完 <span :class="$style.red_text">patch</span> 过程后，会执行 <span :class="$style.red_text">postpatch</span> 钩子函数，它是组件自定义的钩子函数，有则执行。
+
 <style module>
    .special_text {
      color: #00BCD4; 
