@@ -1,17 +1,6 @@
 <script setup>
 import { 
-  list10, 
-  list11, 
-  list12, list13, list14, list15, list16,
-  list17,
-  list18,
-  list19,
-  list20,
-  list21,
-  list22,
-  list23,
-  list24,
-  list25
+  month5
 } from './days/index.ts'
 </script>
 
@@ -19,192 +8,24 @@ import {
   每日清单
 </div>
 
-## 2024-05-25
+<div
+  v-for="(pItem, index) in month5"
+  :key="index" 
+>
+
+## {{ pItem.date }}
 
 <div
   :class="$style.flex"
-  v-for="(item, index) in list25"
-  :key="index">
+  v-for="(item, index) in pItem.child"
+  :key="index"
+  :id="pItem.date"
+>
   <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
   <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
   <span >{{ item.name }}</span>
    <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
 </div>
-
-## 2024-05-24
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list24"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-23
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list23"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-22
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list22"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-21
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list21"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-20
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list20"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-19
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list19"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-18
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list18"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-17
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list17"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-16
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list16"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-15
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list15"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-14
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list14"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-13
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list13"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-  <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
-
-## 2024-05-12
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list12"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-</div>
-
-## 2024-05-11
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list11"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-</div>
-
-## 2024-05-10
-
-<div
-  :class="$style.flex"
-  v-for="(item, index) in list10"
-  :key="index">
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span >{{ item.name }}</span>
 </div>
 
 <style module>
