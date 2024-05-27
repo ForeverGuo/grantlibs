@@ -8,12 +8,51 @@ import {
   list19,
   list20,
   list21,
-  list22
+  list22,
+  list23,
+  list24,
+  list25
 } from './days/index.ts'
 </script>
 
 <div :class="$style.special_text">
   每日清单
+</div>
+
+## 2024-05-25
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list25"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
+</div>
+
+## 2024-05-24
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list24"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
+</div>
+
+## 2024-05-23
+
+<div
+  :class="$style.flex"
+  v-for="(item, index) in list23"
+  :key="index">
+  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+  <span >{{ item.name }}</span>
+   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
 </div>
 
 ## 2024-05-22
