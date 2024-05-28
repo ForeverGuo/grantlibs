@@ -1,5 +1,48 @@
 export const month5 = [
   {
+    date: '2024-05-28',
+    child: [
+      {
+        name: "uview upload 二次封装。",
+        done: false,
+        status: 'will'
+      },
+      {
+        name: "uview upload 二次封装。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
+    date: '2024-05-27',
+    child: [
+      {
+        name: "uview form 表单二次封装。",
+        done: false,
+        status: 'will'
+      },
+      {
+        name: "uview form 表单二次封装。",
+        done: true,
+        status: 'done',
+        rate: '封装效果不佳'
+      },
+      {
+        name: "大文件切片上传，form 表单组件二次封装，导航栏权限，原理学习。",
+        done: false,
+        status: 'will',
+      },
+      {
+        name: "大文件切片上传，form 表单组件二次封装，导航栏权限，原理学习。",
+        done: true,
+        status: 'done',
+        rate: '60%'
+      }
+    ]
+  },
+  {
     date: '2024-05-26',
     child: [
       {
