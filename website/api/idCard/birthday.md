@@ -1,9 +1,9 @@
 ### 引入
 
 ```js
-import { idCardBirth } from "grantlibs";
+import { getCardBirth } from "grantlibs";
 或;
-const { idCardBirth } = require("grantlibs");
+const { getCardBirth } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
@@ -14,7 +14,7 @@ const { idCardBirth } = require("grantlibs");
 
 ```ts
 
-idCardBirth(idCard: string): string | NULL
+getCardBirth(idCard: string): string | NULL
 
 ```
 
@@ -30,6 +30,6 @@ idCardBirth(idCard: string): string | NULL
 
 ```js
 const card = "110101199001013590";
-const date = idCardBirth(card);
+const date = getCardBirth(card);
 // => '1990-01-01'
 ```

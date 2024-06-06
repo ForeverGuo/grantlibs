@@ -1,20 +1,20 @@
 ### 引入
 
 ```js
-import { getCardSex } from "grantlibs";
+import { getCardAge } from "grantlibs";
 或;
-const { getCardSex } = require("grantlibs");
+const { getCardAge } = require("grantlibs");
 ```
 
 <div style="color: #E6A23C; fontSize: 18px; padding: 20px 0">
-  根据身份证获取性别
+  根据身份证获取年龄
 </div>
 
 ### 使用
 
 ```ts
 
-getCardSex(idCard: string): string
+getCardAge(idCard: string): number
 
 ```
 
@@ -24,12 +24,12 @@ getCardSex(idCard: string): string
 
 ### 返回
 
-男性 / 女性
+number
 
 ### 示例
 
 ```js
 const card = "110101199001013590";
-const sex = getCardSex(card);
-// => '男性'
+const age = getCardAge(card);
+// => 34
 ```

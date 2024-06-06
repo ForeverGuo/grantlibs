@@ -15,6 +15,10 @@ export const apiMenu = [
       {
         text: '性别',
         link: '/api/idCard/sex',
+      },
+      {
+        text: '年龄',
+        link: '/api/idCard/age',
       }
     ]
   },
@@ -254,6 +258,10 @@ export const apiMenu = [
       {
         text: 'round',
         link: '/api/number/round'
+      },
+      {
+        text: 'add',
+        link: '/api/number/add'
       },
     ]
   },

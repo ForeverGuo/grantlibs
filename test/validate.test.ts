@@ -40,11 +40,6 @@ test('isEmpty', () => {
   expect(b2).toBe(false)
 })
 
-test('idCard', () => {
-  const b1 = isCard('220181199308286312')
-  console.log(b1)
-})
-
 test("测试手机号", () => {
   const mobile = 17704052506
   const res = isMobile(`${mobile}`)
