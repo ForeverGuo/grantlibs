@@ -18,15 +18,15 @@ const list = reactive([
   },
   {
     name: '深入响应式原理（上）',
-    done: false,
+    done: true,
   },
   {
     name: '深入响应式原理（下）',
-    done: false,
+    done: true,
   },
   {
     name: '编译（上）',
-    done: false,
+    done: true,
   },
   {
     name: '编译（下）',
