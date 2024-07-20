@@ -19,4 +19,8 @@ export const vue2Menu = [
     text: '响应式原理（下）',
     link: '/vue2/reactive/indexBot'
   },
+  {
+    text: 'Compiler 原理',
+    link: '/vue2/compiler/index'
+  },
 ]
