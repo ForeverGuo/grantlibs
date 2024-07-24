@@ -121,6 +121,79 @@ list_2 = list_1[1:4]
 
 ## set 集合
 
+- 无序存储，不支持下标索引访问
+- 支持不同类型的数据
+- 不允许重复数据
+- 可以修改
+- 支持 for 循环
+
+```js
+set_1 = {"a", "b", "c"};
+set_empty = set()
+
+// add 添加元素
+set_1.add("d")
+
+// remove 移除元素
+set_1.remove("a")
+
+// 随机取出一个元素 pop
+element = set_1.pop()
+
+// 清空
+set_1.clear()
+
+// 取2个集合的差集 集合1.difference(集合2)
+set_2 = { 1, 2, 3 }
+set_3 = { 1, 5, 6 }
+set_4 = set_2.difference(set_3)
+
+// 消除2个集合的差集 集合1.difference_update(集合2)
+// 改变集合1的内容, 无返回值
+set_2.difference_update(set_3)
+// => set_2 = { 2, 3 }
+
+// 2个集合合并 集合1.union(集合2)
+// 合并为一个新的集合并返回
+new_set = set_2.union(set_3)
+// => { 1, 2, 3, 5, 6 }
+
+// 统计集合的元素数量 len()
+len_1 = len(set_2)
+
+// 集合的遍历
+// 集合不支持下标索引，不支持while循环
+
+```
+
 ## dict（字典，映射）
+
+- 定义
+
+```js
+dict_1 = { a: 1, b: 2 };
+dict_2 = dict();
+
+// 删除 dict.pop(key) 并返回该元素的值
+dict_1.pop("a");
+// 清空 dict.clear()
+dict_1.clear();
+// 获取全部key  dict.keys()
+dict_keys = dict_1.keys();
+// 1, 根据获取全部keys 遍历获取
+// 2, 直接使用for in
+
+// 统计字典内的元素数量 len()
+count = len(dict_1);
+```
+
+:::warning
+
+- 不可以使用下标索引
+- key 和 value 可以是任意数据类型（key 不可为字典）
+- key 不可以重复，如果已存在，就是更新 value 值
+- 可以修改
+- 支持 for 循环，不支持 while 循环
+  :::
 
 ## 容器的通用操作
