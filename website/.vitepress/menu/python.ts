@@ -19,4 +19,8 @@ export const python3Menu = [
     text: '数据容器',
     link: '/python/canteen/index'
   },
+  {
+    text: '爬虫基础',
+    link: '/python/crawler/index'
+  },
 ]
