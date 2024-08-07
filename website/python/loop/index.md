@@ -24,9 +24,9 @@ for 临时变量 in 待处理数据集:
 - range(num1, num2)
 - range(num1, num2, step)
 
-```tip
-  临时变量在规范上 不应该在for循环外部被访问
-```
+::: tip
+临时变量在规范上 不应该在 for 循环外部被访问
+:::
 
 ## 循环中断 break 和 continue
 
