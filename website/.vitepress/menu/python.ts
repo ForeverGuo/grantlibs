@@ -23,4 +23,8 @@ export const python3Menu = [
     text: '爬虫基础',
     link: '/python/crawler/index'
   },
+  {
+    text: '文件操作',
+    link: '/python/file/index'
+  },
 ]

@@ -81,3 +81,44 @@
 
 - input("提示信息--") 键盘输入（输出类型固定是字符串类型）
 - print 内容输出
+
+## 异常捕获
+
+```js
+// 基本异常
+try:
+  // 可能发生的错误代码
+except:
+  // 如果出现异常需要执行的代码
+
+// 捕获指定异常
+
+try:
+// 只捕获 nameError 错误
+except NameError as e:
+  print(e)
+
+// 捕获多个异常
+try ：
+
+except (NameError, ZeroDivisionError) as e:
+  print(e)
+
+// 捕获所有的异常
+try:
+
+except Exception as e:
+  print(e)
+
+// else 没有异常会执行
+try:
+except Exception as e:
+  print(e)
+else:
+  print("没有异常执行")
+finally:
+  f.close()
+  print("无论有没有异常都会执行")
+```
+
+- 异常具有传递性
