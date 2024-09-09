@@ -1,4 +1,4 @@
-## 依赖
+## 添加依赖
 
 1. spring jdbc 依赖
 2. mysql 驱动
