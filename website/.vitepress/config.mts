@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { apiMenu, guideMenu, leetCodeMenu, vue2Menu, planMenu, python3Menu } from './menu'
+import { apiMenu, guideMenu, leetCodeMenu, vue2Menu, planMenu, python3Menu, springMenu } from './menu'
 
 export default defineConfig({
   title: "grantguo",
@@ -20,7 +20,8 @@ export default defineConfig({
       { text: '指南', link: '/guide/whatIs' },
       { text: '文档', link: '/api/idCard/birthday' },
       { text: 'vue2源码', link: '/vue2/prepare/index' },
-      { text: 'python学习', link: '/python/base/index' },
+      { text: 'python', link: '/python/base/index' },
+      { text: 'spring6', link: '/spring/index' },
       { text: '每日一题', link: '/leetcode/topk' }
     ],
 
@@ -30,7 +31,8 @@ export default defineConfig({
       '/leetcode': leetCodeMenu,
       '/vue2': vue2Menu,
       '/plan': planMenu,
-      '/python': python3Menu
+      '/python': python3Menu,
+      '/spring': springMenu
     },
 
     socialLinks: [
