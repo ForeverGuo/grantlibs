@@ -4,7 +4,27 @@ export const springMenu = [
     link: '/spring/index'
   },
   {
+    text: 'AOP',
+    link: '/spring/aop'
+  },
+  {
+    text: 'GOF代理',
+    link: '/spring/gof'
+  },
+  {
     text: 'JDBC',
     link: '/spring/jdbc'
+  },
+  {
+    text: 'MyBatis',
+    link: '/spring/mybatis'
+  },
+  {
+    text: '事务',
+    link: '/spring/transaction'
+  },
+  {
+    text: "MVC",
+    link: "/spring/mvc"
   }
 ]
