@@ -57,3 +57,127 @@
 逻辑视图名称：first
 物理视图名称：前缀 + first + 后缀
 最终路径： /WEB-INF/templates/first.html
+
+### 关于@RequestMapping 注解的 value 属性
+
+value 属性本身是一个 String[] 字符串数组，说明多个请求可以映射同一个处理器方法 <br />
+如果注解的属性是数组，并且在使用注解的时候，该数组只有一个元素，大括号可以省略 <br />
+如果使用某个注解的时候，如果只使用一个 value 属性，那么 value 也是可以省略的 <br />
+value 属性的别名是 path <br />
+path 属性的别名是 value
+
+### RequestMapping 的 value 属性支持 Ant 风格的 支持模糊匹配的路径
+
+? 表示任意一个字符
+
+- 表示 0 到 N 个任意字符 (排除'/' '?')
+  ** 表示 0 到 N 个任意字符 ，可以出现路径分隔符 注意 ** 左边只能 '/'
+  spring6 只能是末尾出现
+
+### 关于@RequestMapping 注解的 value 属性占位符（重点）
+
+现在流行 RESTFUL 风格的 URL：/springmvc/login/admin/123
+
+```js
+@RequestMapping("/login/{username}/{password}")
+public String testRESTFulURL(
+       @PathVariable("username")
+       String username,
+       @PathVariable("password")
+       String password) {
+   System.out.println("username: " + username + " password: " + password);
+   return  "ok";
+}
+```
+
+### 关于@RequestMapping 注解的 method 属性，通过该属性限制前端请求方式，如果请求方式不同，则会报 405 错误
+
+```js
+@RequestMapping(value = "/user/login", method = { RequestMethod.GET, RequestMethod.POST })
+public String userLogin() {
+   System.out.println("处理登陆的业务逻辑...");
+   return "ok";
+}
+```
+
+### 衍生 Mapping
+
+- @PostMapping
+- @GetMapping
+
+### web 的请求方式
+
+GET POST PUT DELETE HEAD
+
+### 关于 requestMapping 注解的 params 属性
+
+### 关于 requestMapping 注解的 headers 属性
+
+### 获取请求的数据
+
+1. servlet API
+
+在处理器方法参数上，HttpServletRequest
+springMvc 框架将自动将 Tomcat 服务器创建的 request 对象传递给处理器方法
+我们直接在方法中使用 equest 对象即可。
+
+2. 注解 @requestParam
+
+属性 value name
+required：设置该参数是否必传，如果该属性没传则提示 400
+这个属性类似于 @RequestMapping 注解中的 params
+可以设置为 false，则该参数不是必传 不会报 400，但是前端没有提供这个属性，默认为 null
+defaultValue：如果前端没有提供参数，可以设置该参数的默认值
+
+3. 行参名来接收，如果方法行参的名字和提交数据时的 name 相同，则@RequestParam 可省略
+
+```js
+如果使用的是spring6+版本，则需要在pom文件上添加如下：
+<build>
+   <plugins>
+       <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-compiler-plugin</artifactId>
+           <version>3.13.0</version>
+           <configuration>
+               <source>17</source>
+               <target>17</target>
+               <compilerArgs>
+                   <arg>-parameters</arg>
+               </compilerArgs>
+           </configuration>
+       </plugin>
+   </plugins>
+</build>
+
+注意：如果 控制器上的行参名 和 请求参数名 不一致，那么控制器上的行参默认值是 null
+```
+
+4. 使用 POJO 类/JavaBean 接收请求参数（常用）
+
+底层实现：反射机制
+不过使用前提是：POJO 类的属性名和请求参数名一致
+实现原理是什么？
+假设提交一个请求，参数名是 username，那么 POJO 类必须有一个属性名也叫作：username
+根据 username 进行 setUsername 注入赋值
+
+重点：底层通过反射机制调用 set 方法给属性赋值，所以 set 方法名非常重要。
+如果前端提交参数是 username，那么 POJO 类中必须有 seUsername 方法
+
+### 获取请求头信息 ？
+
+```js
+使用@RequestHeader注解获取
+@RequestHeader(value = "Referer",required = false, defaultValue = "")
+```
+
+### 获取客户端提交的 Cookie ？
+
+使用@CookieValue 注解 获取控制器方法上的行参
+
+### 关于 javaweb 项目，如何解决 post 请求乱码问题？
+
+request.setCharacterEncoding("utf-8");
+但是该执行语句必须在 request.getParameter("")之前执行才有效。
+第一种：可以自己写 过滤器 Filter
+第二种：使用 springmvc 内置的字符编码过滤器 CharacterEncodingFilter
