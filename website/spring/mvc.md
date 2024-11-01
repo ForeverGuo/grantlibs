@@ -181,3 +181,71 @@ request.setCharacterEncoding("utf-8");
 但是该执行语句必须在 request.getParameter("")之前执行才有效。
 第一种：可以自己写 过滤器 Filter
 第二种：使用 springmvc 内置的字符编码过滤器 CharacterEncodingFilter
+
+### Request 域数据共享
+
+- 第一种方式：在处理器方法上，添加 HttpServletRequest 参数即可
+- 第二种方式：在 springmvc 的处理器方法上添加一个接口类型 Model （ui.Model）
+
+```js
+@RequestMapping("/testModel")
+public String testModel(Model model) {
+    model.addAttribute("testRequest", "testModel");'
+    // 转发
+    return "ok";
+}
+```
+
+- 第三种方式：在 springmvc 的处理器方法上添加一个接口类型 Map
+
+```js
+@RequestMapping("/testMap")
+public String testMap(Map<String, Object> map) {
+   map.put("testRequest", "testMap");
+   return "ok";
+}
+```
+
+- 第四种方式：在 springmvc 的处理器方法上添加一个类 ModelMap
+
+```js
+@RequestMapping("/testModelMap")
+public String testModelMap(ModelMap modelMap) {
+   modelMap.addAttribute("testRequest", "testModelMap");
+   return "ok";
+}
+```
+
+研究下，Model 接口，Map 接口，ModelMap 类 三者之间的关系 ？<br/>
+::: warning
+表面是使用的不同接口和不同的类，实际上使用的是同一个对象 org.springframework.validation.support.BindingAwareModelMap
+:::
+
+- 第五种方式: 使用 ModelAndView 类完成数据共享
+
+```js
+@RequestMapping("/testModelAndView")
+public ModelAndView testModelAndView() {
+    // 创建模型视图对象
+    ModelAndView modelAndView = new ModelAndView();
+    // 给模型视图对象 绑定数据
+    modelAndView.addObject("testRequest", "testModelAndView");
+    // 给模型视图对象 绑定 视图
+    modelAndView.setViewName("ok");
+    // 返回模型视图对象
+    return modelAndView;
+}
+```
+
+聊一个真相:
+
+::: warning
+对于处理器方法来说,不管使用的是 Model 对象,Map 对象, modelMap 类, ModelAndView 类,最终处理器方法执行
+结束后,返回的都是 ModelAndView 对象,这个返回的 ModelAndView 对象给 DispatchServlet 类了 <br/>
+
+当请求路径不是 JSP 的时候,都会走前端控制器 DispatchServlet.
+DispatchServlet 中有一个方法 doDispatch,这个方法通过请求路径找到 处理器方法,
+然后调用处理器方法返回一个视图名称(也可能是一个 ModelAndView 对象),底层会将逻辑视图名称转换
+为 view 对象,然后结合 Model 对象,封装一个 ModelAndView 对象,然后将该对象返回给 DispatchServlet 类.
+
+:::
