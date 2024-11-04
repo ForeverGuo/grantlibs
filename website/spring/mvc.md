@@ -249,3 +249,48 @@ DispatchServlet 中有一个方法 doDispatch,这个方法通过请求路径找�
 为 view 对象,然后结合 Model 对象,封装一个 ModelAndView 对象,然后将该对象返回给 DispatchServlet 类.
 
 :::
+
+### Session 域数据存储
+
+- 第一种方式: 使用原生的 servlet API 实现(在处理器方法的参数上添加 httpSession 对象, springMVC 会自动将 session 对象传递给这个参数)
+- 第二种方式: 使用@SessionAttributes 注解实现 session 域数据存储
+
+### Application 域数据存储
+
+这个域使用较少,如果使用的话,一般采用 Servlet API 的方式使用.
+
+```js
+@RequestMapping("/testApplication")
+public String testApplicaitonScope(HttpServletRequest request) {
+    ServletContext application = request.getServletContext();
+    application.setAttribute("testApplication", "testApplication");
+    return "ok";
+}
+```
+
+### SpringMVC 中常用的视图
+
+- InternalResourceView: 内部资源视图 (是- springMVC 内置的,专门用于解析 JSP 模版语法的, 另外也负责 转发 forward 功能实现)
+- RedirectView: 重定向视图 (是 springMVC 内置的, 专门负责 重定向 redirect 功能实现)
+- ThymeleafView: Thymeleaf 视图 (第三方, 专门负责解析 thymeleaf 模版语法)
+  ...
+
+### 实现视图的核心类和核心接口
+
+1. DispatcherServlet: 前端控制器
+   负责接收前端的请求
+   根据请求路径找到对应的处理器方法
+   执行处理器方法
+   并且最终返回 ModelAndView 对象.
+   再往下就是视图解析器
+2. ViewSource 接口: 视图解析器接口 (ThymeleafViewResolver 实现了 ViewSource 接口, InternalResourceView 也是实现了 ViewSource 接口)
+   这个接口做什么 ?
+   这个接口的作用就是将 逻辑视图名称 转换为 物理视图名称
+   并且最终返回一个 View 接口对象
+   核心方法是什么 ?
+   View resolveViewName(String viewName, Locale locale) throws Exception;
+3. View 接口: 视图接口
+   这个接口做什么 ?
+   这个接口主要负责将模版语法的字符串转换为 html 代码, 并且将 html 代码响应给浏览器 (即渲染.)
+   核心方法是什么 ?
+   void render(@Nullable Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
