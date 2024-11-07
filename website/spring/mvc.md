@@ -294,3 +294,73 @@ public String testApplicaitonScope(HttpServletRequest request) {
    这个接口主要负责将模版语法的字符串转换为 html 代码, 并且将 html 代码响应给浏览器 (即渲染.)
    核心方法是什么 ?
    void render(@Nullable Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+### 在 springMVC 中是怎么实现转发的 ?
+
+```js
+@RequestMapping("/A")
+public String toA() {
+    // 返回逻辑视图
+    return "pageA";
+}
+/* 注意:
+当 return pageA 的时候, 返回一个逻辑视图,这种方式跳转到视图
+默认采用的是forward方式跳转过去的, 只不过这个底层创建的视图对象 是thymeleafView
+*/
+```
+
+- 怎么转发 ? 什么格式 ?
+  "return forward: /B" 转发到 /B ,这是一次请求, 底层创建视图对象是, internalResourceView 对象
+- 怎么重定向 ? 什么格式 ?
+  "return redirect: /B" 转发到 /B ,发起两次请求,底层创建的是 RedirectView
+
+:::warning
+总结: <br/>
+转发: "return forward: /B" ---> internalResourceView <br/>
+重定向: "return redirect: /B" ---> redirectView
+:::
+
+### <mvc:view-controller>
+
+:::info
+这是个配置信息, 可以在 springmvc.xml 文件中进行配置, 作用是什么 ?
+如果一个 Controller 上的方法是为了完成视图跳转,没有任何业务代码,那么这个 controller 可以不写.
+直接在 springmvc.xml 中写上 <mvc:view-controller /> 注解即可.
+
+<!--配置视图控制器-->
+
+<mvc:view-controller path="/test" view-name="test" />
+:::
+
+### <mvc:annotation-driven />
+
+开启注解启动,会让整个项目中的注解再次开启.
+
+### 关于静态资源处理.
+
+- 假如有静态文件 static,如果想要直接访问有两种解决方式:
+  1. 第一种: 开启默认的 Servlet 服务, 需要在 springmvc.xml 配置 开启静态资源访问
+     ```js
+     <!--开启默认的defaultServlet 可以使用default访问静态资源-->
+     <mvc:default-servlet-handler />
+     <mvc:annotation-driven />
+     ```
+     Servlet 服务器默认先走 DispatcherServlet ,如果发生 404, 则会自动走 defaultServlet 服务帮你定位静态资源.
+  2. 在 springmvc.xml 文件中 添加如下配置:
+  ```js
+  <!--配置处理静态资源-->
+  <mvc:annotation-driven />
+  <mvc:resources mapping="/static/**" location="/static/" />
+  ```
+
+## RESTful API
+
+### 什么是 RESTful ?
+
+RESTful 是对 WEB 服务接口的设计风格,提供的一套约束,可以让 WEB 服务接口更加简洁, 易于理解. <br>
+RESTful 是表述性状态转移
+
+- 查询 get
+- 新增 post
+- 删除 delete
+- 修改 put
