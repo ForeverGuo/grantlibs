@@ -364,3 +364,22 @@ RESTful 是表述性状态转移
 - 新增 post
 - 删除 delete
 - 修改 put
+
+### RESTful 风格中要求,修改的时候,提交必须是一个 PUT 请求, 怎么提交 PUT 请求 ?
+
+1. 要想发送 put 请求, 前提必须是一个 POST 请求
+2. 在 POST 请求中添加隐藏域:
+   <input type="hidden" name="_method" value="put" />
+
+3. 在 web.xml 中添加一个过滤器
+
+```js
+<filter>
+   <filter-name>hiddenHttpMethodFilter</filter-name>
+   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+</filter>
+<filter-mapping>
+   <filter-name>hiddenHttpMethodFilter</filter-name>
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
