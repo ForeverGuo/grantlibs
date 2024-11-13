@@ -383,3 +383,61 @@ RESTful 是表述性状态转移
    <url-pattern>/*</url-pattern>
 </filter-mapping>
 ```
+
+### 在 springMVC 中如何使用原生的 ServletAPI 完成 AJAX 请求的响应 ?
+
+```js
+@RequestMapping("/ajax")
+public void ajax(HttpServletResponse response) throws Exception {
+    PrintWriter writer = response.getWriter();
+    writer.print("hello ajax im spring mvc2w");
+}
+```
+
+### @ResponseBody 注解 (非常重要)
+
+```js
+@GetMapping("/ajax")
+@ResponseBody
+public String ajax() throws IOException {
+    return "hello ajax im spring mvc2w";
+}
+```
+
+:::warning
+注意: 一旦处理器方法上添加了 @ResponseBody 返回将不再是 逻辑视图名称 ,而是将结果返回给浏览器
+底册实现原理代替的就是<br/>
+PrintWriter writer = response.getWriter();<br/>
+writer.print("hello ajax im spring mvc2w");<br/>
+以上使用的 http 消息转换器是 StringHttpMessageConverter
+:::
+
+```js
+@GetMapping("/ajax")
+@ResponseBody
+public User ajax() throws IOException {
+   User user = new User(123L,"zhangsan", "1232");
+   return user;
+}
+```
+
+当一个处理器上面有 @ResponseBody 注解,并且返回一个 java 对象,例如 user 对象,那么 springMVC 框架会自动将 user 对象转换成字符串响应给浏览器.<br/>
+当然,你要在 pom.xml 文件引入 jackson 依赖 <br/>
+
+```js
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.17.1</version>
+</dependency>
+```
+
+以上使用 HTTP 转换器是: MappingJackson2HttpMessageConverter.
+
+### 非常好用的注解 @RestController
+
+:::info
+出现在类上 = @Controller + @ResponseBody <br/>
+@RestController 是一个复合注解. <br/>
+表示该类上自动添加了 @Controller 注解, 并在该类中所有的方法上都会自动添加 @ResponseBody 注解.
+:::
