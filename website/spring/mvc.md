@@ -293,26 +293,28 @@ public String testApplicaitonScope(HttpServletRequest request) {
    这个接口做什么 ?
    这个接口主要负责将模版语法的字符串转换为 html 代码, 并且将 html 代码响应给浏览器 (即渲染.)
    核心方法是什么 ?
-   void render(@Nullable Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
+   void render(@Nullable Map<String, ?/> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
 ### 在 springMVC 中是怎么实现转发的 ?
 
 ```js
-@RequestMapping("/A")
-public String toA() {
-    // 返回逻辑视图
-    return "pageA";
-}
 /* 注意:
-当 return pageA 的时候, 返回一个逻辑视图,这种方式跳转到视图
-默认采用的是forward方式跳转过去的, 只不过这个底层创建的视图对象 是thymeleafView
-*/
+  当 return pageA 的时候, 返回一个逻辑视图,这种方式跳转到视图
+  默认采用的是forward方式跳转过去的, 只不过这个底层创建的视图对象 是thymeleafView*/
+  @RequestMapping("/A")
+  public String toA() {
+      // 返回逻辑视图
+      return "pageA";
+  }
 ```
 
-- 怎么转发 ? 什么格式 ?
-  "return forward: /B" 转发到 /B ,这是一次请求, 底层创建视图对象是, internalResourceView 对象
-- 怎么重定向 ? 什么格式 ?
-  "return redirect: /B" 转发到 /B ,发起两次请求,底层创建的是 RedirectView
+- 如何转发 , 什么格式 ?
+
+  "return forward: /B" 转发到 "/B" ,这是一次请求, 底层创建视图对象是, internalResourceView 对象
+
+- 怎么重定向 , 什么格式 ?
+
+  "return redirect: /B" 转发到 "/B" ,发起两次请求,底层创建的是 RedirectView
 
 :::warning
 总结: <br/>
@@ -320,7 +322,7 @@ public String toA() {
 重定向: "return redirect: /B" ---> redirectView
 :::
 
-### <mvc:view-controller>
+### <mvc:view-controller />
 
 :::info
 这是个配置信息, 可以在 springmvc.xml 文件中进行配置, 作用是什么 ?
@@ -369,19 +371,32 @@ RESTful 是表述性状态转移
 
 1. 要想发送 put 请求, 前提必须是一个 POST 请求
 2. 在 POST 请求中添加隐藏域:
+
+   ```js
    <input type="hidden" name="_method" value="put" />
+   ```
 
 3. 在 web.xml 中添加一个过滤器
 
 ```js
 <filter>
-   <filter-name>hiddenHttpMethodFilter</filter-name>
-   <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+<filter-name>hiddenHttpMethodFilter</filter-name>
+<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
 </filter>
 <filter-mapping>
-   <filter-name>hiddenHttpMethodFilter</filter-name>
-   <url-pattern>/*</url-pattern>
+<filter-name>hiddenHttpMethodFilter</filter-name>
+<url-pattern>/\*</url-pattern>
 </filter-mapping>
+```
+
+### 在 springMVC 中如何使用原生的 ServletAPI 完成 AJAX 请求的响应 ?
+
+```js
+@RequestMapping("/ajax")
+public void ajax(HttpServletResponse response) throws Exception {
+    PrintWriter writer = response.getWriter();
+    writer.print("hello ajax im spring mvc2w");
+}
 ```
 
 ### 在 springMVC 中如何使用原生的 ServletAPI 完成 AJAX 请求的响应 ?
@@ -441,3 +456,55 @@ public User ajax() throws IOException {
 @RestController 是一个复合注解. <br/>
 表示该类上自动添加了 @Controller 注解, 并在该类中所有的方法上都会自动添加 @ResponseBody 注解.
 :::
+
+### 关于@RequestBody 注解
+
+该注解只能使用在处理器方法的形参上 <br/>
+这个注解的作用是直接将请求体传递给 Java 程序,在 Java 程序中可以直接使用一个 String 类型的变量来接收 这个请求体的内容<br/>
+底层使用 HTTP 消息转换器是: FormHttpMessageConverter <br/>
+
+关于@RequestBody 注解的重要用法: 如果前端请求体当中提交的数据是 JSON 格式,那么 @RequestBody 可以将提交的 JSON 格式的字符串转换成 java 对象. <br />
+
+注意: 同样是说过 jackjson 依赖: <br />
+
+```js
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.17.1</version>
+</dependency>
+```
+
+以上前端请求体提交的 JSON 格式的字符串, 那么后端直接将 JSON 格式的字符串转换成 java 对象, 这里使用的消息转换器是: MappingJackson2HttpMessageConverter
+
+### RequestEntity
+
+这个类的实例封装了整个请求协议 <br>
+SpringMVC 自动创建好, 传递给处理器方法上的参数 <br>
+你只需要在处理器的方法的参数上加上: (RequestEntity requestEntity)即可 springmvc 自动创建好该对象 <br>
+传递到处理器方法的参数上. <br>
+通过它可以获取请求协议中个任何信息: 请求行 请求头 请求体
+
+### ResponseEntity
+
+这个类的实例封装了整个响应协议 包括 状态行 响应头 响应体; <br>
+注意: 如果你要定制响应协议, 那么处理器的返回值类型必须是 ResponseEntity<User/>, <br>
+泛型为什么是 User, 因为响应体的信息是 user 信息.
+
+## 文件上传
+
+文件上传必须是 post 请求 <br>
+文件上传的 form 标签中使用 enctype="multipart/form-data" <br>
+enctype 用来设置请求头的内容类型,默认类型 application/x-www-form-urlencoded <br>
+如果你是 spring6,需要在 web.xml 中 dispatcherServlet 中配置
+
+```js
+<multipart-config>
+  <!--设置单个支持最大文件的大小-->
+  <max-file-size>102400</max-file-size>
+  <!--设置整个表单所有文件上传的最大值-->
+  <max-request-size>102400</max-request-size>
+  <!--设置最小上传文件大小-->
+  <file-size-threshold>0</file-size-threshold>
+</multipart-config>
+```
