@@ -31,4 +31,8 @@ export const leetCodeMenu = [
     text: 'program beauty 1',
     link: '/leetcode/programBeauty_1'
   },
+  {
+    text: '二分查找',
+    link: '/leetcode/binarySearch'
+  },
 ]
