@@ -508,3 +508,22 @@ enctype 用来设置请求头的内容类型,默认类型 application/x-www-form
   <file-size-threshold>0</file-size-threshold>
 </multipart-config>
 ```
+
+### 文件下载(固定格式)
+
+```js
+@GetMapping("/download")
+public ResponseEntity<byte[]> downloadFile(HttpServletResponse response, HttpServletRequest request) throws IOException {
+    File file = new File(request.getServletContext().getRealPath("/upload") + "/谢谢参与 2.png");
+    // 创建响应头对象
+    HttpHeaders headers = new HttpHeaders();
+    // 设置响应内容类型
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    // 设置下载文件的名称
+    String fileName = URLEncoder.encode(file.getName(), "UTF-8");
+    headers.setContentDispositionFormData("attachment", fileName);
+
+    // 下载文件
+   return new ResponseEntity<byte[]>(Files.readAllBytes(file.toPath()), headers, HttpStatus.OK);
+}
+```

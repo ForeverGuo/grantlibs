@@ -53,4 +53,7 @@ class Solution {
 
 ### 相关练习题目
 
-[leetcode-35](https://leetcode.cn/problems/search-insert-position/description/)
+[leetcode-35](https://leetcode.cn/problems/search-insert-position/description/) - easy <br>
+[leetcode-34](https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/) - medium <br>
+[leetcode-69](https://leetcode.cn/problems/sqrtx/description/) - easy <br>
+[leetcod-367](https://leetcode.cn/problems/valid-perfect-square/description/) - easy
