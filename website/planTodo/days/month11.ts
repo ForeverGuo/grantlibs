@@ -1,5 +1,57 @@
 export const month11 = [
   {
+    date: '2024-11-22',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "营销抽奖首页大转盘列表联调。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "员工数据报表问题修复。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
+    date: '2024-11-21',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "营销抽奖需求开发问题修复。",
+        done: true,
+        status: 'done',
+        rate: '70%'
+      },
+      {
+        name: "员工数据报表问题修复。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "修改营销报表数据。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
     date: '2024-11-20',
     child: [
       {
