@@ -1,5 +1,9 @@
 export const planMenu = [
   {
+    text: 'docker install',
+    link: '/planTodo/dockerInstall'
+  },
+  {
     text: 'Day',
     link: '/planTodo/day'
   },
@@ -18,5 +22,5 @@ export const planMenu = [
   {
     text: 'Python',
     link: '/planTodo/python'
-  },
+  }
 ]
