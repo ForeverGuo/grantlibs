@@ -26,5 +26,9 @@ export const springMenu = [
   {
     text: "MVC",
     link: "/spring/mvc"
+  },
+  {
+    text: "MVC 执行流程源码解析",
+    link: "/spring/springmvc"
   }
 ]
