@@ -120,3 +120,43 @@ add-apt-repository -y ppa:ondrej/php
 ```
 
 安装相关包前要检查 repo 是否正确
+
+### docker 内部执行指令
+
+```shell
+启动apache2服务 :
+apt-get install -y apache2
+service apache2 status
+service apache2 start
+cat /etc/apache2/sites-available/000-default.conf
+
+# 一 更换版本
+1. update-alternatives --set php /usr/bin/php7.4
+2. service apache2 status
+
+# 二  查看http://localhost:2053
+cat /etc/apache2/sites-available/000-default.conf
+
+# 更新环境
+ssh 连接 开发环境主机:
+chmod 600 /Users/xxxx/Downloads/johnson/Pem/SPM-Stage.pem
+
+ssh -i /Users/xxxx/Downloads/johnson/Pem/xxx.pem ubuntu@dns域名
+
+# 跑批任务 php schedule :
+
+sudo crontab -e
+php artisan schedule:run
+php artisan -v
+
+# 更新代码仓库时需要执行两部:
+git pull
+sudo supervisorctl restart horizon ( 主要是更新redis栈存)
+
+# laravel 电商测试站:
+https://tw-stage-admin.welltivity.com/admin/auth/login
+# laravel 电商正式站:
+https://tw-admin.welltivity.com/admin/auth/login
+# laravel 电商开发站:
+https://tw-develop-admin.welltivity.com/admin/auth/login (不维护)
+```
