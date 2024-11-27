@@ -1,5 +1,28 @@
 export const month11 = [
   {
+    date: '2024-11-27',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "内容后台问题修复",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "eason工作交接之三。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
     date: '2024-11-26',
     child: [
       {

@@ -153,10 +153,41 @@ php artisan -v
 git pull
 sudo supervisorctl restart horizon ( 主要是更新redis栈存)
 
-# laravel 电商测试站:
+# laravel 电商订单管理后台测试站:
 https://tw-stage-admin.welltivity.com/admin/auth/login
-# laravel 电商正式站:
+# laravel 电商订单管理后台正式站:
 https://tw-admin.welltivity.com/admin/auth/login
-# laravel 电商开发站:
+# laravel 电商订单管理后台开发站:
 https://tw-develop-admin.welltivity.com/admin/auth/login (不维护)
+
+# 电商建置平台管理端
+https://admin.shopify.com/login?errorHint=no_identity_session
+
+# 电商建置平台前台(由管理端定制化生成)
+https://tw.welltivity.com/
+
+# gmail
+johnsonfitness2019@gmail.com - Johnsonfitness2019
+
+# DB开发环境
+DB_CONNECTION=mysql
+DB_HOST=spm-staging-mariadb.cfeqvo0govkf.ap-northeast-1.rds.amazonaws.com
+DB_PORT=3306
+DB_DATABASE=stage
+DB_USERNAME=admin
+DB_PASSWORD=IQQol6bYQH9YNK1Kb4FD
+
+# DB正式环境
+DB_CONNECTION=mysql
+DB_HOST=spm-production-mariadb.cfeqvo0govkf.ap-northeast-1.rds.amazonaws.com
+DB_PORT=3306
+DB_DATABASE=shopifyadmin
+DB_USERNAME=admin
+DB_PASSWORD=noKonUBQngRdHS4UichT
+
+# composer json
+删除一个依赖:
+"masbug/flysystem-google-drive-ext": "^1.0.0"
+
+
 ```
