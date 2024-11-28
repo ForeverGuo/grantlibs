@@ -159,11 +159,13 @@ https://tw-stage-admin.welltivity.com/admin/auth/login
 https://tw-admin.welltivity.com/admin/auth/login
 # laravel 电商订单管理后台开发站:
 https://tw-develop-admin.welltivity.com/admin/auth/login (不维护)
+admin/admin
+admin/password
 
 # 电商建置平台管理端
 https://admin.shopify.com/login?errorHint=no_identity_session
 
-# 电商建置平台前台(由管理端定制化生成)
+# 电商建置平台前台(由建置平台管理端定制化生成)
 https://tw.welltivity.com/
 
 # gmail
