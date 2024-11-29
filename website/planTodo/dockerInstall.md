@@ -173,6 +173,14 @@ johnsonfitness2019@gmail.com - Johnsonfitness2019
 
 # DB开发环境
 DB_CONNECTION=mysql
+DB_HOST=asia-ec-develop-database-01.cfeqvo0govkf.ap-northeast-1.rds.amazonaws.com
+DB_PORT=3306
+DB_DATABASE=shopifyadmin
+DB_USERNAME=admin
+DB_PASSWORD=OmUf5oreh28w_iNp
+
+# DB测试环境
+DB_CONNECTION=mysql
 DB_HOST=spm-staging-mariadb.cfeqvo0govkf.ap-northeast-1.rds.amazonaws.com
 DB_PORT=3306
 DB_DATABASE=stage
@@ -187,9 +195,27 @@ DB_DATABASE=shopifyadmin
 DB_USERNAME=admin
 DB_PASSWORD=noKonUBQngRdHS4UichT
 
-# composer json
-删除一个依赖:
-"masbug/flysystem-google-drive-ext": "^1.0.0"
 
+
+ubuntu@ip-172-29-0-38: 正式环境主机
+ubuntu@ip-172-31-4-52: DEV开发环境主机
+
+# 定时 传报表 指令
+php artisan scheduly:nanshan-mail
+# 手动 传推销信件 指令 (模版文件(nidas提供)和模版id需要提供, 去tw-admin后台获取)
+php artisan send:promotion-emails
 
 ```
+
+### git push 注意 依赖 和 文件的问题:
+
+:::waring
+
+# composer json
+
+本地需删除一个依赖:
+"masbug/flysystem-google-drive-ext": "^1.0.0" (git push 需要补充完整)
+
+# /app/Console/Commands/SyncExternalOrders.php 本地需要移除
+
+:::
