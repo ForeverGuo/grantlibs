@@ -22,8 +22,7 @@ export default defineConfig({
       { text: 'vue2源码', link: '/vue2/prepare/index' },
       { text: 'python', link: '/python/base/index' },
       { text: 'spring6', link: '/spring/index' },
-      { text: '每日一题', link: '/leetcode/topk' },
-      { text: '杂记', link: '/planTodo/dockerInstall' }
+      { text: '每日一题', link: '/leetcode/topk' }
     ],
 
     sidebar: {
