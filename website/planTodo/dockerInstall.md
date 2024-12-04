@@ -218,4 +218,9 @@ php artisan send:promotion-emails
 
 # /app/Console/Commands/SyncExternalOrders.php 本地需要移除
 
+# 目前线上版本 aws-sdk-php ( 开发环境需要降级处理,已经做了降级)
+
+"aws/aws-sdk-php": "^3.283",
+"aws/aws-sdk-php-laravel": "^3.7",
+
 :::
