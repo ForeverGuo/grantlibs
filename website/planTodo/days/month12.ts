@@ -1,5 +1,28 @@
 export const month12 = [
   {
+    date: '2024-12-05',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "内容后台运动数据新增字段开发",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "TW电商后台汇入其他表单和定时邮件转测。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
     date: '2024-12-04',
     child: [
       {
