@@ -1,5 +1,34 @@
 export const month12 = [
   {
+    date: '2024-12-13',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "抽奖优惠券开发",
+        done: true,
+        status: 'done',
+        rate: '50%'
+      },
+      {
+        name: "shopify本地开发环境搭建",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "shopify前端优惠券开发",
+        done: true,
+        status: 'done',
+        rate: '10%'
+      }
+    ]
+  },
+  {
     date: '2024-12-12',
     child: [
       {
