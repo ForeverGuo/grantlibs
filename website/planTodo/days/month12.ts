@@ -1,5 +1,39 @@
 export const month12 = [
   {
+    date: '2024-12-18',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "消息推送提测",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
+    date: '2024-12-17',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "消息推送联调",
+        done: true,
+        status: 'done',
+        rate: '50%'
+      }
+    ]
+  },
+  {
     date: '2024-12-13',
     child: [
       {

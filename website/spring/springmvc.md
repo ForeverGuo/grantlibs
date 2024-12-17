@@ -196,3 +196,12 @@ public class DispatcherServlet {
    - HandlerInterceptor - list 中的拦截器
    - HandlerMapping
      - requestMappingHandlerMapping (HandlerMapping 接口的实现)
+
+## DispatcherServlet 流程概述
+
+用户发起请求, DispatcherServlet(前端控制器) 拦截到请求, 通过处理器映射器(handlerMapping),返回一个 handler 处理器(实质是一个 handlerExecutionChain), 根据返回的 handler, 来获取适合的 handlerAdapter 处理器适配器,下面进行 preHandler, 根据 handlerAdapter 来调用处理器方法(参数处理,绑定), 返回逻辑视图名称给到 处理器适配器, 然后处理器适配器根据逻辑视图名称, 返回 MV(modelAndView),给到前端控制器, 前端控制利用视图解析器 ViewResolver, 解析出视图对象 View, 返回给前端控制器, 接下来根据 View 视图解析对象,进行渲染,
+
+### 服务器启动
+
+1. 初始化 spring 上下文, 也就是创建所有的 Bean, 让 IOC 容器将其管理起来
+2. 初始化 springMVC 相关的对象: 处理器映射器, 处理器适配器 等
