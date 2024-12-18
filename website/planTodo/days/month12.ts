@@ -9,6 +9,29 @@ export const month12 = [
         rate: '100%'
       },
       {
+        name: "体适能和图表功能发布",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "首页改版后台配置开发",
+        done: false,
+        status: 'done',
+        rate: '10%'
+      }
+    ]
+  },
+  {
+    date: '2024-12-17',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
         name: "消息推送提测",
         done: true,
         status: 'done',
@@ -17,7 +40,7 @@ export const month12 = [
     ]
   },
   {
-    date: '2024-12-17',
+    date: '2024-12-16',
     child: [
       {
         name: "每日站会。",
