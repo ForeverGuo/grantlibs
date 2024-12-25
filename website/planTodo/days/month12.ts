@@ -1,5 +1,51 @@
 export const month12 = [
   {
+    date: '2024-12-25',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "消息推送问题修复",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "首页改版后台配置开发联调",
+        done: true,
+        status: 'done',
+        rate: '60%'
+      }
+    ]
+  },
+  {
+    date: '2024-12-24',
+    child: [
+      {
+        name: "每日站会。",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "消息推送问题修复",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      },
+      {
+        name: "首页改版后台配置开发之记忆路由功能开发",
+        done: true,
+        status: 'done',
+        rate: '100%'
+      }
+    ]
+  },
+  {
     date: '2024-12-23',
     child: [
       {
