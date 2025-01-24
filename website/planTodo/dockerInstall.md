@@ -224,3 +224,13 @@ php artisan send:promotion-emails
 "aws/aws-sdk-php-laravel": "^3.7",
 
 :::
+
+### 本地部署 llama
+
+```shell
+# 运行 ollama 服务
+docker run -d -v /Users/guoyongsheng/Downloads/docker/ollama -p 11434:11434 --name ollama ollama/ollama
+docker exec -it ollama ollama run llama3.2:1b
+# 运行 open-webui
+docker run -d -p 3000:8080 -e OLLAMA_BASE_URL=http://host.docker.internal:11434 -v /Users/guoyongsheng/Downloads/docker/open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+```
