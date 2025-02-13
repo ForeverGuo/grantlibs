@@ -1,1 +1,0 @@
-import{_ as t,c as e,o}from"./chunks/framework.BZPRC472.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"planTodo/python.md","filePath":"planTodo/python.md","lastUpdated":1715695981000}'),a={name:"planTodo/python.md"};function n(p,r,s,c,d,l){return o(),e("div")}const m=t(a,[["render",n]]);export{i as __pageData,m as default};
