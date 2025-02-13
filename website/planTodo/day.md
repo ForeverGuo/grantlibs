@@ -2,7 +2,7 @@
 import { 
   month5,
   month6,
-  month11
+  month11,
   month12
 } from './days/index.ts'
 </script>
