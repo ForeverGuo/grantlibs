@@ -35,4 +35,8 @@ export const leetCodeMenu = [
     text: '二分查找',
     link: '/leetcode/binarySearch'
   },
+  {
+    text: '三数之和',
+    link: '/leetcode/threeSum'
+  },
 ]
