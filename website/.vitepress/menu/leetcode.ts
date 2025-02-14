@@ -39,4 +39,8 @@ export const leetCodeMenu = [
     text: '三数之和',
     link: '/leetcode/threeSum'
   },
+  {
+    text: '四数之和',
+    link: '/leetcode/fourSum'
+  },
 ]
