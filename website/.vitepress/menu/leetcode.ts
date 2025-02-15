@@ -43,4 +43,8 @@ export const leetCodeMenu = [
     text: '四数之和',
     link: '/leetcode/fourSum'
   },
+  {
+    text: '删除排序数组中的重复项',
+    link: '/leetcode/Remove Duplicates from Sorted Array'
+  }
 ]
