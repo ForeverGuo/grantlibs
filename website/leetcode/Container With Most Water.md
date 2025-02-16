@@ -1,4 +1,4 @@
-# 盛最多水的容器（Container With Most Water）
+# 盛最多水的容器
 
 ### 解决方式
 
