@@ -22,5 +22,9 @@ export const planMenu = [
   {
     text: 'Python',
     link: '/planTodo/python'
+  },
+  {
+    text: '面试题',
+    link: '/planTodo/view'
   }
 ]
