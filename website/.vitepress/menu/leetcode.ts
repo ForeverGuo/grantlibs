@@ -50,5 +50,9 @@ export const leetCodeMenu = [
   {
     text: '删除排序数组中的重复项',
     link: '/leetcode/Remove Duplicates from Sorted Array'
+  },
+  {
+    text: '盛最多水的容器',
+    link: '/leetcode/Container With Most Water'
   }
 ]
