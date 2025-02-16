@@ -1,5 +1,9 @@
 export const leetCodeMenu = [
   {
+    text: '常见算法题',
+    link: '/leetcode/100'
+  },
+  {
     text: 'Top k 问题',
     link: '/leetcode/topk'
   },
