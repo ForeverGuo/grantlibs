@@ -54,5 +54,9 @@ export const leetCodeMenu = [
   {
     text: '盛最多水的容器',
     link: '/leetcode/Container With Most Water'
-  }
+  },
+  {
+    text: '回文',
+    link: '/leetcode/Longest Palindromic Substring'
+  },
 ]
