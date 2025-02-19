@@ -28,7 +28,7 @@ def longestPalindrome(s):
 
 ## 5 最长回文子串
 
-### python3 解决方式
+### python3 解决方式 - 中心扩展法
 
 ```python
 def longestPalindrome2(s):
@@ -49,3 +49,41 @@ def longestPalindrome2(s):
 
 时间复杂度：O(n^2) <br/>
 空间复杂度：O(1)
+
+### 动态规划法
+
+```python
+def longestPalindrome3(s):
+  n = len(s)
+  if n < 2:
+    return s
+
+  # 初始化dp规划表
+  dp = [[False] * n for _ in range(n)]
+  longest = ""
+
+  # 针对长度为 1
+  for i in range(n):
+    dp[i][i] = True
+    longest = s[i]
+
+  # 针对长度为 2
+  for i in range(n-1):
+    if s[i] == s[i+1]:
+      dp[i][i+1] = True
+      longest = s[i:i+2]
+
+  # 针对长度 大于 2
+  for length in range(3, n+1):
+    for i in range(n-length+1): # 字符串起始位置
+      j = i + length - 1 # 字符串结束位置
+      if s[i] == s[j] and dp[i+1][j-1]:
+        dp[i][j] = True
+        if length > len(longest):
+          longest = s[i:j+1]
+
+  return longest
+```
+
+时间复杂度：O(n^2) <br/>
+空间复杂度：O(n^2)
