@@ -28,10 +28,6 @@ export const leetCodeMenu = [
     link: '/leetcode/Maximum Sum Subarray of Size K'
   },
   {
-    text: 'Maximum Sum Size K',
-    link: '/leetcode/Maximum Sum Subarray of Size K'
-  },
-  {
     text: 'program beauty 1',
     link: '/leetcode/programBeauty_1'
   },
