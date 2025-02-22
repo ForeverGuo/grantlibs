@@ -55,4 +55,8 @@ export const leetCodeMenu = [
     text: '回文',
     link: '/leetcode/Longest Palindromic Substring'
   },
+  {
+    text: '合并有序数组',
+    link: '/leetcode/Merge Sorted Array'
+  },
 ]

@@ -18,7 +18,7 @@ function twoSum(numbers, target) {
 }
 ```
 
-#### 复杂度
+### 复杂度
 
 时间复杂度：O(n) <br/>
 空间复杂度：O(n)
