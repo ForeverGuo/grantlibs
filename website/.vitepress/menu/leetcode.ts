@@ -59,4 +59,8 @@ export const leetCodeMenu = [
     text: '合并有序数组',
     link: '/leetcode/Merge Sorted Array'
   },
+  {
+    text: '旋转图像',
+    link: '/leetcode/Rotate Image'
+  },
 ]
