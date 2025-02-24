@@ -63,4 +63,8 @@ export const leetCodeMenu = [
     text: '旋转图像',
     link: '/leetcode/Rotate Image'
   },
+  {
+    text: '旋转矩阵',
+    link: '/leetcode/Spiral Matrix'
+  }
 ]
