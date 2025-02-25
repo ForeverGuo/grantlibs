@@ -52,11 +52,11 @@ export const leetCodeMenu = [
     link: '/leetcode/Container With Most Water'
   },
   {
-    text: '回文',
+    text: '回文串',
     link: '/leetcode/Longest Palindromic Substring'
   },
   {
-    text: '合并有序数组',
+    text: '合并两个有序数组',
     link: '/leetcode/Merge Sorted Array'
   },
   {
@@ -64,7 +64,19 @@ export const leetCodeMenu = [
     link: '/leetcode/Rotate Image'
   },
   {
-    text: '旋转矩阵',
+    text: '螺旋矩阵',
     link: '/leetcode/Spiral Matrix'
+  },
+  {
+    text: '有效的括号',
+    link: '/leetcode/Valid Parentheses'
+  },
+  {
+    text: '最长无重复字符的子串',
+    link: '/leetcode/Longest Substring Without Repeating Characters'
+  },
+  {
+    text: '字符串转换整数',
+    link: '/leetcode/String to Integer (atoi)'
   }
 ]
