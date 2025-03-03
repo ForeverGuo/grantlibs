@@ -78,5 +78,9 @@ export const leetCodeMenu = [
   {
     text: '字符串转换整数',
     link: '/leetcode/String to Integer (atoi)'
+  },
+  {
+    text: '反转链表',
+    link: '/leetcode/Reverse Linked List'
   }
 ]
