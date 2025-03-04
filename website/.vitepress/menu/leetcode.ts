@@ -82,5 +82,9 @@ export const leetCodeMenu = [
   {
     text: '反转链表',
     link: '/leetcode/Reverse Linked List'
+  },
+  {
+    text: '环形链表',
+    link: '/leetcode/Linked List Cycle'
   }
 ]
