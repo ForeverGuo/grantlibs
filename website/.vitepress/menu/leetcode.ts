@@ -86,5 +86,9 @@ export const leetCodeMenu = [
   {
     text: '环形链表',
     link: '/leetcode/Linked List Cycle'
+  },
+  {
+    text: '环形链表 II',
+    link: '/leetcode/Linked List Cycle II'
   }
 ]
