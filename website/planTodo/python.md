@@ -6,7 +6,11 @@
 pip freeze | xargs pip uninstall -y
 ```
 
-- pip freeze 获取所有已安装的库的列表
+### 获取所有已安装的库的列表
+
+```shell
+pip freeze
+```
 
 ### conda install 安装不成功怎么办 ?
 

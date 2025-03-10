@@ -90,5 +90,9 @@ export const leetCodeMenu = [
   {
     text: '环形链表 II',
     link: '/leetcode/Linked List Cycle II'
+  },
+  {
+    text: '删除链表的倒数第 N 个节点',
+    link: '/leetcode/Remove Nth Node From End of List'
   }
 ]
