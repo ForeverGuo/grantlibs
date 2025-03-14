@@ -94,5 +94,9 @@ export const leetCodeMenu = [
   {
     text: '删除链表的倒数第 N 个节点',
     link: '/leetcode/Remove Nth Node From End of List'
+  },
+  {
+    text: '两数相加',
+    link: '/leetcode/Add Two Numbers'
   }
 ]
