@@ -98,5 +98,13 @@ export const leetCodeMenu = [
   {
     text: '两数相加',
     link: '/leetcode/Add Two Numbers'
-  }
+  },
+  {
+    text: '合并两个有序链表',
+    link: '/leetcode/Merge Two Sorted Lists'
+  },
+  {
+    text: '回文链表',
+    link: '/leetcode/Palindrome Linked List'
+  },
 ]
