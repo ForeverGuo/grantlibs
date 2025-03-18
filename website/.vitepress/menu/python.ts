@@ -27,4 +27,20 @@ export const python3Menu = [
     text: '文件操作',
     link: '/python/file/index'
   },
+  {
+    text: 'Python 编程第一课：快速上手 Python',
+    link: '/python/little_book/Python 编程第一课：快速上手 Python'
+  },
+  {
+    text: '第一个 Web 应用：Hello World',
+    link: '/python/little_book/第一个 Web 应用：Hello World'
+  },
+  {
+    text: 'Flask or Django？开发者の灵魂拷问：要自由还是求省心？',
+    link: '/python/little_book/Flask or Django？开发者の灵魂拷问：要自由还是求省心？'
+  },
+  {
+    text: '数据库：SQLite_MySQL_PostgreSQL 的破圈之战',
+    link: '/python/little_book/数据库：SQLite_MySQL_PostgreSQL 的破圈之战'
+  },
 ]
