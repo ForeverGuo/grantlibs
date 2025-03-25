@@ -107,4 +107,8 @@ export const leetCodeMenu = [
     text: '回文链表',
     link: '/leetcode/Palindrome Linked List'
   },
+  {
+    text: '奇偶链表',
+    link: '/leetcode/Odd Even Linked List'
+  },
 ]
