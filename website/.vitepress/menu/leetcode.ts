@@ -111,4 +111,8 @@ export const leetCodeMenu = [
     text: '奇偶链表',
     link: '/leetcode/Odd Even Linked List'
   },
+  {
+    text: 'K 个一组翻转链表',
+    link: '/leetcode/Reverse Nodes in k-Group'
+  },
 ]
