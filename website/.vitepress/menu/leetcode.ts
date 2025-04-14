@@ -115,4 +115,8 @@ export const leetCodeMenu = [
     text: 'K 个一组翻转链表',
     link: '/leetcode/Reverse Nodes in k-Group'
   },
+  {
+    text: '爬楼梯',
+    link: '/leetcode/Climbing Stairs'
+  },
 ]
