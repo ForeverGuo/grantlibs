@@ -21,5 +21,5 @@ def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
 
 ### 复杂度
 
-时间复杂度: O(N)
-空间复杂度: O(1)
+- 时间复杂度: O(N)
+- 空间复杂度: O(1)

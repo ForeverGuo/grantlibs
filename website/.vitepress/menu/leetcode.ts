@@ -119,4 +119,8 @@ export const leetCodeMenu = [
     text: '爬楼梯',
     link: '/leetcode/Climbing Stairs'
   },
+  {
+    text: '最长递增子序列',
+    link: '/leetcode/Longest Increasing Subsequence'
+  },
 ]
