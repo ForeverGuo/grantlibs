@@ -11,7 +11,7 @@ String、Number、Boolean、Null、Undefined、Symbol、BigInt。
 Object（包括 Array、Function、Date 等）。
 ```
 
-4. 什么是原型链 ? 常见使用场景
+4. 什么是原型链 ? 常见使用`场景
 5. 什么是事件循环 ? event loop 工作流程是什么 ?
 6. 如何实现深拷贝和浅拷贝 ? 深拷贝的方式有哪些 ? (至少 3 种)
 7. es6 的新特性有哪些, 箭头函数 有哪些特点

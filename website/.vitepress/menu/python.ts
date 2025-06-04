@@ -42,5 +42,5 @@ export const python3Menu = [
   {
     text: '数据库：SQLite_MySQL_PostgreSQL 的破圈之战',
     link: '/python/little_book/数据库：SQLite_MySQL_PostgreSQL 的破圈之战'
-  },
+  }
 ]
