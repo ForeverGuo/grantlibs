@@ -14,22 +14,22 @@ import {
 
 <div
   v-for="(pItem, index) in [...month202509, ...month12, ...month11, ...month6, ...month5]"
-  :key="index" 
+  :key="index"
 >
 
 ## {{ pItem.date }}
 
-<div
-  :class="$style.flex"
-  v-for="(item, index) in pItem.child"
-  :key="index"
-  :id="pItem.date"
->
-  <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
-  <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
-  <span >{{ item.name }}</span>
-   <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
-</div>
+  <div
+    :class="$style.flex"
+    v-for="(item, index) in pItem.child"
+    :key="index"
+    :id="pItem.date"
+  >
+    <span :class="[$style.common,item.done ? $style.actived : $style.noActive ]">{{ item.done ? '✓' : '✗' }}</span>
+    <span :class="item.status == 'will' ? $style.will : $style.achive">{{ item.status == 'will' ? '计划-' : '实际完成-' }}</span>
+    <span>{{ item.name }}</span>
+    <span v-if="item.rate" :class="$style.rate">{{ item.rate }}</span>
+  </div>
 </div>
 
 <style module>

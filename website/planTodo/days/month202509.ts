@@ -21,5 +21,5 @@ export const month202509 = [
         rate: '100%'
       }
     ]
-  },
+  }
 ]

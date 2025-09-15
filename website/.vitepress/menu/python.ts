@@ -43,12 +43,4 @@ export const python3Menu = [
     text: '数据库：SQLite_MySQL_PostgreSQL 的破圈之战',
     link: '/python/little_book/数据库：SQLite_MySQL_PostgreSQL 的破圈之战'
   },
-  {
-    text: 'Python的数据结构、函数和文件备工作',
-    link: '/python/python_for_data_analysis_2nd/第03章 Python的数据结构、函数和文件'
-  },
-  {
-    text: 'NumPy基础：数组和矢量计算',
-    link: '/python/python_for_data_analysis_2nd/第04章 NumPy基础：数组和矢量计算'
-  }
 ]
